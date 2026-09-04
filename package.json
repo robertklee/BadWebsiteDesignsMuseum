@@ -1,0 +1,10 @@
+{
+  "name": "really-bad-design-museum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A lovingly curated collection of terrible website ideas.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  }
+}

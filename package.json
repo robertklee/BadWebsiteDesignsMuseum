@@ -5,6 +5,6 @@
   "description": "A lovingly curated collection of terrible website ideas.",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check app.js && node --check server.js"
+    "check": "node --check app.js && node --check additional-exhibits.js && node --check server.js"
   }
 }

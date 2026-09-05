@@ -1,0 +1,63 @@
+.password-crane-stage{background:#d9cde8}
+.physics-cart-stage{background:#ebc8ad}
+.fixed.password-crane-stage,.fixed.physics-cart-stage{background:#edf0e5}
+.arcade-exhibit{min-width:0}
+.arcade-exhibit button{min-height:44px}
+.arcade-exhibit button:disabled{opacity:.45}
+.arcade-exhibit .arcade-instructions{font-size:13px;line-height:1.7;margin-bottom:16px}
+.arcade-exhibit kbd{border:1px solid #887b95;padding:1px 5px;border-radius:3px;background:#fff}
+.arcade-readout{font:13px/1.6 monospace;overflow-wrap:anywhere;margin:16px 0}
+.arcade-cabinet{border:3px solid #544260;border-radius:12px 12px 4px 4px;background:linear-gradient(#e9def6,#f8f3fc);padding:14px 8px 10px;box-shadow:inset 0 0 0 5px #d3c2e6}
+.arcade-crane-rail{position:relative;height:174px;border-top:5px solid #544260;margin:0 3px}
+.arcade-claw{position:absolute;top:0;left:10%;width:36px;margin-left:-18px;text-align:center;transition:left .18s ease;color:#382844}
+.arcade-claw-rope{display:block;margin:auto;width:3px;height:62px;background:#544260}
+.arcade-claw-jaw{display:block;font:48px/36px Georgia,serif}
+.arcade-claw b{display:block;font:700 19px/28px monospace;background:#fbebae;min-height:0;border-radius:4px}
+.arcade-claw b:empty{display:none}
+.arcade-bank>label{display:block;font-size:12px;margin:14px 0 8px}
+.arcade-bank>select{display:block;width:100%;padding:12px;border:1px solid #9688a0;border-radius:4px;background:#fffaf1;color:#382844}
+.arcade-hoppers{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px}
+.arcade-hoppers>div{padding:12px 0 6px;text-align:center;border:2px solid #897698;background:#fffaf1;font:700 17px/1.2 monospace;border-radius:4px 4px 10px 10px;min-width:0}
+.arcade-hopper b{display:block;font-size:clamp(8px,1.8vw,16px);overflow-wrap:anywhere}
+.arcade-hoppers .arcade-selected{background:#f2db89;border-color:#493459}
+.arcade-hoppers small{display:block;font:10px/1.4 monospace;margin-top:6px;color:#665b6e}
+.arcade-hoppers .arcade-chute{font:700 clamp(7px,1.4vw,12px)/2.6 monospace;background:#544260;color:white;border-color:#544260}
+.arcade-hoppers .arcade-chute small{color:#eee1fa}
+.arcade-password{padding:16px;border:1px solid #9688a0;background:#fffaf1;border-radius:4px}
+.arcade-password>span{display:block;font:11px/1.5 monospace}
+.arcade-password output{display:block;font:700 25px/1.5 monospace;letter-spacing:3px;overflow-wrap:anywhere;white-space:pre-wrap;margin-top:8px}
+.arcade-products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.arcade-product{border:1px solid #ba9074;border-radius:5px;padding:16px 12px;background:#fff8ee;min-width:0}
+.arcade-product h3{font-size:17px;letter-spacing:-.02em;margin-bottom:8px}
+.arcade-product p{font-size:11px;line-height:1.6;margin-bottom:12px}
+.arcade-quantity{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.arcade-quantity button{min-width:44px;padding:7px;font-size:20px}
+.arcade-quantity output{font:700 20px monospace}
+.arcade-track{position:relative;height:210px;border:1px solid #b89478;border-radius:6px;overflow:hidden;background:linear-gradient(#fff7e8,#f6dbb7)}
+.arcade-track-slope{position:absolute;inset:0;background:#bd8054;clip-path:polygon(0 50%,100% 81%,100% 100%,0 100%)}
+.arcade-buy-zone{position:absolute;right:0;top:0;bottom:0;width:15%;min-width:45px;text-align:center;background:#9b452027;border-left:2px dashed #904623;color:#733218;font:700 13px/1.3 monospace;padding-top:8px}
+.arcade-buy-zone small{display:block;font-size:9px;margin-top:4px}
+.arcade-cart{position:absolute;width:64px;height:53px;background:#725092;border:3px solid #412851;border-radius:4px 4px 14px 14px;color:white;z-index:2;text-align:center}
+.arcade-cart:before{content:"";position:absolute;left:-9px;top:-9px;width:13px;height:18px;border-top:4px solid #412851;border-left:4px solid #412851}
+.arcade-cart span{font:700 12px/40px monospace}
+.arcade-cart i{position:absolute;bottom:-17px;left:6px;width:18px;height:18px;background:#34322f;border:4px solid #655e56;border-radius:50%}
+.arcade-cart i:last-child{left:auto;right:6px}
+.arcade-speed-bump{position:absolute;left:48%;top:126px;border-top:7px solid #8b3e1c;border-radius:8px;color:#522915;font:8px/1.3 monospace;padding-top:3px}
+.arcade-preview-crane>strong{font-size:44px;line-height:.75}
+.arcade-preview-crane>div{display:flex;justify-content:center;gap:8px}
+.arcade-preview-crane b{background:#fff2c2;border:1px solid #574468;box-shadow:2px 2px 0 #574468;padding:4px 10px;font:18px monospace}
+.arcade-preview-cart>strong{font-size:54px;transform:rotate(8deg)}
+.arcade-preview-cart>div{border-bottom:3px solid #74411f;padding-bottom:8px;transform:rotate(8deg);font:12px monospace}
+@media(max-width:600px){
+  .arcade-products{grid-template-columns:1fr}
+  .arcade-product{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:3px 10px;align-items:center}
+  .arcade-product h3{margin:0}
+  .arcade-product p{grid-column:1;margin:0}
+  .arcade-quantity{grid-column:2;grid-row:1/3}
+  .arcade-exhibit .arcade-controls{gap:8px}
+  .arcade-controls button{flex:1 1 110px;padding:10px 8px}
+  .arcade-password output{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){
+  .arcade-claw{transition:none}
+}

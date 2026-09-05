@@ -10,6 +10,8 @@ const publicFiles = new Map([
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/additional-exhibits.js", ["additional-exhibits.js", "text/javascript; charset=utf-8"]],
+  ["/arcade-exhibits.js", ["arcade-exhibits.js", "text/javascript; charset=utf-8"]],
+  ["/arcade-exhibits.css", ["arcade-exhibits.css", "text/css; charset=utf-8"]],
 ]);
 
 http.createServer(async (request, response) => {

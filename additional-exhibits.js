@@ -21,6 +21,7 @@ const additionalExhibits = [
   ...arcadeExhibits,
   { id: "checkbox-ecosystem", name: "The Checkbox Ecosystem", category: "Forms", number: "28", color: "green", tagline: "Your preferences require watering.", description: "Feed your checked boxes before they wilt, wander, and uncheck themselves.", lesson: "Preferences should persist until someone changes them. Timed decay, moving controls, and spontaneously added options make consent and settings unreliable.", fix: "Independent, stable checkboxes. Save the choices you actually made, without gardening." },
   { id: "elevator-date", name: "The Elevator Date Picker", category: "Forms", number: "29", color: "lilac", tagline: "Your date is on another floor.", description: "Ride between years, then transfer to month and day elevators.", lesson: "Date entry should not require waiting or timing a stop request. Support direct input and predictable calendar navigation rather than making people navigate three transit systems.", fix: "Choose a date directly using a normal calendar field." },
+  ...puzzleExhibits,
 ];
 
 function additionalPreview(id) {

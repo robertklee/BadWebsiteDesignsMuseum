@@ -52,7 +52,7 @@ The site deploys to Cloudflare Workers with `npm run build` followed by `npm run
 - The Volume Gym: reach exactly 37% using +7/-3 buttons with wraparound at 0 and 100. Worse mode uses +17/-11 and loses one point every two seconds after the first adjustment. Success stops the decay. No audio is played.
 - The Calendar Treadmill: navigate from January 1 to January 12, 2000, using one-day buttons. Worse mode makes Forward alternate between advancing seven days and retreating six.
 
-Every exhibit has original, worse, and fixed modes, a reset button, a curator's note, and a persistent mode toolbar. Use **Escape** to return to the collection. Filter the collection by category or navigate directly to an exhibit, such as `#exhibit/runaway`.
+Every exhibit has original, worse, and fixed modes, a reset button, a curator's note, and a persistent mode toolbar. Worse mode displays a highlighted summary of exactly what it adds to the original version. Use **Escape** to return to the collection. Filter the collection by category or navigate directly to an exhibit, such as `/exhibit/runaway`.
 
 Interactions are local and ephemeral. Messages, guestbook entries, and purchases are simulations; no data is submitted or stored. These are deliberately frustrating task interfaces, not just visual parodies. The museum's sticky Exit, Reset, and Fix it controls remain trustworthy. Fixed mode removes the obstacles rather than merely restyling them.
 

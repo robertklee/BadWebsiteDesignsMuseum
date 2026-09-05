@@ -45,6 +45,43 @@ const exhibitOrder = [
   "volume",
   "calendar",
 ];
+const worseChanges = {
+  "cat-captcha": "Adds a fourth cheese, and the cat moves after every turn instead of every second turn.",
+  "tetris-volume": "More than doubles the falling speed.",
+  "seismic-editor": "Builds structural stress twice as fast and shakes the editor harder.",
+  "checkbox-ecosystem": "Drains health faster and creates a checked offspring box after every third feeding.",
+  "password-crane": "Grabs the next ASCII character instead of the selected one on every third attempt.",
+  "physics-cart": "Steepens the hill and adds a speed bump.",
+  "volume-seesaw": "Adds negative-weight balloons and rolls a weight to the opposite tray after every third addition.",
+  "wind-volume": "Strengthens the gusts and can turn the slider upside down.",
+  "notification-swatter": "Spawns alerts faster and creates another alert whenever you miss.",
+  "email-auction": "Raises reserve prices, adds two rival bids to every lot, and gives @ a third rival.",
+  "elevator-date": "Skips three floors per departure unless you request a stop.",
+  "expanding-form": "Makes every gap grow faster, triples the distance caps, and folds longer answers.",
+  "correcting-search": "Requires five rejected corrections instead of three, plus an explanation for every rejection.",
+  "shrinking-unsubscribe": "Starts shrinking sooner and relocates the button earlier.",
+  phone: "Rerolls and unlocks the digit immediately to the left after each roll.",
+  "password-gym": "Expands to 32 rules and ends with a rule that contradicts the earlier requirements.",
+  "word-editor": "Reshuffles every character menu after each edit.",
+  cookies: "Flips three switches per click and reverses what their labels mean.",
+  "address-jigsaw": "Adds four decoy pieces and reshuffles the unused tray after every edit.",
+  runaway: "Detects an approaching pointer, shrinks the real button, and leaves clickable decoys.",
+  dropdown: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.",
+  "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and resets the exam after one wrong answer.",
+  retro: "Replaces vowels, rearranges CAPTCHA tiles after every selection, and requires two rounds.",
+  "ai-store": "Requires three product-calibration rounds.",
+  fonts: "Styles every character separately instead of every word.",
+  "mystery-menu": "Reshuffles which destination each mystery icon opens after every click.",
+  "unix-birthday": "Removes the slider and midnight helper, leaving one raw millisecond timestamp field.",
+  alphabet: "Also reshuffles the alphabet whenever you commit a slider adjustment.",
+  horizontal: "Reverses the arrow buttons and the direction of vertical mouse-wheel scrolling.",
+  cancel: "Adds two checkpoints, shuffles the buttons, and sends you back to the start after a wrong answer.",
+  recipe: "Resets all reading progress after a wrong answer or an attempt to skip.",
+  corporate: "Adds a required authorization checkbox and creates three new steps after each answer instead of two.",
+  loading: "Interrupts the fake loading process for three mandatory approvals.",
+  volume: "Changes the controls to +17 and -11, then lowers the value every two seconds.",
+  calendar: "Makes Forward alternate between jumping seven days ahead and moving six days back.",
+};
 const exhibitsById = new Map(exhibitCatalog.map(exhibit => [exhibit.id, exhibit]));
 const exhibits = exhibitOrder.map((id, index) => {
   const exhibit = exhibitsById.get(id);
@@ -53,6 +90,9 @@ const exhibits = exhibitOrder.map((id, index) => {
 });
 if (exhibits.length !== exhibitCatalog.length || new Set(exhibitOrder).size !== exhibitCatalog.length || exhibitsById.size !== exhibitCatalog.length) {
   throw new Error("The collection order must include every exhibit exactly once.");
+}
+if (Object.keys(worseChanges).length !== exhibitCatalog.length || exhibitOrder.some(id => !worseChanges[id])) {
+  throw new Error("Every exhibit needs a Worse-mode change summary.");
 }
 
 const main = document.querySelector("#main");
@@ -126,11 +166,16 @@ function renderExhibit(id, focus = false) {
   }
   currentId = id;
   document.title = `${exhibit.name} — Really Bad Design Museum`;
+  const modeNote = mode === "fixed"
+    ? "SENSIBLE MODE — a little consideration goes a long way."
+    : mode === "worse"
+      ? `EXTRA TERRIBLE — we regret to inform you that this was approved.<strong class="worse-added"><span>ADDED IN WORSE MODE</span>${worseChanges[id]}</strong>`
+      : "ORIGINAL DISASTER — interact below. You can escape at any time.";
   main.innerHTML = `<section class="exhibit-page section-wrap">
     <a class="escape" href="/#collection">← Escape exhibit</a>
     <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">PLEASE TOUCH<br>THE ARTWORK. ↙</span></div>
     <div class="exhibit-toolbar"><div class="mode-controls" role="group" aria-label="Exhibit mode"><button data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button data-mode="worse" aria-pressed="${mode === "worse"}">Make it worse ↗</button><button data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button class="reset-button">↻ Reset</button><a class="toolbar-exit" href="#collection" aria-label="Escape exhibit">Exit ↗</a></div></div>
-    <p class="mode-note" role="status">${mode === "fixed" ? "SENSIBLE MODE — a little consideration goes a long way." : mode === "worse" ? "EXTRA TERRIBLE — we regret to inform you that this was approved." : "ORIGINAL DISASTER — interact below. You can escape at any time."}</p>
+    <p class="mode-note" role="status">${modeNote}</p>
     <div class="exhibit-stage ${id}-stage ${mode}" id="stage"></div>
     <aside class="curator-note"><span class="note-icon" aria-hidden="true">↳</span><div><div class="eyebrow">${mode === "fixed" ? "AFTER THE INTERVENTION" : "THE CURATOR'S NOTE"}</div><h2>${mode === "fixed" ? "That was almost too easy." : "The curators have questions."}</h2><p>${mode === "fixed" ? exhibit.fix : exhibit.lesson}</p></div></aside>
     <div class="exhibit-bottom"><a href="/#collection">← All exhibits</a><a href="/exhibit/${exhibits[(exhibits.indexOf(exhibit) + 1) % exhibits.length].id}">Next questionable idea →</a></div>

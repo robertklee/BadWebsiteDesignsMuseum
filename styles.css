@@ -150,6 +150,8 @@ button{border-radius:0}
 .toolbar-actions{display:flex;gap:10px;align-items:center}
 .toolbar-exit{color:var(--acid);font-size:12px;white-space:nowrap;padding:9px 5px}
 .mode-note{font:9px/1.6 var(--heading);letter-spacing:1px;color:var(--muted);margin:15px 0}
+.worse-added{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 10px;margin-top:9px;padding:10px 12px;border-left:5px solid var(--acid);background:#2b2d27;color:var(--text);font:700 12px/1.5 var(--body);letter-spacing:0}
+.worse-added span{flex:0 0 auto;color:var(--acid);font:700 9px/1.5 var(--heading);letter-spacing:1px}
 .exhibit-stage{border-radius:5px;overflow:hidden;color:#20231e;background:#f2f0e5;min-height:450px}
 .exhibit-stage h2{font-size:clamp(28px,4vw,48px)}
 .exhibit-stage small{font-size:11px;display:block;line-height:1.7}

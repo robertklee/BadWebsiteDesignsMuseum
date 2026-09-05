@@ -1,4 +1,4 @@
-const exhibits = [
+const exhibitCatalog = [
   { id: "runaway", name: "The Runaway Button", category: "Interaction", number: "01", color: "lilac", tagline: "A call to action. A refusal to cooperate.", description: "Finally, a button with a healthy fear of commitment.", lesson: "Moving targets turn a simple action into a motor-control challenge. Keep controls stable, offer generous hit areas, and make them work with a keyboard.", fix: "A stable, clearly labeled button. One click does exactly what you expect." },
   { id: "corporate", name: "The Corporate Fog Machine", category: "Copywriting", number: "02", color: "blue", tagline: "Onboarding without the onboarded part.", description: "Every completed step unlocks more mandatory steps.", lesson: "Vague choices and a constantly moving finish line make a simple signup feel endless. Ask only for information you need, label it clearly, and never invent more steps as people progress.", fix: "Plain language, a specific product, and a clear next step." },
   { id: "dropdown", name: "The Character Bureaucracy", category: "Forms", number: "03", color: "pink", tagline: "Every letter needs a permit.", description: "Tune a precision dial. File the paperwork. Earn one character.", lesson: "A precision slider is the wrong tool for text. Repeated approvals, scrambled mappings, and destructive undo turn writing into a memory and motor-control test. Let people type.", fix: "One labeled text area. Type, paste, edit, and send like a human." },
@@ -7,6 +7,53 @@ const exhibits = [
   { id: "retro", name: "The Retro Personal Homepage", category: "Nostalgia", number: "06", color: "yellow", tagline: "The guestbook requires a typing license.", description: "A backwards keyboard and a very suspicious cat CAPTCHA.", lesson: "Never rewrite someone's input behind their back or make them repeatedly prove they are human. Preserve what people type, keep navigation predictable, and remove unnecessary barriers.", fix: "All the personality, with readable type, a calm background, and a guestbook that accepts what you actually type." },
   ...additionalExhibits,
 ];
+
+const exhibitOrder = [
+  "cat-captcha",
+  "tetris-volume",
+  "seismic-editor",
+  "checkbox-ecosystem",
+  "password-crane",
+  "physics-cart",
+  "volume-seesaw",
+  "wind-volume",
+  "notification-swatter",
+  "email-auction",
+  "elevator-date",
+  "expanding-form",
+  "correcting-search",
+  "shrinking-unsubscribe",
+  "phone",
+  "password-gym",
+  "word-editor",
+  "cookies",
+  "address-jigsaw",
+  "runaway",
+  "dropdown",
+  "terms-game",
+  "retro",
+  "ai-store",
+  "fonts",
+  "mystery-menu",
+  "unix-birthday",
+  "alphabet",
+  "horizontal",
+  "cancel",
+  "recipe",
+  "corporate",
+  "loading",
+  "volume",
+  "calendar",
+];
+const exhibitsById = new Map(exhibitCatalog.map(exhibit => [exhibit.id, exhibit]));
+const exhibits = exhibitOrder.map((id, index) => {
+  const exhibit = exhibitsById.get(id);
+  if (!exhibit) throw new Error(`Unknown exhibit in collection order: ${id}`);
+  return { ...exhibit, number: String(index + 1).padStart(2, "0") };
+});
+if (exhibits.length !== exhibitCatalog.length || new Set(exhibitOrder).size !== exhibitCatalog.length || exhibitsById.size !== exhibitCatalog.length) {
+  throw new Error("The collection order must include every exhibit exactly once.");
+}
 
 const main = document.querySelector("#main");
 document.querySelector(".nav-count").textContent = String(exhibits.length).padStart(2, "0");

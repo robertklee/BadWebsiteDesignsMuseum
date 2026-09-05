@@ -214,6 +214,9 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
     let brake = false;
     let arrived = false;
     let bumpUsed = false;
+    let bumpLift = 0;
+    let bumpVelocity = 0;
+    let bumpPulse = 0;
     let lastTime = 0;
     let lastReadout = 0;
     const quantities = arcadeDrafts.quantities;
@@ -231,10 +234,14 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
     const paint = (readout = true) => {
       const total = totals();
       if (fixed) return;
-      $("#arcade-cart").style.left = `calc(${x}% - ${x * 0.64}px)`;
-      $("#arcade-cart").style.top = `${30 + x * 0.65}px`;
+      const cart = $("#arcade-cart");
+      cart.style.left = `calc(${x}% - ${x * 0.64}px)`;
+      cart.style.top = `${30 + x * 0.65}px`;
+      cart.style.transform = bumpLift > 0 ? `translateY(${-bumpLift}px) rotate(${-Math.min(16, bumpLift * 0.65)}deg)` : "";
+      cart.classList.toggle("arcade-cart-bumping", bumpPulse > 0);
+      stage.querySelector(".arcade-speed-bump")?.classList.toggle("arcade-bump-hit", bumpPulse > 0);
       $("#arcade-cart-load").textContent = `${total.mass} kg`;
-      if (readout) $("#arcade-cart-state").textContent = `${arrived ? "Pretend checkout zone reached" : running ? "Rolling" : "Paused"} · position ${Math.round(x)}% · speed ${velocity.toFixed(1)}%/s · brake ${brake ? "ON" : "OFF"}.${motion.matches ? " Reduced motion: manual steps only." : ""}`;
+      if (readout) $("#arcade-cart-state").textContent = `${bumpPulse > 0 ? "BUMP! " : ""}${arrived ? "Pretend checkout zone reached" : running ? "Rolling" : "Paused"} · position ${Math.round(x)}% · speed ${velocity.toFixed(1)}%/s · brake ${brake ? "ON" : "OFF"}.${motion.matches ? " Reduced motion: manual steps only." : ""}`;
       $("#arcade-start").textContent = running ? "Pause rolling" : "Start rolling";
       $("#arcade-start").disabled = motion.matches || arrived || !total.count;
       $("#arcade-step").disabled = running || arrived || !total.count;
@@ -264,9 +271,20 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
         x = Math.min(90, Math.max(0, x + velocity * dt));
         if (worse && !bumpUsed && x >= 50) {
           bumpUsed = true;
-          if (!brake) velocity = Math.min(38, velocity + 6);
-          say(brake ? "The brake absorbed the speed bump." : "Speed bump at 50%: a small downhill kick! Brake or pull back.");
+          velocity = brake ? 0 : Math.max(3, velocity * 0.45);
+          bumpVelocity = motion.matches ? 0 : brake ? 55 : 105;
+          bumpPulse = 0.85;
+          say(brake ? "The brake absorbed the speed bump and stopped the cart." : "Speed bump at 50%: the cart jumped and lost more than half its speed.");
         }
+        if (bumpLift > 0 || bumpVelocity > 0) {
+          bumpLift += bumpVelocity * dt;
+          bumpVelocity -= 240 * dt;
+          if (bumpLift <= 0 && bumpVelocity < 0) {
+            bumpLift = 0;
+            bumpVelocity = 0;
+          }
+        }
+        bumpPulse = Math.max(0, bumpPulse - dt);
         if (x >= 90) {
           arrived = true;
           velocity = 0;
@@ -292,6 +310,9 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
       velocity = 0;
       arrived = false;
       bumpUsed = false;
+      bumpLift = 0;
+      bumpVelocity = 0;
+      bumpPulse = 0;
       brake = false;
       paint();
     };
@@ -337,9 +358,12 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
       });
       on($("#arcade-step"), "click", () => {
         if (running) return;
+        const hadUsedBump = bumpUsed;
         advance(0.5);
         paint();
-        if (!arrived) say(`Advanced half a second. Position ${Math.round(x)}%, speed ${velocity.toFixed(1)}% per second.`);
+        if (!arrived) say(bumpUsed && !hadUsedBump
+          ? `Advanced across the speed bump. The cart lost more than half its speed and is now at ${Math.round(x)}%.`
+          : `Advanced half a second. Position ${Math.round(x)}%, speed ${velocity.toFixed(1)}% per second.`);
       });
       on($("#arcade-park"), "click", () => { park(); say("Cart returned to start. Basket preserved; press Start or advance manually."); });
       on(motion, "change", () => { autoStart = false; stop(); paint(); say("Motion preference changed. Simulation paused; manual advance remains available."); });

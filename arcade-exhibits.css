@@ -38,11 +38,13 @@
 .arcade-buy-zone{position:absolute;right:0;top:0;bottom:0;width:15%;min-width:45px;text-align:center;background:#9b452027;border-left:2px dashed #904623;color:#733218;font:700 13px/1.3 monospace;padding-top:8px}
 .arcade-buy-zone small{display:block;font-size:9px;margin-top:4px}
 .arcade-cart{position:absolute;width:64px;height:53px;background:#725092;border:3px solid #412851;border-radius:4px 4px 14px 14px;color:white;z-index:2;text-align:center}
+.arcade-cart-bumping{filter:drop-shadow(0 10px 4px #472c2438)}
 .arcade-cart:before{content:"";position:absolute;left:-9px;top:-9px;width:13px;height:18px;border-top:4px solid #412851;border-left:4px solid #412851}
 .arcade-cart span{font:700 12px/40px monospace}
 .arcade-cart i{position:absolute;bottom:-17px;left:6px;width:18px;height:18px;background:#34322f;border:4px solid #655e56;border-radius:50%}
 .arcade-cart i:last-child{left:auto;right:6px}
-.arcade-speed-bump{position:absolute;left:48%;top:126px;border-top:7px solid #8b3e1c;border-radius:8px;color:#522915;font:8px/1.3 monospace;padding-top:3px}
+.arcade-speed-bump{position:absolute;left:47%;top:121px;width:54px;border-top:12px solid #8b3e1c;border-radius:50%;color:#522915;font:8px/1.3 monospace;padding-top:4px;text-align:center;transition:transform .12s,filter .12s}
+.arcade-speed-bump.arcade-bump-hit{transform:scaleY(.55);filter:brightness(1.55)}
 .arcade-preview-crane>strong{font-size:44px;line-height:.75}
 .arcade-preview-crane>div{display:flex;justify-content:center;gap:8px}
 .arcade-preview-crane b{background:#fff2c2;border:1px solid #574468;box-shadow:2px 2px 0 #574468;padding:4px 10px;font:18px monospace}

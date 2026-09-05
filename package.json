@@ -5,6 +5,12 @@
   "description": "A lovingly curated collection of terrible website ideas.",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check app.js && node --check additional-exhibits.js && node --check arcade-exhibits.js && node --check puzzle-exhibits.js && node --check server.js"
+    "build": "node build.js",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev",
+    "check": "node --check app.js && node --check additional-exhibits.js && node --check arcade-exhibits.js && node --check puzzle-exhibits.js && node --check server.js && node --check build.js"
+  },
+  "devDependencies": {
+    "wrangler": "4.129.0"
   }
 }

@@ -547,29 +547,29 @@ function renderNotificationSwatter({ stage, mode, shell, say }) {
   };
 }
 
-const correctionWords = (`quiet quite quilt quit cafe cafes cages caves cakes cares cage cave cake care
-weather whether feather leather museum museums amuse amused hours hour house horse yours our out
-open opening hoping coping opened opener forms form farms farm firms firm foam from formal
-cat cats cap caps car cars cart carts bat bats rat rats hat hats cut cuts coat coats goat goats
-picture pictures pitcher pitchers fixtures fixture coffee coffees toffee tea team tear tears
-search starch beach reach teach teacher feature features future futures
-volume volumes value values valve valves email mail fail tail trail train grain rain pain main
-phone phones home homes hone tone tones stone stones alone clone
-address addresses dress dresses press presses stress
-shipping shopping stopping sipping typing trying flying
-password passwords passcode passcodes word words sword swords
-login logic loin logs log blog blogs
-settings setting sitting settling calendar calender calendars birthday birthdays birth bird birds
-the then them they there their where were here hear near fear dear read ready red bed bad
-this thin thing things think thank thanks blank black back pack stack snack
-light lights night nights right rights sight sites site seat heat meat neat
-help held hello shell sell bells well wall walk talk call hall small smell
-book books boot boots look looks cook cooks food good mood moon soon room rooms
-table tables cable cables stable label labels
-save safe saves waves wave gave game games name names
-date dates data late rate rates gate gates case cash chase
-price prices prize prizes rice rise nice mice mouse house
-request requests quest quests test tests text texts next best rest guest guests`).split(/\s+/);
+const correctionWords = (`quilt cages sweater medium horse oven worms costume snail scone actress undress
+shrimping chopping passport sittings seedlings colander starch bequest pickle coffin wetsuit
+mutton spider rookies amount candle summit massage contract profane piracy downland quest rat resign manger
+badger beaver ferret rabbit pigeon possum llama alpaca otter goose moose moth bees beetle lobster
+sardine donkey pony yak penguin walrus hamster turtle chicken parrot raccoon
+waffle noodles biscuit banana turnip potato tomato toast tacos pizza pasta bagel muffin custard
+mustard avocado pretzel burrito radish pancake dumpling oatmeal sausage coconut
+teapot toaster helmet bucket ladder carpet curtain pillow socks slipper trumpet shovel fridge
+kettle spoon umbrella wheelbarrow suitcase lamp broom mailbox stapler gazebo
+wizard goblin dragon ghost vampire unicorn mermaid moon comet rocket robot pirate castle dungeon
+potion wand crown spaceship asteroid galaxy monster detective
+meeting memo spreadsheet printer calendar invoice password manager button slider form email phone
+address search settings submit message contact profile privacy download upload browser website
+quiet noisy awkward wobbly tiny giant sideways backwards indoor windy broken confused suspicious
+urgent premium fictional local remote shiny dusty soggy crooked invisible
+cafe museum weather hours open tickets recipe volume login account cancel shipping shopping birthday
+date price help book table save request result support service checkout
+garden garage kitchen library airport station hotel office school beach forest mountain river island
+basement attic hallway rooftop tunnel village bakery aquarium
+music movie camera picture coffee sandwich bicycle train airplane taxi package parcel letter number
+color window chair blanket guitar radio newspaper
+happy sad angry polite curious sleepy hungry fancy plain strange normal random exact almost maybe
+never always yesterday tomorrow quickly slowly gently loudly secretly probably`).split(/\s+/);
 
 function correctionDistance(a, b) {
   const rows = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
@@ -585,25 +585,35 @@ function correctionDistance(a, b) {
 }
 
 function findQueryCorrections(query, limit) {
-  const choices = [];
+  const groups = [];
   const seen = new Set();
   for (const match of query.matchAll(/\p{L}+/gu)) {
     const original = match[0];
     const word = original.toLowerCase();
     if (!/^[a-z]+$/.test(word)) continue;
-    const maxDistance = word.length >= 5 ? 2 : 1;
-    for (const candidate of correctionWords) {
-      if (candidate === word || Math.abs(candidate.length - word.length) > maxDistance) continue;
+    const maxDistance = word.length >= 6 ? 3 : word.length >= 5 ? 2 : 1;
+    const choices = [];
+    correctionWords.forEach((candidate, candidateIndex) => {
+      if (candidate === word || Math.abs(candidate.length - word.length) > maxDistance) return;
       const distance = correctionDistance(word, candidate);
-      if (distance > maxDistance) continue;
+      if (distance > maxDistance) return;
       const replacement = original === original.toUpperCase() ? candidate.toUpperCase() : original[0] === original[0].toUpperCase() ? candidate[0].toUpperCase() + candidate.slice(1) : candidate;
       const changed = query.slice(0, match.index) + replacement + query.slice(match.index + original.length);
-      if (changed.length > 80 || seen.has(changed)) continue;
+      if (changed.length > 80 || seen.has(changed)) return;
       seen.add(changed);
-      choices.push({ query: changed, original, replacement, distance, index: match.index });
+      choices.push({ query: changed, original, replacement, distance, index: match.index, candidateIndex });
+    });
+    choices.sort((a, b) => a.distance - b.distance || a.candidateIndex - b.candidateIndex);
+    if (choices.length) groups.push(choices);
+  }
+  const selected = [];
+  for (let rank = 0; selected.length < limit && groups.some(group => rank < group.length); rank++) {
+    for (const group of groups) {
+      if (group[rank]) selected.push(group[rank]);
+      if (selected.length === limit) break;
     }
   }
-  return choices.sort((a, b) => a.distance - b.distance || a.index - b.index).slice(0, limit);
+  return selected.map(({ candidateIndex, ...choice }) => choice);
 }
 
 function renderCorrectingSearch({ stage, mode, shell, say }) {
@@ -611,7 +621,7 @@ function renderCorrectingSearch({ stage, mode, shell, say }) {
   const worse = mode === "worse";
   const rounds = worse ? 5 : 3;
   shell("YOUR INTENT, REVISED BY COMMITTEE", fixed ? "Search exactly what you typed." : "Did you mean something completely different?",
-    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps one word for a nearby spelling from a small bundled word list. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance, including adjacent letter swaps. No big dictionary download or external service. Words with no close match stay unchanged.`,
+    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps words for nearby spellings from a small, unusually varied vocabulary. Suggestions rotate across the words in your query instead of obsessing over the first one. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance, including adjacent letter swaps. No big dictionary download or external service. Words with no close match stay unchanged.`,
     `<div class="correcting-machine"><form id="correcting-form" novalidate><label for="correcting-input">Your search query</label><input type="text" id="correcting-input" maxlength="80" autocomplete="off" placeholder="quiet cafes" required>${fixed ? "" : '<div class="correcting-original"><span>WHAT YOU ACTUALLY TYPED</span><output id="correcting-original">(empty)</output></div>'}<button class="demo-button" id="correcting-submit" ${fixed ? "" : "disabled"}>Search local demo</button></form>${fixed ? "" : `<div class="correcting-review" id="correcting-review" hidden><span>OUR UNREQUESTED IMPROVEMENT</span><strong id="correcting-change"></strong><p id="correcting-distance"></p>${worse ? '<label for="correcting-reason">Explain why your original words were correct (8+ characters)</label><input type="text" id="correcting-reason" maxlength="120" autocomplete="off">' : ""}<button type="button" class="plain-button" id="correcting-reject">Reject correction</button></div><p class="correcting-progress" id="correcting-progress">Type a query to begin defending it.</p>`}<div class="correcting-results" id="correcting-results"></div></div>`);
   const input = stage.querySelector("#correcting-input");
   const submit = stage.querySelector("#correcting-submit");

@@ -67,7 +67,7 @@ const worseChanges = {
   "address-jigsaw": "Adds four decoy pieces and reshuffles the unused tray after every edit.",
   runaway: "Detects an approaching pointer, shrinks the real button, and leaves clickable decoys.",
   dropdown: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.",
-  "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and resets the exam after one wrong answer.",
+  "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and hides clause references unless you spend one of five hints. Wrong answers restart the exam without refunding hints.",
   retro: "Replaces vowels, rearranges CAPTCHA tiles after every selection, and requires two rounds.",
   "ai-store": "Requires three product-calibration rounds.",
   fonts: "Styles every character separately instead of every word.",

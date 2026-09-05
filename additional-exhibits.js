@@ -689,7 +689,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
   } else if (id === "terms-game") {
     const contract = buildMuseumTerms(worse);
     shell("CONSENT, NOW WITH A COMPREHENSION EXAM", fixed ? "Terms a human can actually read." : "Please read every exceedingly important word.",
-      fixed ? "This is a fictional exhibit. Here is everything you actually need to know." : `Read the ${contract.sections.length}-clause fictional agreement below. Reach the end to unlock an open-book exam about ${contract.facts.length} buried details.${worse ? " A wrong answer resets the entire exam and shuffles its questions." : " Incorrect answers must be corrected before you can continue."} Scrolling alone is not proof: you must answer the questions. You may decline at any time.`,
+      fixed ? "This is a fictional exhibit. Here is everything you actually need to know." : `Read the ${contract.sections.length}-clause fictional agreement below. Reach the end to unlock an open-book exam about ${contract.facts.length} buried details.${worse ? " Clause references are withheld. You have five hints to reveal them, because apparently directions are a limited resource. A wrong answer resets the entire exam and shuffles its questions, but does not refund hints." : " Incorrect answers must be corrected before you can continue."} Scrolling alone is not proof: you must answer the questions. You may decline at any time.`,
       fixed ? `<div class="terms-summary"><h3>The actual summary</h3><ul><li>This is a pretend agreement for a design game, not a real contract.</li><li>Your answers stay in this page. Nothing is sent or stored.</li><li>You can decline or leave with no penalty.</li></ul><div class="new-actions"><button class="demo-button" id="terms-accept">Accept demo terms</button><button class="plain-button" id="terms-decline">Decline demo terms</button></div></div>` : `<div class="terms-document-meta"><span id="terms-word-count"></span><span>FICTIONAL · NON-BINDING · UNNECESSARILY LONG</span></div><article class="terms-document" id="terms-document" tabindex="0" aria-label="Full fictional terms and conditions"><h3>Agreement for the Provisional Use of Absolutely Nothing</h3><p>This entire document is a parody. It grants no rights, imposes no real obligations, and exists only to demonstrate an unnecessarily difficult interface. All named people, committees, objects, fees, and procedures are imaginary.</p>${contract.sections.join("")}<p class="terms-end">END OF AGREEMENT. The paperwork is over. The exam is not.</p></article><div class="terms-exam-actions"><p id="terms-reading-status" role="status">Scroll to the end of the document to unlock the reading exam. Keyboard users can focus the document and use End.</p><button class="demo-button" id="terms-start" disabled>Prove I read it</button><button class="plain-button" id="terms-decline">Decline demo terms</button></div><section class="terms-exam" id="terms-exam" aria-label="Reading comprehension exam" hidden></section>`);
     let ended = false;
     const accept = () => {
@@ -720,6 +720,8 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       let unlocked = false;
       let question = 0;
       let questions = worse ? shuffle(contract.facts) : [...contract.facts];
+      const hintedClauses = new Set();
+      const hintLimit = 5;
       const normalize = value => value.trim().toLowerCase().replace(/\s+/g, " ");
       const checkScroll = () => {
         if (ended || unlocked) return;
@@ -738,7 +740,26 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
           return;
         }
         const fact = questions[question];
-        exam.innerHTML = `<span class="demo-kicker">QUESTION ${question + 1} / ${questions.length} · CLAUSE ${fact.clause}</span><h3>${fact.question}</h3><p>Consult clause ${fact.clause} in the document above. Answers are case-insensitive.</p><form id="terms-answer-form"><label for="terms-answer">Your answer</label><input id="terms-answer" type="text" maxlength="100" required autocomplete="off"><button class="demo-button">Submit reading evidence</button></form>`;
+        const clauseHelp = () => !worse || hintedClauses.has(fact.clause)
+          ? `Consult clause ${fact.clause} in the document above. Answers are case-insensitive.`
+          : "The answer is somewhere in the document above. How very helpful. Answers are case-insensitive.";
+        exam.innerHTML = `<span class="demo-kicker">QUESTION ${question + 1} / ${questions.length}${worse ? "" : ` · CLAUSE ${fact.clause}`}</span><h3>${fact.question}</h3><p id="terms-clause-help" role="status">${clauseHelp()}</p>${worse ? '<div class="new-actions"><button type="button" class="plain-button" id="terms-hint"></button></div>' : ""}<form id="terms-answer-form"><label for="terms-answer">Your answer</label><input id="terms-answer" type="text" maxlength="100" required autocomplete="off"><button class="demo-button">Submit reading evidence</button></form>`;
+        if (worse) {
+          const hintButton = exam.querySelector("#terms-hint");
+          const updateHint = () => {
+            const revealed = hintedClauses.has(fact.clause);
+            const remaining = hintLimit - hintedClauses.size;
+            hintButton.disabled = revealed || remaining === 0;
+            hintButton.textContent = `${revealed ? "Clause revealed" : remaining === 0 ? "No hints left" : "Reveal clause"} (${remaining} hint${remaining === 1 ? "" : "s"} left)`;
+            exam.querySelector("#terms-clause-help").textContent = clauseHelp();
+          };
+          hintButton.addEventListener("click", () => {
+            if (hintedClauses.has(fact.clause) || hintedClauses.size >= hintLimit) return;
+            hintedClauses.add(fact.clause);
+            updateHint();
+          });
+          updateHint();
+        }
         exam.querySelector("form").addEventListener("submit", event => {
           event.preventDefault();
           if (normalize(exam.querySelector("input").value) !== normalize(fact.answer)) {

@@ -619,6 +619,8 @@ button{border-radius:0}
 .cat-piece{position:absolute;transform:translate(-50%,-50%);font-size:clamp(22px,6vw,39px);line-height:1;pointer-events:none;transition:left .14s ease-out,top .14s ease-out;filter:drop-shadow(1px 2px 1px #6c532c44)}
 .cat-player{z-index:2}.cat-hunter{z-index:3}
 .cat-caught{border-color:#ad4936}.cat-escaped{border-color:#42733b}
+.cat-sprint-warning{border-color:#ad4936;box-shadow:0 0 0 3px #ad493644}
+.cat-policy{padding:12px;border-left:4px solid #ad4936;background:#f9e5c7;color:#6e3024;font:bold 12px/1.6 monospace}
 .cat-caught .cat-player{opacity:.35}
 .cat-directions{display:grid;grid-template-columns:repeat(3,48px);gap:7px;justify-content:center;margin:16px 0}
 .cat-directions button{min-height:44px;font-size:20px;padding:4px;touch-action:manipulation}

@@ -1252,12 +1252,16 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
   const maze = [".........", ".##.#.##.", "....#....", ".#.....#.", ".#.###.#.", ".........", "..#...#.."];
   const columns = maze[0].length;
   const directions = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }];
-  const cheeseLocations = [0, 21, 52, ...(worse ? [58] : [])];
-  const exit = 62;
+  const cheeseLocations = [0, 21, 52, 58, ...(worse ? [8, 54] : [])];
+  let exit;
+  let audited;
   shell("CAT-PCHA / RODENT-BASED AUTHENTICATION", "Prove you're human. Become a mouse.",
-    `Collect all ${cheeseLocations.length} cheeses, then reach the mouse hole at the bottom right. The cat hunts you ${worse ? "after EVERY move" : "after every second move"}. Getting caught means starting over. This chase is turn-based: take as long as you like to think. This is a pretend CAPTCHA, not a real security check.`,
+    `Collect all ${cheeseLocations.length} cheeses, then reach the mouse hole at the bottom right. The cat hunts you after EVERY move.${worse ? " Every eighth move, it takes TWO steps. Collecting cheese distracts it for that turn, even during a sprint. Your first completed exit attempt will be rejected: expect a new cheese fee and a relocated exit. Apparently the cat wrote the terms." : ""} Getting caught means starting over. This chase is turn-based: take as long as you like to think. This is a pretend CAPTCHA, not a real security check.`,
     `<div class="cat-machine"><div class="cat-dashboard"><strong id="cat-verdict">UNVERIFIED</strong><span id="cat-cheese-count"></span><span id="cat-turn"></span></div><div class="cat-board" id="cat-board" tabindex="0" role="group" aria-label="Cat and mouse maze" aria-describedby="cat-help"><div class="cat-grid" aria-hidden="true">${maze.flatMap((row, y) => [...row].map((cell, x) => `<div class="cat-cell${cell === "#" ? " cat-wall" : ""}" data-cat-cell="${y * columns + x}"></div>`)).join("")}</div><span class="cat-piece cat-player" id="cat-player" aria-hidden="true">🐭</span><span class="cat-piece cat-hunter" id="cat-hunter" aria-hidden="true">🐈</span></div><p id="cat-help">You are the mouse. Use arrow keys or WASD while the maze is focused, tap a neighboring square, or use the buttons below. Walls block both of you. The cat does not move while you think.</p><div class="cat-directions" aria-label="Move the mouse"><button type="button" class="plain-button" data-cat-direction="3" aria-label="Move mouse up">↑</button><button type="button" class="plain-button" data-cat-direction="1" aria-label="Move mouse left">←</button><button type="button" class="plain-button" data-cat-direction="2" aria-label="Move mouse down">↓</button><button type="button" class="plain-button" data-cat-direction="0" aria-label="Move mouse right">→</button></div><div class="new-actions"><button type="button" class="demo-button" id="cat-retry">Restart chase</button><span class="cat-legend">🐭 You &nbsp; 🐈 Cat &nbsp; 🧀 Cheese &nbsp; ◠ Mouse hole</span></div></div>`);
   const board = stage.querySelector("#cat-board");
+  if (worse) {
+    board.insertAdjacentHTML("afterend", '<p class="cat-policy" id="cat-policy"></p>');
+  }
   const cells = [...stage.querySelectorAll("[data-cat-cell]")];
   let mouse;
   let cat;
@@ -1283,10 +1287,18 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
       piece.style.left = `${(position % columns + 0.5) / columns * 100}%`;
       piece.style.top = `${(Math.floor(position / columns) + 0.5) / maze.length * 100}%`;
     }
-    stage.querySelector("#cat-cheese-count").textContent = `Cheese: ${cheeseLocations.length - cheese.size}/${cheeseLocations.length}`;
-    stage.querySelector("#cat-turn").textContent = ended ? `${moves} moves` : `Move ${moves} / Cat ${worse || moves % 2 === 1 ? "moves next" : "rests next"}`;
+    const total = cheeseLocations.length + (audited ? 1 : 0);
+    const sprintNext = worse && (moves + 1) % 8 === 0;
+    stage.querySelector("#cat-cheese-count").textContent = `Cheese: ${total - cheese.size}/${total}`;
+    stage.querySelector("#cat-turn").textContent = ended ? `${moves} moves` : `Move ${moves} / Cat ${sprintNext ? "SPRINTS next (2 steps)" : "moves next"}`;
+    board.classList.toggle("cat-sprint-warning", sprintNext && !ended);
+    if (worse) {
+      stage.querySelector("#cat-policy").textContent = audited
+        ? `EXIT RELOCATED: top right. ${cheese.size ? "One processing-fee cheese is waiting at the top left." : "Processing fee paid. Now reach the new exit."} The original hole is now a decorative hole.`
+        : "EXIT APPROVAL: provisional. Six cheeses buy you the right to be rejected once. Cheese pickups distract the cat; use them to dodge its eighth-turn sprints.";
+    }
     stage.querySelectorAll("[data-cat-direction]").forEach(button => { button.disabled = ended; });
-    board.setAttribute("aria-label", `Maze: mouse at ${coordinates(mouse)}. Cat at ${coordinates(cat)}. ${cheese.size} cheeses left${cheese.size ? ` at ${[...cheese].map(coordinates).join("; ")}` : ""}. Exit at column 9, row 7.`);
+    board.setAttribute("aria-label", `Maze: mouse at ${coordinates(mouse)}. Cat at ${coordinates(cat)}. ${cheese.size} cheeses left${cheese.size ? ` at ${[...cheese].map(coordinates).join("; ")}` : ""}. Exit at ${coordinates(exit)}.${sprintNext && !ended ? " Warning: the cat takes two steps next turn unless you collect cheese." : ""}`);
   };
   const chase = () => {
     const queue = [{ position: cat, first: cat }];
@@ -1316,11 +1328,23 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
     moves++;
     if (mouse === cat) { finish(false); return; }
     const collected = cheese.delete(mouse);
-    if (mouse === exit && cheese.size === 0) { finish(true); return; }
-    if (worse || moves % 2 === 0) chase();
-    if (mouse === cat) { finish(false); return; }
+    let notice = "";
+    if (mouse === exit && cheese.size === 0) {
+      if (!worse || audited) { finish(true); return; }
+      audited = true;
+      exit = 8;
+      cheese.add(0);
+      stage.querySelector("#cat-verdict").textContent = "DENIED. MISSING CHEESEWORK.";
+      notice = "Verification rejected! A seventh cheese has appeared at the top left as a processing fee. The exit has relocated to the top right. No, your previous cheese does not cover this. ";
+    }
+    const distracted = worse && collected;
+    const catSteps = distracted ? 0 : worse && moves % 8 === 0 ? 2 : 1;
+    for (let step = 0; step < catSteps; step++) {
+      chase();
+      if (mouse === cat) { finish(false); return; }
+    }
     paint();
-    say(`${collected ? "Cheese collected! " : ""}${mouse === exit ? "The hole needs all the cheese first. " : ""}Mouse at ${coordinates(mouse)}; cat at ${coordinates(cat)}. ${cheese.size} cheeses left.`);
+    say(`${notice}${collected ? "Cheese collected! " : ""}${distracted ? "The cat pauses to inspect your cheese receipt. " : catSteps === 2 ? "The cat took TWO steps. Premium predation. " : ""}${mouse === exit ? "The hole needs all the cheese first. " : ""}Mouse at ${coordinates(mouse)}; cat at ${coordinates(cat)}. ${cheese.size} cheeses left.`);
   };
   const step = direction => {
     const vector = directions[direction];
@@ -1346,6 +1370,8 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
     mouse = 46;
     cat = 7;
     cheese = new Set(cheeseLocations);
+    exit = 62;
+    audited = false;
     moves = 0;
     ended = false;
     board.classList.remove("cat-caught", "cat-escaped");

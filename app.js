@@ -46,7 +46,7 @@ const exhibitOrder = [
   "calendar",
 ];
 const worseChanges = {
-  "cat-captcha": "Adds a fourth cheese, and the cat moves after every turn instead of every second turn.",
+  "cat-captcha": "Six cheeses, two-step cat sprints every eighth turn, and a rejected first exit: pay a seventh cheese at the top left, then reach the relocated top-right hole. Cheese pickups distract the cat for one turn.",
   "tetris-volume": "More than doubles the falling speed.",
   "seismic-editor": "Builds structural stress twice as fast and shakes the editor harder.",
   "checkbox-ecosystem": "Drains health faster and creates a checked offspring box after every third feeding.",

@@ -1365,7 +1365,7 @@ function renderWindVolume({ stage, mode, shell, say }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("AN ENTIRE WEATHER SYSTEM FOR ONE SETTING", fixed ? "Volume, indoors." : "Please adjust during a lull.",
-    `${fixed ? "A sheltered slider. Up increases the value; down decreases it." : `Drag the handle up and down. Gusts twist the entire track beneath your pointer and shove the pretend volume around.${worse ? " Hurricane mode can flip the track upside down." : ""} Release to hold your value.`} Aim for 37% (35-39% counts), then save. No audio plays and your device volume never changes.`,
+    `${fixed ? "A sheltered slider. Up increases the value; down decreases it." : `Drag the handle up and down. Gusts twist the entire track beneath your pointer and keep shoving the pretend volume after you let go.${worse ? " Hurricane mode can flip the track upside down." : ""} Only Save shelters the setting from the weather.`} Aim for 37% (35-39% counts), then save. No audio plays and your device volume never changes.`,
     `<div class="wind-machine"><div class="wind-readout"><span id="wind-volume-label">PRETEND VOLUME</span><output id="wind-value">50%</output><span id="wind-weather"></span></div><div class="wind-field" id="wind-field"><div class="wind-streaks" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="wind-rotor" id="wind-slider" role="slider" tabindex="0" aria-labelledby="wind-volume-label" aria-describedby="wind-help" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-orientation="vertical"><span class="wind-end wind-high" aria-hidden="true">100</span><div class="wind-track" aria-hidden="true"></div><span class="wind-handle" id="wind-handle" aria-hidden="true"></span><span class="wind-end wind-low" aria-hidden="true">0</span></div><div class="wind-ground" aria-hidden="true">${fixed ? "CERTIFIED INDOOR AIR" : "DO NOT INSTALL CONTROLS OUTDOORS"}</div></div><p id="wind-help">Drag the handle, or focus it and use arrow keys. Page Up/Down adjust by 10; Home/End select the ends. Reduced motion keeps the track still, but gusts still affect the number.</p><button type="button" class="demo-button" id="wind-save">Save pretend volume</button></div>`);
   const slider = stage.querySelector("#wind-slider");
   const field = stage.querySelector("#wind-field");
@@ -1381,13 +1381,15 @@ function renderWindVolume({ stage, mode, shell, say }) {
   let previousTime = 0;
   let saved = false;
   const phase = Math.random() * Math.PI * 2;
-  const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
+  const clamp = value => Math.max(0, Math.min(100, value));
+  const displayedVolume = () => Math.round(volume);
   const draw = () => {
+    const displayed = displayedVolume();
     slider.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-    handle.style.top = `${20 + (100 - volume) * 1.8}px`;
-    output.textContent = `${volume}%`;
-    slider.setAttribute("aria-valuenow", String(volume));
-    slider.setAttribute("aria-valuetext", `${volume} percent, simulated volume only`);
+    handle.style.top = `${20 + (100 - displayed) * 1.8}px`;
+    output.textContent = `${displayed}%`;
+    slider.setAttribute("aria-valuenow", String(displayed));
+    slider.setAttribute("aria-valuetext", `${displayed} percent, simulated volume only`);
     weather.textContent = saved ? "Setting sheltered." : fixed ? "Wind: 0. Sensible." : `Wind: ${force < 0 ? "left" : "right"} ${Math.round(Math.abs(force) * (worse ? 110 : 65))} pretend km/h`;
     field.classList.toggle("wind-active", pointer !== null);
   };
@@ -1407,19 +1409,29 @@ function renderWindVolume({ stage, mode, shell, say }) {
     volume = clamp(50 + (x * Math.sin(radians) - y * Math.cos(radians)) / 1.8 + force * (worse ? 18 : 8));
   };
   const tick = now => {
-    gust(now, Math.min(50, now - previousTime));
+    const dt = Math.min(50, now - previousTime);
+    gust(now, dt);
     previousTime = now;
-    readPointer();
+    if (pointer) readPointer();
+    else if (!fixed && !saved) volume = clamp(volume + force * (worse ? 18 : 8) * dt / 1000);
     draw();
     frame = requestAnimationFrame(tick);
   };
-  const stop = () => {
-    if (frame !== null) cancelAnimationFrame(frame);
-    frame = null;
+  const releasePointer = () => {
     const id = pointer?.id;
     pointer = null;
     if (id !== undefined && slider.hasPointerCapture(id)) slider.releasePointerCapture(id);
     draw();
+  };
+  const stopWeather = () => {
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = null;
+    releasePointer();
+  };
+  const startWeather = () => {
+    if (fixed || saved || frame !== null || document.hidden) return;
+    previousTime = performance.now();
+    frame = requestAnimationFrame(tick);
   };
   slider.addEventListener("pointerdown", event => {
     if (saved || pointer || event.button !== 0) return;
@@ -1429,10 +1441,7 @@ function renderWindVolume({ stage, mode, shell, say }) {
     slider.setPointerCapture(event.pointerId);
     readPointer();
     draw();
-    if (!fixed) {
-      previousTime = performance.now();
-      frame = requestAnimationFrame(tick);
-    }
+    startWeather();
   });
   slider.addEventListener("pointermove", event => {
     if (!pointer || event.pointerId !== pointer.id) return;
@@ -1442,43 +1451,53 @@ function renderWindVolume({ stage, mode, shell, say }) {
     draw();
   });
   ["pointerup", "pointercancel", "lostpointercapture"].forEach(type => slider.addEventListener(type, event => {
-    if (pointer?.id === event.pointerId) stop();
+    if (pointer?.id === event.pointerId) releasePointer();
   }));
   slider.addEventListener("keydown", event => {
     const steps = { ArrowUp: 1, ArrowRight: 1, ArrowDown: -1, ArrowLeft: -1, PageUp: 10, PageDown: -10 };
     if (!(event.key in steps) && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
     if (saved) return;
-    stop();
+    releasePointer();
     if (!fixed) gust(performance.now(), 160);
     const requested = event.key === "Home" ? 0 : event.key === "End" ? 100 : volume + steps[event.key] * Math.cos(angle * Math.PI / 180);
     volume = clamp(requested + force * (worse ? 18 : 8));
     draw();
   });
   stage.querySelector("#wind-save").addEventListener("click", () => {
-    stop();
-    if (volume < 35 || volume > 39) {
-      say(`${volume}% is not the target. Aim for 35-39%, release the handle, then save. Only this pretend number changes.`);
+    releasePointer();
+    const displayed = displayedVolume();
+    if (displayed < 35 || displayed > 39) {
+      say(`${displayed}% is not the target. Aim for 35-39% and save before the wind moves it again. Only this pretend number changes.`);
       return;
     }
     saved = true;
+    stopWeather();
     slider.setAttribute("aria-disabled", "true");
     stage.querySelector("#wind-save").disabled = true;
     field.classList.add("wind-sheltered");
     draw();
-    say(`Pretend volume sheltered at ${volume}%. Your real volume was never touched. Reset to brave the weather again.`);
+    say(`Pretend volume sheltered at ${displayed}%. Your real volume was never touched. Reset to brave the weather again.`);
   });
   const handleMotion = () => {
     angle = 0;
     draw();
   };
   motion.addEventListener("change", handleMotion);
-  window.addEventListener("blur", stop);
+  const pauseWeather = () => stopWeather();
+  const resumeWeather = () => startWeather();
+  const visibility = () => document.hidden ? pauseWeather() : resumeWeather();
+  window.addEventListener("blur", pauseWeather);
+  window.addEventListener("focus", resumeWeather);
+  document.addEventListener("visibilitychange", visibility);
   draw();
+  startWeather();
   return () => {
-    stop();
+    stopWeather();
     motion.removeEventListener("change", handleMotion);
-    window.removeEventListener("blur", stop);
+    window.removeEventListener("blur", pauseWeather);
+    window.removeEventListener("focus", resumeWeather);
+    document.removeEventListener("visibilitychange", visibility);
   };
 }
 

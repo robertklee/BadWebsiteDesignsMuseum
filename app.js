@@ -84,7 +84,7 @@ function preview(id) {
 }
 
 function card(exhibit) {
-  return `<a class="exhibit-card" href="#exhibit/${exhibit.id}">
+  return `<a class="exhibit-card" href="/exhibit/${exhibit.id}">
     <div class="card-art ${exhibit.color}" aria-hidden="true"><span class="exhibit-number">EXHIBIT ${exhibit.number}</span>${preview(exhibit.id)}<span class="card-enter">↗</span></div>
     <div class="card-meta"><span>${exhibit.category}</span><span>INTERACTIVE ↗</span></div>
     <h3>${exhibit.name}</h3><p>${exhibit.description}</p>
@@ -98,7 +98,7 @@ function renderHome(anchor) {
       <div class="hero-copy"><div class="eyebrow"><span class="small-cross">✳</span> A CELEBRATION OF WHAT NOT TO DO</div>
       <h1 id="hero-title">Good taste.<br><span>Bad examples.</span></h1>
       <p>The internet has some terrible ideas.<br>We gave them a very nice home.</p>
-      <a class="primary-link" href="#collection">Enter the collection <span>↘</span></a>
+      <a class="primary-link" href="/#collection">Enter the collection <span>↘</span></a>
       <div class="hero-fine">${exhibits.length} interactive exhibits <span>·</span> Zero best practices <span>·</span> Free admission</div></div>
       <div class="hero-sculpture" aria-hidden="true"><div class="orbit-label">EXCEPTIONALLY BAD. INTENTIONALLY SO.</div><div class="sculpture-window"><div class="window-top"><span>● ● ●</span><span>oops.website</span><span>×</span></div><div class="sculpture-body"><span class="error-tag">DESIGN ERROR 404</span><div class="face"><span>×</span><span>×</span><i></i></div><strong>Looks wrong.<br>Feels right.</strong><span class="window-button">please don't click</span></div></div><div class="award-seal">100%<span>BAD<br>BY DESIGN</span></div><span class="floating-star">✳</span><span class="sculpture-caption">FIG. 001 — A BEAUTIFUL MISTAKE</span></div>
     </section>
@@ -121,19 +121,19 @@ function renderExhibit(id, focus = false) {
   const exhibit = exhibits.find(item => item.id === id);
   if (!exhibit) {
     currentId = null;
-    main.innerHTML = `<section class="not-found section-wrap"><div class="eyebrow">ERROR 404. THE REAL KIND.</div><h1>Too bad to exhibit.</h1><p>We couldn't find that exhibit.</p><a class="primary-link" href="#collection">Back to the collection ↗</a></section>`;
+    main.innerHTML = `<section class="not-found section-wrap"><div class="eyebrow">ERROR 404. THE REAL KIND.</div><h1>Too bad to exhibit.</h1><p>We couldn't find that exhibit.</p><a class="primary-link" href="/#collection">Back to the collection ↗</a></section>`;
     return;
   }
   currentId = id;
   document.title = `${exhibit.name} — Really Bad Design Museum`;
   main.innerHTML = `<section class="exhibit-page section-wrap">
-    <a class="escape" href="#collection">← Escape exhibit</a>
+    <a class="escape" href="/#collection">← Escape exhibit</a>
     <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">PLEASE TOUCH<br>THE ARTWORK. ↙</span></div>
     <div class="exhibit-toolbar"><div class="mode-controls" role="group" aria-label="Exhibit mode"><button data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button data-mode="worse" aria-pressed="${mode === "worse"}">Make it worse ↗</button><button data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button class="reset-button">↻ Reset</button><a class="toolbar-exit" href="#collection" aria-label="Escape exhibit">Exit ↗</a></div></div>
     <p class="mode-note" role="status">${mode === "fixed" ? "SENSIBLE MODE — a little consideration goes a long way." : mode === "worse" ? "EXTRA TERRIBLE — we regret to inform you that this was approved." : "ORIGINAL DISASTER — interact below. You can escape at any time."}</p>
     <div class="exhibit-stage ${id}-stage ${mode}" id="stage"></div>
     <aside class="curator-note"><span class="note-icon" aria-hidden="true">↳</span><div><div class="eyebrow">${mode === "fixed" ? "WHAT CHANGED" : "THE CURATOR'S NOTE"}</div><h2>${mode === "fixed" ? "Better by design." : "Funny here. Frustrating out there."}</h2><p>${mode === "fixed" ? exhibit.fix : exhibit.lesson}</p></div></aside>
-    <div class="exhibit-bottom"><a href="#collection">← All exhibits</a><a href="#exhibit/${exhibits[(exhibits.indexOf(exhibit) + 1) % exhibits.length].id}">Next questionable idea →</a></div>
+    <div class="exhibit-bottom"><a href="/#collection">← All exhibits</a><a href="/exhibit/${exhibits[(exhibits.indexOf(exhibit) + 1) % exhibits.length].id}">Next questionable idea →</a></div>
   </section>`;
   main.querySelectorAll("[data-mode]").forEach(button => button.addEventListener("click", () => {
     cleanup();
@@ -614,9 +614,16 @@ function route() {
   cleanup();
   cleanup = () => {};
   const hash = location.hash.slice(1);
-  if (hash.startsWith("exhibit/")) {
+  const pathMatch = location.pathname.match(/^\/exhibit\/([^/]+)\/?$/);
+  if (pathMatch) {
     mode = "bad";
-    renderExhibit(hash.slice(8), true);
+    renderExhibit(decodeURIComponent(pathMatch[1]), true);
+    window.scrollTo(0, 0);
+  } else if (hash.startsWith("exhibit/")) {
+    const exhibitId = hash.slice(8);
+    history.replaceState(null, "", `/exhibit/${encodeURIComponent(exhibitId)}`);
+    mode = "bad";
+    renderExhibit(exhibitId, true);
     window.scrollTo(0, 0);
   } else {
     renderHome(hash === "collection" || hash === "about" ? hash : null);
@@ -625,11 +632,12 @@ function route() {
 }
 
 window.addEventListener("hashchange", route);
+window.addEventListener("popstate", route);
 document.querySelector(".skip-link").addEventListener("click", event => {
   event.preventDefault();
   main.focus();
 });
 window.addEventListener("keydown", event => {
-  if (event.key === "Escape" && currentId) location.hash = "collection";
+  if (event.key === "Escape" && currentId) location.href = "/#collection";
 });
 route();

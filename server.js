@@ -17,14 +17,21 @@ const publicFiles = new Map([
 ]);
 
 http.createServer(async (request, response) => {
-  const file = publicFiles.get(new URL(request.url, "http://localhost").pathname);
+  const url = new URL(request.url, `http://${request.headers.host || `localhost:${port}`}`);
+  const pathname = url.pathname;
+  let file = publicFiles.get(pathname);
+  const exhibit = pathname.match(/^\/exhibit\/([a-z0-9-]+)\/?$/);
+  const shareImage = pathname.match(/^\/share\/([a-z0-9-]+\.png)$/);
+  if (exhibit) file = [path.join("dist", "exhibit", exhibit[1], "index.html"), "text/html; charset=utf-8"];
+  if (shareImage) file = [path.join("share", shareImage[1]), "image/png"];
   if (!file) {
     response.writeHead(404, { "Content-Type": "text/plain" });
     response.end("This exhibit does not exist. Even we have standards.");
     return;
   }
   try {
-    const content = await fs.readFile(path.join(root, file[0]));
+    let content = await fs.readFile(path.join(root, file[0]));
+    if (file[1].startsWith("text/html")) content = Buffer.from(content.toString().replaceAll("__SITE_ORIGIN__", url.origin));
     response.writeHead(200, { "Content-Type": file[1], "X-Content-Type-Options": "nosniff" });
     response.end(content);
   } catch (error) {

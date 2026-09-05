@@ -12,7 +12,7 @@ npm start
 
 Open **http://localhost:3000**. Set `PORT` to use a different port.
 
-The site is also static-host friendly: deploy `index.html`, `styles.css`, `arcade-exhibits.css`, `puzzle-exhibits.css`, `app.js`, `additional-exhibits.js`, `arcade-exhibits.js`, and `puzzle-exhibits.js` together. Navigation uses hash URLs, so server-side route rewrites are unnecessary. Google Fonts is optional; local font fallbacks are included.
+The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 35 per-exhibit share pages, and 36 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
 ## The collection
 

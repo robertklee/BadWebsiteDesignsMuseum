@@ -16,7 +16,7 @@ const additionalExhibits = [
   { id: "seismic-editor", name: "The Seismic Text Editor", category: "Interaction", number: "21", color: "pink", tagline: "Every keystroke is a structural risk.", description: "Type carefully. The editor shakes, and your whole sentence might tumble.", lesson: "The sentence was built on ambitious foundations. Punctuation remains a known seismic risk, especially the excitable kind.", fix: "The editor passed inspection. Exclamation marks may now enter without a hard hat." },
   { id: "wind-volume", name: "The Windswept Volume Slider", category: "Interaction", number: "22", color: "blue", tagline: "Forecast: scattered decibels.", description: "Drag a volume slider through a gale. Up is subject to weather.", lesson: "Today's forecast calls for shifting controls with a chance of accidental silence. Up may become down by evening.", fix: "The slider has been moved indoors, where the forecast is consistently 37 percent." },
   { id: "cat-captcha", name: "The CAT-PCHA", category: "Forms", number: "23", color: "yellow", tagline: "Prove you're human. Be a mouse.", description: "Collect the cheese and escape a hunting cat to pass a pretend CAPTCHA.", lesson: "Humanity is best demonstrated by rodent strategy under feline pressure. The cheese is part of the standard verification process.", fix: "The cat has been reassigned. A checkbox now handles the investigation." },
-  { id: "tetris-volume", name: "The Tetris Volume Control", category: "Interaction", number: "24", color: "blue", tagline: "Turn it up. Build it up.", description: "Fill the bottom of a block game to adjust a completely silent volume slider.", lesson: "Sound levels are a construction project. Please complete several rows before requesting a quieter room.", fix: "The building permit expired, leaving behind one ordinary volume slider." },
+  { id: "tetris-volume", name: "The Tetris Volume Control", category: "Interaction", number: "24", color: "blue", tagline: "Turn it up. Build it up.", description: "Stack blocks across a game board to adjust a completely silent volume slider.", lesson: "Sound levels are a construction project. Please occupy two-thirds of the site without accidentally finishing a row.", fix: "The building permit expired, leaving behind one ordinary volume slider." },
   { id: "shrinking-unsubscribe", name: "The Shrinking Unsubscribe Button", category: "Commerce", number: "25", color: "pink", tagline: "Your subscription grows. Your exit shrinks.", description: "A fictional subscription with a cancel button that shrinks and relocates as you approach.", lesson: "The cancellation button is shy and needs space. Unfortunately, it interprets the pointer as direct eye contact.", fix: "The button completed a confidence workshop and can now be approached safely." },
   ...arcadeExhibits,
   { id: "checkbox-ecosystem", name: "The Checkbox Ecosystem", category: "Forms", number: "28", color: "green", tagline: "Your preferences require watering.", description: "Feed your checked boxes before they wilt, wander, and uncheck themselves.", lesson: "Preferences are living things and cannot survive on clicks alone. Please provide regular snacks and adequate roaming space.", fix: "The checkboxes are now inanimate and appear to be thriving." },
@@ -43,7 +43,7 @@ function additionalPreview(id) {
     "seismic-editor": `<div class="new-preview preview-seismic"><span>STRUCTURAL INTEGRITY: QUESTIONABLE</span><div><b>T</b><b>Y</b><b>P</b><b>E</b></div><small>One more letter. What could go wrong?</small><i>CAUTION: UNSTABLE WORDS</i></div>`,
     "wind-volume": `<div class="new-preview preview-wind"><span>VOLUME ADVISORY IN EFFECT</span><strong>~~~ / ~~~</strong><div>37% &nbsp; 82% &nbsp; 4%?</div><small>The slider is experiencing weather.</small></div>`,
     "cat-captcha": `<div class="new-preview preview-cat"><span>PROVE YOU ARE NOT A ROBOT</span><strong>🐈 &nbsp; 🐭</strong><div>FIRST, BE A RODENT.</div><small>Verification requires cheese.</small></div>`,
-    "tetris-volume": `<div class="new-preview preview-tetris"><span>BUILD YOUR OWN DECIBELS</span><strong>▟ ▙ ▟</strong><div class="preview-track"><i></i></div><small>Full rows. Fuller pretend volume.</small></div>`,
+    "tetris-volume": `<div class="new-preview preview-tetris"><span>BUILD YOUR OWN DECIBELS</span><strong>▟ ▙ ▟</strong><div class="preview-track"><i></i></div><small>Full rows vanish. So does the volume.</small></div>`,
     "shrinking-unsubscribe": `<div class="new-preview preview-shrinking"><span>THANKS FOR ACCIDENTALLY JOINING</span><strong>$49 / month*</strong><div>Unsubscribe</div><small>*Imaginary money. Real frustration.</small></div>`,
     "checkbox-ecosystem": `<div class="new-preview preview-ecosystem"><span>PREFERENCES ARE LIVING THINGS</span><strong>🌱 ☑ 🌱</strong><div>Analytics needs watering.</div><small>Your dark mode is wilting.</small></div>`,
     "elevator-date": `<div class="new-preview preview-elevator"><span>PLEASE MIND THE DATE GAP</span><strong>↑ 1992 ↓</strong><div>MONTHS: CHANGE AT LOBBY</div><small>Express service skips your birthday.</small></div>`,
@@ -1000,8 +1000,8 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("DECIBELS REQUIRE STRUCTURAL SUPPORT", fixed ? "A slider. Not an arcade." : "Please construct your volume.",
-    fixed ? "Adjust the pretend volume directly. No audio plays and your device volume never changes." : `Fill the bottom six rows with blocks to raise the pretend volume. Full rows stay full instead of clearing. Click Another block to replace the falling piece without changing your stack.${worse ? " Worse mode drops blocks more than twice as fast." : ""} No audio plays and your device volume never changes.`,
-    `<div class="tetris-machine"><label for="tetris-volume">Pretend volume${fixed ? "" : " (controlled by the bottom six rows)"}</label><output id="tetris-value" for="tetris-volume">${fixed ? 50 : 0}%</output><input type="range" id="tetris-volume" min="0" max="100" value="${fixed ? 50 : 0}" ${fixed ? "" : "disabled"}>${fixed ? "" : `<div class="tetris-summary"><span id="tetris-fill">0 / 60 lower cells filled</span><span id="tetris-piece-name"></span></div><div class="tetris-board" id="tetris-board" tabindex="0" role="group" aria-label="Falling block volume game" aria-describedby="tetris-help">${Array.from({ length: 120 }, (_, index) => `<span class="tetris-cell${index >= 60 ? " tetris-lower" : ""}" data-tetris-cell="${index}" aria-hidden="true"></span>`).join("")}</div><p id="tetris-help">With the board or any game button focused: Left/Right move, Up or R rotates, Down lowers. Space drops when the board is focused; on a button, Space activates that button. Touch controls are below. Reduced motion uses manual drops only. Pause whenever you need to think.</p><div class="tetris-controls"><button type="button" class="plain-button" data-tetris-action="left" aria-label="Move block left">←</button><button type="button" class="plain-button" data-tetris-action="rotate" aria-keyshortcuts="ArrowUp r">Rotate (R / ↑)</button><button type="button" class="plain-button" data-tetris-action="right" aria-label="Move block right">→</button><button type="button" class="plain-button" data-tetris-action="down">Lower ↓</button><button type="button" class="demo-button" data-tetris-action="drop">Drop block</button></div><div class="new-actions"><button type="button" class="demo-button" id="tetris-play">Start game</button><button type="button" class="plain-button" id="tetris-another">Another block</button><button type="button" class="plain-button" id="tetris-empty">Empty speaker</button></div>`}</div>`);
+    fixed ? "Adjust the pretend volume directly. No audio plays and your device volume never changes." : `Each settled block raises the pretend volume; 80 blocks, or two-thirds of the board, reaches 100%. Complete rows disappear and take their volume with them. Click Another block to replace the falling piece without changing your stack.${worse ? " Worse mode drops blocks more than twice as fast." : ""} No audio plays and your device volume never changes.`,
+    `<div class="tetris-machine"><label for="tetris-volume">Pretend volume${fixed ? "" : " (controlled by settled blocks)"}</label><output id="tetris-value" for="tetris-volume">${fixed ? 50 : 0}%</output><input type="range" id="tetris-volume" min="0" max="100" value="${fixed ? 50 : 0}" ${fixed ? "" : "disabled"}>${fixed ? "" : `<div class="tetris-summary"><span id="tetris-fill">0 / 80 cells for 100%</span><span id="tetris-piece-name"></span></div><div class="tetris-board" id="tetris-board" tabindex="0" role="group" aria-label="Falling block volume game" aria-describedby="tetris-help">${Array.from({ length: 120 }, (_, index) => `<span class="tetris-cell${index >= 40 ? " tetris-lower" : ""}" data-tetris-cell="${index}" aria-hidden="true"></span>`).join("")}</div><p id="tetris-help">With the board or any game button focused: Left/Right move, Up or R rotates, Down lowers. Space drops when the board is focused; on a button, Space activates that button. Completed rows disappear. Touch controls are below. Reduced motion uses manual drops only. Pause whenever you need to think.</p><div class="tetris-controls"><button type="button" class="plain-button" data-tetris-action="left" aria-label="Move block left">←</button><button type="button" class="plain-button" data-tetris-action="rotate" aria-keyshortcuts="ArrowUp r">Rotate (R / ↑)</button><button type="button" class="plain-button" data-tetris-action="right" aria-label="Move block right">→</button><button type="button" class="plain-button" data-tetris-action="down">Lower ↓</button><button type="button" class="demo-button" data-tetris-action="drop">Drop block</button></div><div class="new-actions"><button type="button" class="demo-button" id="tetris-play">Start game</button><button type="button" class="plain-button" id="tetris-another">Another block</button><button type="button" class="plain-button" id="tetris-empty">Empty speaker</button></div>`}</div>`);
   const volume = stage.querySelector("#tetris-volume");
   const output = stage.querySelector("#tetris-value");
   if (fixed) {
@@ -1033,14 +1033,14 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
     const active = new Set(jammed ? [] : piece.cells.map(([x, y]) => (piece.y + y) * 10 + piece.x + x));
     cells.forEach((cell, index) => {
       const color = stack[index] || (active.has(index) ? piece.name : null);
-      cell.className = `tetris-cell${index >= 60 ? " tetris-lower" : ""}${color ? ` tetris-${color}` : ""}${stack[index] ? " tetris-settled" : active.has(index) ? " tetris-active" : ""}`;
+      cell.className = `tetris-cell${index >= 40 ? " tetris-lower" : ""}${color ? ` tetris-${color}` : ""}${stack[index] ? " tetris-settled" : active.has(index) ? " tetris-active" : ""}`;
     });
-    const filled = stack.slice(60).filter(Boolean).length;
-    volume.value = String(Math.round(filled / 60 * 100));
+    const filled = stack.filter(Boolean).length;
+    volume.value = String(Math.min(100, Math.round(filled / 80 * 100)));
     output.textContent = `${volume.value}%`;
-    stage.querySelector("#tetris-fill").textContent = `${filled} / 60 lower cells filled`;
+    stage.querySelector("#tetris-fill").textContent = `${filled} / 80 cells for 100%`;
     stage.querySelector("#tetris-piece-name").textContent = jammed ? "STACK JAMMED" : `${piece.name} block / ${playing ? motion.matches ? "manual gravity" : "falling" : "paused"}`;
-    board.setAttribute("aria-label", `${piece.name} block at column ${piece.x + 1}, row ${piece.y + 1}. ${filled} of 60 lower cells filled. Pretend volume ${volume.value} percent. ${jammed ? "Stack jammed." : playing ? "Playing." : "Paused."}`);
+    board.setAttribute("aria-label", `${piece.name} block at column ${piece.x + 1}, row ${piece.y + 1}. ${filled} settled cells; 80 reaches full volume. Pretend volume ${volume.value} percent. ${jammed ? "Stack jammed." : playing ? "Playing." : "Paused."}`);
     play.textContent = jammed ? "Stack jammed" : playing ? "Pause game" : started ? "Resume game" : "Start game";
     play.disabled = jammed;
     stage.querySelectorAll("[data-tetris-action]").forEach(button => { button.disabled = !playing; });
@@ -1057,11 +1057,19 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
       say("The speaker is stacked to the ceiling. Your pretend volume is held. Empty speaker to rebuild.");
     }
   };
+  const clearCompletedRows = () => {
+    const rows = Array.from({ length: 12 }, (_, row) => stack.slice(row * 10, row * 10 + 10));
+    const remaining = rows.filter(row => row.some(cell => cell === null));
+    const cleared = rows.length - remaining.length;
+    if (cleared) stack = [...Array.from({ length: cleared }, () => Array(10).fill(null)), ...remaining].flat();
+    return cleared;
+  };
   const lock = () => {
     piece.cells.forEach(([x, y]) => { stack[(piece.y + y) * 10 + piece.x + x] = piece.name; });
+    const cleared = clearCompletedRows();
     spawn();
     paint();
-    if (!jammed) say(`Block settled. Pretend volume is ${volume.value}%. Completed rows stay filled; no sound is produced.`);
+    if (!jammed) say(cleared ? `${cleared === 1 ? "A completed row disappeared, taking its filled cells with it" : `${cleared} completed rows disappeared, taking their filled cells with them`}. Pretend volume is now ${volume.value}%.` : `Block settled. Pretend volume is ${volume.value}%. Reach 80 settled cells for 100%.`);
   };
   const lower = () => {
     if (fits(piece.cells, piece.x, piece.y + 1)) piece.y++;
@@ -1104,7 +1112,7 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
     started = true;
     runTimer();
     paint();
-    say(motion.matches ? "Manual gravity: use Lower or Drop block. No automatic falling." : "Blocks are falling. Fill the lower six rows to turn up the pretend volume.");
+    say(motion.matches ? "Manual gravity: use Lower or Drop block. No automatic falling." : "Blocks are falling. Stack 80 cells for 100%; completed rows disappear.");
     board.focus({ preventScroll: true });
   });
   stage.querySelector(".tetris-machine").addEventListener("keydown", event => {

@@ -513,7 +513,7 @@ function renderNotificationSwatter({ stage, mode, shell, say }) {
     });
     arena.addEventListener("click", event => {
       if (!started || finished || event.target.closest("form, button, input, label")) return;
-      if (worse) { spawn("Your swatting accuracy needs attention"); say("Missed. We created an alert about that missed alert."); }
+      if (worse) { spawn("New alert: alerts about missed alerts"); say("Missed. We created an alert about that missed alert."); }
       else say("Missed. Click a notification to swat it; the form itself is not a target.");
     });
   }

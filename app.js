@@ -618,7 +618,7 @@ function renderStage(id) {
               renderChapter();
               gate.querySelector("select").focus();
             }
-            say(worse ? "Incorrect. All reading progress reset. Grandmother would like another word." : "Incorrect. Read the irrelevant family history more carefully.");
+            say(worse ? "Incorrect. All reading progress reset. Grandmother would like another word." : "Incorrect. The irrelevant family history needs another read.");
             return;
           }
           chapter++;

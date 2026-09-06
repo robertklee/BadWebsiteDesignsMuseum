@@ -175,7 +175,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
       let clicks = 0;
       const paint = () => {
         stage.querySelector("#calendar-date").textContent = date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
-        stage.querySelector("#date-step").textContent = worse ? `Next “Forward” step: ${clicks % 2 ? "−6" : "+7"} days. Arithmetic is your problem.` : "There are no shortcuts. That is the design.";
+        stage.querySelector("#date-step").textContent = worse ? `Next “Forward” step: ${clicks % 2 ? "−6" : "+7"} days. Arithmetic not included.` : "There are no shortcuts. That is the design.";
       };
       stage.querySelector("#date-forward").addEventListener("click", () => {
         date.setUTCDate(date.getUTCDate() + (worse ? (clicks++ % 2 ? -6 : 7) : 1));

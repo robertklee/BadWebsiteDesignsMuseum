@@ -65,7 +65,7 @@ const worseChanges = {
   "word-editor": "Reshuffles every character menu after each edit.",
   cookies: "Flips three switches per click and reverses what their labels mean.",
   "address-jigsaw": "Adds four decoy pieces and reshuffles the unused tray after every edit.",
-  runaway: "Detects an approaching pointer, shrinks the real button, leaves clickable decoys, and relocates on touch roughly twice as often.",
+  runaway: "Detects an approaching pointer, shrinks the real button, leaves clickable decoys, relocates on touch roughly twice as often, and flinches away from clean hits more stubbornly.",
   dropdown: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.",
   "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and hides clause references unless you spend one of five hints. Wrong answers restart the exam without refunding hints.",
   retro: "Replaces vowels, rearranges CAPTCHA tiles after every selection, and requires two rounds.",
@@ -203,7 +203,7 @@ function renderStage(id) {
   const status = `<div class="demo-status" role="status" id="demo-status"></div>`;
   const say = text => { document.querySelector("#demo-status").textContent = text; };
   if (id === "runaway") {
-    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often. Chase the real button." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer, so tap quickly."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
+    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often, and a clean hit only makes it flinch. Its nerve runs out after eight flinches, so keep tapping." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer and a clean hit sometimes only makes it flinch, though it loses its nerve fast."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
     const button = stage.querySelector(".runaway-button");
     const arena = stage.querySelector(".chase-arena");
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -211,6 +211,19 @@ function renderStage(id) {
     let attempts = 0;
     let lastMove = -Infinity;
     let dodgedAt = -Infinity;
+    let directHits = 0;
+    // Hard ceiling on flinches, so the button is guaranteed to be catchable in bounded time.
+    const flinchLimit = 8;
+    const flinches = [
+      "You had it. It panicked.",
+      "That was a clean hit. It left anyway.",
+      "You definitely touched it. It disagrees.",
+      "Contact confirmed. Commitment declined.",
+      "It felt you coming and lost its nerve.",
+      "Caught, briefly, in the technical sense.",
+      "It was yours for roughly one frame.",
+      "That one nearly stuck. Nearly.",
+    ];
     // The chase should not run its course before you have even scrolled to the arena.
     let onscreen = false;
     const watcher = new IntersectionObserver(([entry]) => { onscreen = entry.isIntersecting; }, { threshold: 0.4 });
@@ -259,10 +272,13 @@ function renderStage(id) {
       button.style.top = `${destination.y}px`;
       say(note || `Escape ${attempts}. ${worse ? "Smaller target. More impostors. Same absolutely nothing." : "A new destination. Another missed opportunity."}`);
     }
-    function flee(event) {
+    function flee(event, note) {
       if (performance.now() - lastMove < 100) return;
+      escape(local(event), note);
+    }
+    function local(event) {
       const bounds = arena.getBoundingClientRect();
-      escape({ x: event.clientX - bounds.left, y: event.clientY - bounds.top });
+      return { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
     }
     function gap(event) {
       const rect = button.getBoundingClientRect();
@@ -282,10 +298,23 @@ function renderStage(id) {
     arena.addEventListener("pointerdown", event => {
       if (fixed || caught || event.pointerType === "mouse" || motion.matches) return;
       startDrift();
-      // A direct hit counts, except for the opening tap. Near misses scare it off, so a touch
-      // has to be both quick and accurate rather than merely present.
-      if (!(event.target.closest(".runaway-button") ? attempts === 0 : gap(event) < (worse ? 130 : 90))) return;
-      flee(event);
+      // The guard only ever applies to the tap that caused a dodge, so rapid tapping still wins.
+      dodgedAt = -Infinity;
+      if (!event.target.closest(".runaway-button")) {
+        // Near misses scare it off, so a touch has to be accurate and not merely present.
+        if (gap(event) >= (worse ? 130 : 90)) return;
+        flee(event);
+        dodgedAt = performance.now();
+        return;
+      }
+      // A clean hit makes it flinch instead of surrendering, but its nerve decays fast and runs
+      // out entirely, so the chase always ends. The first tap is a guaranteed flinch.
+      const nerve = directHits === 0 ? 1
+        : directHits >= flinchLimit ? 0
+        : (worse ? 0.65 : 0.4) * Math.pow(0.6, directHits - 1);
+      directHits++;
+      if (Math.random() >= nerve) return;
+      escape(local(event), `${flinches[(directHits - 1) % flinches.length]} Direct hits: ${directHits}.`);
       dodgedAt = performance.now();
     });
     arena.addEventListener("pointermove", event => {

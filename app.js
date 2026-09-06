@@ -174,8 +174,9 @@ function renderExhibit(id, focus = false) {
   main.innerHTML = `<section class="exhibit-page section-wrap">
     <a class="escape" href="/#collection">← Escape exhibit</a>
     <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">PLEASE TOUCH<br>THE ARTWORK. ↙</span></div>
-    <div class="exhibit-toolbar"><div class="mode-controls" role="group" aria-label="Exhibit mode"><button data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button data-mode="worse" aria-pressed="${mode === "worse"}">Make it worse ↗</button><button data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button class="reset-button">↻ Reset</button><a class="toolbar-exit" href="/#collection" aria-label="Escape exhibit">Exit ↗</a></div></div>
+    <div class="exhibit-toolbar"><div class="mode-controls game-difficulty" role="group" aria-label="Exhibit difficulty"><span class="difficulty-label">CHOOSE YOUR DIFFICULTY</span><button data-mode="bad" aria-pressed="${mode === "bad"}">Easy</button><button data-mode="worse" aria-pressed="${mode === "worse"}">Hard ↗</button><button data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button class="reset-button">↻ Reset</button><a class="toolbar-exit" href="/#collection" aria-label="Escape exhibit">Exit ↗</a></div></div>
     <p class="mode-note" role="status">${modeNote}</p>
+    <div class="difficulty-progress" id="difficulty-progress" hidden><div class="difficulty-transition-content"><span class="difficulty-transition-title" aria-hidden="true">EASY CLEARED.</span><p role="status"></p><div class="difficulty-countdown" aria-hidden="true"></div><button type="button" class="plain-button">Stay here</button></div></div>
     <div class="exhibit-stage ${id}-stage ${mode}" id="stage"></div>
     <aside class="curator-note"><span class="note-icon" aria-hidden="true">↳</span><div><div class="eyebrow">${mode === "fixed" ? "AFTER THE INTERVENTION" : "THE CURATOR'S NOTE"}</div><h2>${mode === "fixed" ? "That was almost too easy." : "The curators have questions."}</h2><p>${mode === "fixed" ? exhibit.fix : exhibit.lesson}</p></div></aside>
     <div class="exhibit-bottom"><a href="/#collection">← All exhibits</a><a href="/exhibit/${exhibits[(exhibits.indexOf(exhibit) + 1) % exhibits.length].id}">Next questionable idea →</a></div>
@@ -193,10 +194,63 @@ function renderExhibit(id, focus = false) {
     main.querySelector(".reset-button").focus();
   });
   renderStage(id);
+  setupDifficultyProgression(id);
   if (focus) main.focus({ preventScroll: true });
 }
 
+function setupDifficultyProgression(id) {
+  const stage = main.querySelector("#stage");
+  const notice = main.querySelector("#difficulty-progress");
+  const initialMode = mode;
+  const stageCleanup = cleanup;
+  let completed = false;
+  let disposed = false;
+  let advanceTimer = null;
+  let countdownTimer = null;
+  let previousFocus = null;
+  const complete = () => {
+    if (disposed || completed || initialMode !== "bad") return;
+    completed = true;
+    previousFocus = document.activeElement;
+    notice.hidden = false;
+    notice.querySelector("p").textContent = "Easy mode cleared! Hard mode starts in 3 seconds.";
+    const deadline = Date.now() + 3000;
+    countdownTimer = setInterval(() => {
+      const seconds = Math.max(1, Math.ceil((deadline - Date.now()) / 1000));
+      notice.querySelector("p").textContent = `Easy mode cleared! Hard mode starts in ${seconds} second${seconds === 1 ? "" : "s"}.`;
+    }, 1000);
+    queueMicrotask(() => {
+      if (!disposed && !notice.hidden) notice.querySelector("button").focus({ preventScroll: true });
+    });
+    advanceTimer = setTimeout(() => {
+      if (disposed) return;
+      cleanup();
+      mode = "worse";
+      renderExhibit(id);
+      main.querySelector(".mode-note").prepend("Hard mode started. Easy was the warm-up. ");
+      main.querySelector("[data-mode='worse']").focus({ preventScroll: true });
+    }, 3000);
+  };
+  stage.addEventListener("exhibit-complete", complete);
+  notice.querySelector("button").addEventListener("click", () => {
+    clearTimeout(advanceTimer);
+    clearInterval(countdownTimer);
+    notice.hidden = true;
+    main.querySelector(".mode-note").prepend("Staying in easy mode. Hard mode is ready whenever you are. ");
+    const focusTarget = previousFocus?.isConnected && !previousFocus.matches(":disabled") ? previousFocus : main;
+    focusTarget.focus({ preventScroll: true });
+  });
+  cleanup = () => {
+    disposed = true;
+    clearTimeout(advanceTimer);
+    clearInterval(countdownTimer);
+    stage.removeEventListener("exhibit-complete", complete);
+    stageCleanup();
+  };
+}
+
 function renderStage(id) {
+  cleanup = () => {};
   const stage = document.querySelector("#stage");
   const fixed = mode === "fixed";
   const worse = mode === "worse";
@@ -208,6 +262,9 @@ function renderStage(id) {
     const arena = stage.querySelector(".chase-arena");
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const coarse = matchMedia("(hover: none), (pointer: coarse)");
+    if (!fixed) stage.querySelector(".demo-kicker").textContent = worse
+      ? "HARD MODE — NOW IT'S PERSONAL"
+      : "EASY MODE — CONSIDER THIS A WARM-UP";
     let attempts = 0;
     let lastMove = -Infinity;
     let dodgedAt = -Infinity;
@@ -358,6 +415,7 @@ function renderStage(id) {
       stage.querySelector("h2").textContent = "You caught it!";
       stage.querySelector(".demo-centered > p").textContent = "The chase is over. It has officially run out of excuses.";
       say("You win! Game stopped. Reset to chase it again.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     }
     button.addEventListener("click", event => {
       // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
@@ -385,6 +443,10 @@ function renderStage(id) {
         renderOnboarding();
         say(`Progress successfully made less complete. ${totalSteps - onboardingStep} steps now remain.`);
         onboarding.querySelector("select").focus();
+        if (onboardingStep === 5) {
+          say("You finished the original four steps. Management has rewarded you with more onboarding.");
+          stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+        }
       });
       onboarding.querySelector("#onboarding-back").addEventListener("click", () => {
         onboardingStep = 1;
@@ -501,6 +563,7 @@ function renderStage(id) {
     stage.querySelector("form").addEventListener("submit", event => {
       event.preventDefault();
       say(message.value.trim() ? "Message admired! This is a demo, so nothing was sent." : "Add a message first. Even this form needs something to work with.");
+      if (message.value.trim()) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
   } else if (id === "word-editor") {
     renderWordEditor(stage, mode);
@@ -533,6 +596,7 @@ function renderStage(id) {
           gate.innerHTML = recipe;
           gate.querySelector("#actual-recipe").focus();
           say("Six quizzes later: put butter on toast. That was the entire recipe.");
+          stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
           return;
         }
         const quiz = quizzes[chapter];
@@ -647,6 +711,7 @@ function renderStage(id) {
       entry.textContent = `${input.value.trim()} was here. Thanks for surfing by!`;
       stage.querySelector("#guest-entries").prepend(entry);
       say("Guestbook signed! Pixel the cat approves.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       input.value = "";
       captcha.hidden = true;
       captchaOpen = false;
@@ -752,6 +817,7 @@ function renderWordEditor(stage, mode) {
   });
   stage.querySelector("#word-finish").addEventListener("click", () => {
     say(text.trim() ? "Document complete. Nothing was sent or saved; admire your hard-earned words above." : "Write something first. Spaces alone do not make a masterpiece.");
+    if (text.trim()) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   refresh();
 }

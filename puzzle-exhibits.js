@@ -39,6 +39,7 @@ function renderEmailAuction({ stage, mode, shell, say }) {
     stage.querySelector("#auction-setup").addEventListener("submit", event => {
       event.preventDefault();
       say(`Email accepted for this demo: ${stage.querySelector("#auction-email").value.trim()}. Nothing was sent or saved.`);
+      if (stage.querySelector("#auction-email").validity.valid) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     return () => {};
   }
@@ -227,6 +228,7 @@ function renderEmailAuction({ stage, mode, shell, say }) {
     finished = true;
     paint();
     say(`Email assembled: ${address}. No email, payment, storage, or external request was made.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   open();
   return () => {};
@@ -243,7 +245,9 @@ function renderAddressJigsaw({ stage, mode, shuffle, shell, say }) {
   if (fixed) {
     stage.querySelector("#jigsaw-simple").addEventListener("submit", event => {
       event.preventDefault();
-      say(stage.querySelector("#jigsaw-input").value.trim().replace(/\s+/g, " ") === target ? "Demo address accepted. Nothing was shipped or saved." : `Use the fictional address ${target}.`);
+      const correct = stage.querySelector("#jigsaw-input").value.trim().replace(/\s+/g, " ") === target;
+      say(correct ? "Demo address accepted. Nothing was shipped or saved." : `Use the fictional address ${target}.`);
+      if (correct) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     return () => {};
   }
@@ -334,6 +338,7 @@ function renderAddressJigsaw({ stage, mode, shuffle, shell, say }) {
     solved = true;
     paint();
     say(`Address assembled: ${target}. Nothing was shipped or saved.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   stage.querySelector("#jigsaw-reset").addEventListener("click", () => {
     solved = false;
@@ -403,6 +408,7 @@ function renderExpandingForm({ stage, mode, shell, say }) {
     inputs.forEach(input => { input.readOnly = true; });
     stage.querySelector("#expanding-submit").disabled = true;
     say("All four answers survived. Demo form complete; nothing was sent or saved.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const motionChange = () => { if (!finished) paint(); else cards.forEach(card => { card.style.transform = "none"; }); };
   motion.addEventListener("change", motionChange);
@@ -529,6 +535,7 @@ function renderNotificationSwatter({ stage, mode, shell, say }) {
     inputs.forEach(input => { input.readOnly = true; });
     stage.querySelector("#fly-finish").disabled = true;
     say("Form complete. The alerts are gone, your entries survived, and nothing was sent or saved.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const visibility = () => { if (document.hidden && running) { pause(); say("Swarm paused while the tab is hidden."); } };
   const resize = new ResizeObserver(() => {
@@ -858,6 +865,7 @@ function renderCorrectingSearch({ stage, mode, shell, say }) {
       results.append(empty);
     }
     say(`Searched "${query}" without changing it. ${matches.length} local demo results. No external search was performed.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const visibility = () => { if (document.hidden) clearTimer(); else schedule(); };
   document.addEventListener("visibilitychange", visibility);
@@ -876,7 +884,10 @@ function renderVolumeSeesaw({ stage, mode, shell, say }) {
   const output = stage.querySelector("#seesaw-value");
   const slider = stage.querySelector("#seesaw-volume");
   if (fixed) {
-    slider.addEventListener("input", () => { output.textContent = `${slider.value}%`; });
+    slider.addEventListener("input", () => {
+      output.textContent = `${slider.value}%`;
+      if (Number(slider.value) === 65) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    });
     return () => {};
   }
   const types = [{ name: "Pebble", mass: 1, symbol: "●" }, { name: "Brick", mass: 3, symbol: "■" }, { name: "Anvil", mass: 5, symbol: "▰" }, { name: "Balloon", mass: -2, symbol: "◯" }];
@@ -972,6 +983,7 @@ function renderVolumeSeesaw({ stage, mode, shell, say }) {
     paintWeights();
     if (!held) settle();
     say(held ? `Pretend volume held at ${slider.value}%. No real volume changed.` : "Volume released. The weights are in charge again.");
+    if (held && Number(slider.value) === 65) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   stage.querySelector("#seesaw-reset").addEventListener("click", () => {
     cancel();

@@ -109,6 +109,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
     stage.querySelector("#alphabet-form").addEventListener("submit", event => {
       event.preventDefault();
       say(message.value.trim() ? "Your message has survived. Demo only: nothing was sent." : "Compose a message before sending it.");
+      if (message.value.trim()) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
   } else if (id === "phone") {
     const target = "2025550107";
@@ -120,6 +121,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
       stage.querySelector("form").addEventListener("submit", event => {
         event.preventDefault();
         say(stage.querySelector("#phone-number").value === target ? "Number accepted. No call or message will be sent." : `Use the fictional demo number ${target}, not your real number.`);
+        if (stage.querySelector("#phone-number").value === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       });
     } else {
       const digits = Array(target.length).fill(null);
@@ -154,6 +156,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
       }));
       stage.querySelector("#confirm-phone").addEventListener("click", () => {
         say(digits.every(digit => digit !== null) && digits.join("") === target ? `Number accepted after ${rolls} rolls. No call or message will be sent.` : `That is not ${target}. Keep rolling. You are not allowed to type.`);
+        if (digits.every(digit => digit !== null) && digits.join("") === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       });
       paint();
     }
@@ -161,7 +164,10 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
     shell("TRAVEL THROUGH TIME, INEFFICIENTLY", fixed ? "Choose an appointment date." : "Please advance to January 12.",
       `Task: select January 12, 2000.${fixed ? " Direct date entry is allowed again." : ` We begin on January 1. There is no month picker and no typing.${worse ? " Forward alternates between +7 days and −6 days. Back always moves one day backwards." : " Only one-day steps. Holding a button does nothing."}`}`,
       `${fixed ? `<form id="date-form"><label for="appointment-date">Appointment date</label><input type="date" id="appointment-date" value="2000-01-01" required><button class="demo-button">Book fictional appointment</button></form>` : `<div class="calendar-machine"><span>JANUARY? EVENTUALLY.</span><output id="calendar-date" aria-live="polite"></output><div class="new-actions"><button class="plain-button" id="date-back">← Back one day</button><button class="demo-button" id="date-forward">Forward →</button></div><p id="date-step"></p></div><button class="demo-button" id="confirm-date">Book the date shown</button>`}`);
-    const confirm = date => say(date === "2000-01-12" ? "January 12 booked in our fictional calendar. No real appointment was created." : "Wrong date. The fictional appointment must be January 12, 2000.");
+    const confirm = date => {
+      say(date === "2000-01-12" ? "January 12 booked in our fictional calendar. No real appointment was created." : "Wrong date. The fictional appointment must be January 12, 2000.");
+      if (date === "2000-01-12") stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    };
     if (fixed) {
       stage.querySelector("form").addEventListener("submit", event => { event.preventDefault(); confirm(stage.querySelector("#appointment-date").value); });
     } else {
@@ -207,6 +213,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
       clearInterval(timer);
       timer = null;
       say("Exactly 37%. Setting accepted; any decay has stopped. Still no sound.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     paint();
     return () => clearInterval(timer);
@@ -236,6 +243,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
     const save = () => {
       stage.querySelector("#cookie-summary").textContent = "Actual optional settings: " + names.map((name, index) => `${name}: ${enabled[index] ? "enabled" : "disabled"}`).join("; ") + ".";
       say(enabled.every(value => !value) ? "All optional cookies rejected. Puzzle solved. No actual cookies were set." : fixed ? "Your selected preferences are shown below. No actual cookies were set." : "Some optional categories are still enabled. The goal is to reject all four.");
+      if (fixed || enabled.every(value => !value)) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     };
     stage.querySelector("#save-cookies").addEventListener("click", save);
     stage.querySelector("#reject-all")?.addEventListener("click", () => { enabled = enabled.map(() => false); paint(); save(); });
@@ -260,6 +268,7 @@ function renderAdditionalExhibit({ id, stage, mode, shuffle }) {
       if (step === total) {
         maze.innerHTML = `<div class="cancelled-stamp">CANCELLED</div><p>Fictional subscription ended. No account or billing system was involved.</p>`;
         say(`You escaped${fixed ? "." : ` after ${total} confirmations and ${mistakes} wrong turns.`}`);
+        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
         return;
       }
       const question = questions[step];
@@ -319,6 +328,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       count++;
       stage.querySelector("#ai-total").textContent = `${count} object${count === 1 ? "" : "s"}: $${(total / 100).toFixed(2)}${fixed ? " one time" : " every month"}. Demo only; no checkout or charges.`;
       say(fixed ? "Added to the demo basket. No account, prompt, or payment needed." : "You have subscribed to an object's basic function. Fictionally. No charges or real subscription.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     };
     stage.querySelectorAll("[data-ai-product]").forEach(button => button.addEventListener("click", () => {
       const product = products.find(item => item.id === button.dataset.aiProduct);
@@ -384,6 +394,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       const result = parse();
       if (result.error) { say(result.error); return; }
       say(`Demo birthday accepted: ${result.date} (UTC). ${result.timestamp} milliseconds since the Unix epoch. Nothing was saved.`);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     };
     if (worse) input.addEventListener("input", checkBirthday);
     stage.querySelector("form").addEventListener("submit", event => {
@@ -429,6 +440,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       phase.textContent = "Your one sentence is ready.";
       stage.querySelector("#loaded-sentence").hidden = false;
       say(fixed ? "Instantly delivered. The loading screen was optional all along." : "Congratulations. All that waiting produced exactly one sentence.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     };
     start.addEventListener("click", () => {
       stop();
@@ -511,6 +523,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
     });
     stage.querySelector("#type-approve").addEventListener("click", () => {
       say(input.value.trim() ? fixed ? "Approved. Your reader's eyes thank you." : "Approved by all six art directors. None of them read it." : "Add a sample sentence before approving it.");
+      if (input.value.trim()) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     render();
   } else if (id === "horizontal") {
@@ -563,6 +576,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       event.preventDefault();
       stage.querySelector("#sideways-result").textContent = "Demo quote requested. No message was sent. We recommend the normal website.";
       say("You reached the contact form. A considerable journey for one dropdown.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
   } else if (id === "mystery-menu") {
     const destinations = [
@@ -603,6 +617,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
           panel.querySelector("#mystery-receipt-text").textContent = "RECEIPT DEMO-0001 · 1 imaginary delivery · Total: $0.00. No order was placed.";
           updateProgress();
           say("Both tasks complete. Clear labels would have made that considerably easier.");
+          stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
         });
       }
       updateProgress();
@@ -678,6 +693,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
         say("Impossible by design: rule 32 forbids all digits, while rule 4 requires a digit and rule 6 requires their sum to be 25. Removing digits only breaks the earlier rules. Use Fix it or Exit to escape.");
       } else if (revealed === rules.length && satisfied === rules.length) {
         say(`Demo phrase accepted. All ${rules.length} requirement${rules.length === 1 ? "" : "s"} met automatically. No account was created; never reuse this phrase.`);
+        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       } else {
         const failing = results.slice(0, revealed).findIndex(result => !result);
         say(`Rule ${failing + 1} is unmet: ${rules[failing].text} All earlier requirements remain active.`);
@@ -697,6 +713,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
       stage.querySelector("#terms-accept").disabled = true;
       stage.querySelector("#terms-decline").disabled = true;
       say(fixed ? "Demo terms accepted. No real agreement was created." : "Reading exam passed. Demo terms accepted. No real agreement was created.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     };
     stage.querySelector("#terms-decline").addEventListener("click", () => {
       ended = true;
@@ -888,6 +905,7 @@ function renderCheckboxEcosystem({ stage, mode, shell, say }) {
     pause();
     stage.querySelector("#eco-save").disabled = true;
     say(`Demo preferences saved: ${preferences.filter(pet => pet.checked).map(pet => pet.name).join(", ") || "none"}. They will no longer decay. No real settings were changed.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const visibility = () => {
     if (document.hidden && running) { pause(); say("Habitat paused while the tab is hidden. Your preferences are held."); }
@@ -913,6 +931,7 @@ function renderElevatorDate({ stage, mode, shell, say }) {
     stage.querySelector("#lift-form").addEventListener("submit", event => {
       event.preventDefault();
       say(`Demo date chosen: ${stage.querySelector("#lift-date").value}. Nothing was booked or saved.`);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     return () => {};
   }
@@ -983,6 +1002,7 @@ function renderElevatorDate({ stage, mode, shell, say }) {
       finished = true;
       paint();
       say(`Demo date chosen: ${selection[0]}-${String(selection[1]).padStart(2, "0")}-${String(selection[2]).padStart(2, "0")}. Three elevators, one date. Nothing was booked or saved.`);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     } else {
       level++;
       floor = 1;
@@ -1026,7 +1046,10 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
   const volume = stage.querySelector("#tetris-volume");
   const output = stage.querySelector("#tetris-value");
   if (fixed) {
-    volume.addEventListener("input", () => { output.textContent = `${volume.value}%`; });
+    volume.addEventListener("input", () => {
+      output.textContent = `${volume.value}%`;
+      if (Number(volume.value) === 100) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    });
     return () => {};
   }
   const board = stage.querySelector("#tetris-board");
@@ -1091,6 +1114,7 @@ function renderTetrisVolume({ stage, mode, shuffle, shell, say }) {
     spawn();
     paint();
     if (!jammed) say(cleared ? `${cleared === 1 ? "A completed row disappeared, taking its filled cells with it" : `${cleared} completed rows disappeared, taking their filled cells with them`}. Pretend volume is now ${volume.value}%.` : `Block settled. Pretend volume is ${volume.value}%. Reach 80 settled cells for 100%.`);
+    if (stack.filter(Boolean).length >= 80) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   };
   const lower = () => {
     if (fits(piece.cells, piece.x, piece.y + 1)) piece.y++;
@@ -1352,6 +1376,7 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
     arena.classList.add("shrink-cancelled");
     center();
     say("Your fictional subscription is cancelled. No real account, subscription, or payment was involved.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const resize = new ResizeObserver(center);
   resize.observe(arena);
@@ -1377,6 +1402,7 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
     stage.querySelector("#cat-simple-form").addEventListener("submit", event => {
       event.preventDefault();
       say("Demo verified. No chase, no cheese, and no real security check.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     return () => {};
   }
@@ -1451,6 +1477,7 @@ function renderCatCaptcha({ stage, mode, shell, say }) {
     stage.querySelector("#cat-verdict").textContent = success ? "DEMO VERIFIED" : "CAUGHT. STILL SUSPICIOUS.";
     paint();
     say(success ? `You escaped with all the cheese in ${moves} moves. Demo verified! No real security check took place.` : "The cat tagged you! Verification denied on grounds of being delicious. Restart the chase to try again, or use Fix it to skip the game.");
+    if (success) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   };
   const move = destination => {
     if (ended) { say("This chase is over. Restart to play again, or use Fix it for the simple demo."); return; }
@@ -1635,6 +1662,7 @@ function renderWindVolume({ stage, mode, shell, say }) {
     field.classList.add("wind-sheltered");
     draw();
     say(`Pretend volume sheltered at ${displayed}%. Your real volume was never touched. Reset to brave the weather again.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   const handleMotion = () => {
     angle = 0;
@@ -1829,6 +1857,7 @@ function renderSeismicEditor({ stage, mode, shell, say }) {
     finished = true;
     paint();
     say(fixed ? "Sentence finished. It stayed put, as text should." : "Sentence finished before another collapse. Your text is intact. Nothing was sent or saved.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   let lastWidth = chamber.clientWidth;
   const resize = new ResizeObserver(() => {

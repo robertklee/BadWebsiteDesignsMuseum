@@ -62,6 +62,10 @@ Interactions are local and ephemeral. Messages, guestbook entries, and purchases
 
 There are no flashing effects or browser traps. The runaway button remains usable by keyboard and touch and respects reduced-motion preferences. All other tasks can also be operated with a keyboard. The character dial supports arrow keys and one-unit adjustment buttons.
 
+Every exhibit highlights its Easy/Hard difficulty controls. Completing an easy task shows a translucent full-screen overlay with a three-second countdown before automatically starting hard mode. “Stay here” dismisses it and keeps the current result instead. The overlay disappears when hard mode starts; reduced-motion preferences disable its animations. Hard and Fix it completions never advance automatically. The toolbar Reset, manual mode changes, and leaving the exhibit cancel any pending transition. The Runaway Button retains its green victory screen behind the overlay during this pause.
+
+Renderers signal success with an explicit `exhibit-complete` event on their stage; the shared page controller handles the one-shot transition and cleanup. Invalid answers and intermediate steps do not trigger it. For the deliberately endless Corporate Fog Machine, finishing the original four onboarding steps is the milestone—management rewards you with harder onboarding.
+
 ## Syntax check
 
 ```sh

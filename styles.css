@@ -146,6 +146,19 @@ button{border-radius:0}
 .mode-controls button,.reset-button{font-size:12px;background:transparent;border:1px solid var(--line);padding:9px 13px;color:var(--text);border-radius:4px}
 .mode-controls button[aria-pressed=true]{background:var(--acid);border-color:var(--acid);color:var(--bg)}
 .mode-controls button:hover,.reset-button:hover{border-color:var(--text)}
+.game-difficulty{padding:10px;border:2px solid var(--acid);border-radius:8px;background:var(--panel)}
+.difficulty-label{flex-basis:100%;font:700 10px var(--heading);letter-spacing:1px;color:var(--acid)}
+.mode-controls.game-difficulty button{min-height:44px;min-width:70px;font-size:14px;font-weight:700;border-width:2px}
+.game-difficulty button[data-mode="worse"]:not([aria-pressed="true"]){border-color:var(--acid);color:var(--acid)}
+.difficulty-progress{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:rgba(15,22,17,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#f2f1e9;text-align:center;pointer-events:none;animation:difficulty-reveal .2s ease-out}
+.difficulty-progress[hidden]{display:none}
+.difficulty-transition-content{width:min(100%,560px);pointer-events:auto}
+.difficulty-transition-title{display:block;font:700 clamp(32px,7vw,64px)/1.1 var(--heading);letter-spacing:-.045em;color:var(--acid)}
+.difficulty-progress p{margin:18px 0;font-size:18px;font-weight:500}
+.difficulty-progress button{min-height:44px;border-color:#f2f1e9}
+.difficulty-countdown{height:4px;margin:24px auto;max-width:280px;background:var(--acid);transform-origin:left;animation:difficulty-countdown 3s linear forwards}
+@keyframes difficulty-reveal{from{opacity:0}to{opacity:1}}
+@keyframes difficulty-countdown{to{transform:scaleX(0)}}
 .reset-button{flex-shrink:0;align-self:start}
 .toolbar-actions{display:flex;gap:10px;align-items:center}
 .toolbar-exit{color:var(--acid);font-size:12px;white-space:nowrap;padding:9px 5px}

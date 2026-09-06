@@ -65,6 +65,7 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
       on($("#arcade-phrase-form"), "submit", event => {
         event.preventDefault();
         say(input.value.trim().length >= 4 ? "Demo phrase accepted. No account was created and nothing was sent." : "Use at least 4 non-padding characters in your invented phrase.");
+        if (input.value.trim().length >= 4) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       });
       on($("#arcade-crane-reset"), "click", () => {
         arcadeDrafts.password = "";
@@ -151,9 +152,12 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
       update();
       say("Last letter removed.");
     });
-    on($("#arcade-check"), "click", () => say(arcadeDrafts.password === target
-      ? `Success! The fictional password is ${target}. No real credentials were used or saved.`
-      : `Not ${target} yet. Use Undo to remove unwanted characters, or reset and try again.`));
+    on($("#arcade-check"), "click", () => {
+      say(arcadeDrafts.password === target
+        ? `Success! The fictional password is ${target}. No real credentials were used or saved.`
+        : `Not ${target} yet. Use Undo to remove unwanted characters, or reset and try again.`);
+      if (arcadeDrafts.password === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    });
     on($(".arcade-crane"), "keydown", event => {
       if (event.target.closest("select, input, textarea")) return;
       if (!["ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " "].includes(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
@@ -290,6 +294,7 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
           velocity = 0;
           stop();
           say(`Pretend BUY NOW triggered for ${totals().credits} demo credits. This was deliberately bad design, not a purchase. Nothing was charged. Pull back or return to start to try again.`);
+          stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
         }
         remaining -= dt;
       }
@@ -335,7 +340,10 @@ function renderArcadeExhibit({ id, stage, mode = "bad", shell, say }) {
       });
     });
     if (fixed) {
-      on($("#arcade-checkout"), "click", () => say(`Intentional demo checkout: ${totals().count} items, ${totals().credits} demo credits. No payment or order was made. Your basket remains available to edit.`));
+      on($("#arcade-checkout"), "click", () => {
+        say(`Intentional demo checkout: ${totals().count} items, ${totals().credits} demo credits. No payment or order was made. Your basket remains available to edit.`);
+        if (totals().count) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      });
     } else {
       on($("#arcade-start"), "click", () => {
         if (running) { autoStart = false; stop(); say("Paused. Items and position preserved."); }

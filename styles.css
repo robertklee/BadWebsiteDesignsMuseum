@@ -171,6 +171,11 @@ button{border-radius:0}
 .fixed.runaway-stage{background:#e6ebdc}
 .fixed .runaway-button{position:static;margin-top:55px}
 .fixed .chase-arena{height:175px;background:none;border:0}
+body.runaway-won{--bg:#153c2b;--line:#527b60;--muted:#c1d9c7}
+.runaway-won .runaway-stage{background:#b5eea3}
+.runaway-won .chase-arena{background:#9bdf87;border-color:#356841}
+.runaway-won .runaway-button{transition:none;background:#153c2b;color:#fff;opacity:1;cursor:default}
+.runaway-won .runaway-stage .demo-status{font-size:18px;font-weight:700}
 .corporate-demo{position:relative;background:#b8d0ed;overflow:hidden}
 .corporate-nav{padding:25px 40px;border-bottom:1px solid #7494b655;display:flex;align-items:center;justify-content:space-between;gap:15px;color:#1d3558}
 .corporate-nav>strong{font:700 17px var(--heading);letter-spacing:2px}

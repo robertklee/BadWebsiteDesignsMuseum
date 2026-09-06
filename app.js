@@ -65,7 +65,7 @@ const worseChanges = {
   "word-editor": "Reshuffles every character menu after each edit.",
   cookies: "Flips three switches per click and reverses what their labels mean.",
   "address-jigsaw": "Adds four decoy pieces and reshuffles the unused tray after every edit.",
-  runaway: "Detects an approaching pointer, shrinks the real button, leaves clickable decoys, relocates on touch roughly twice as often, and flinches away from clean hits more stubbornly.",
+  runaway: "Detects an approaching pointer, shrinks the real button, leaves clickable decoys, relocates faster on touch, and raises the typical catch from 8 direct hits to 20 (18–24 total).",
   dropdown: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.",
   "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and hides clause references unless you spend one of five hints. Wrong answers restart the exam without refunding hints.",
   retro: "Replaces vowels, rearranges CAPTCHA tiles after every selection, and requires two rounds.",
@@ -203,7 +203,7 @@ function renderStage(id) {
   const status = `<div class="demo-status" role="status" id="demo-status"></div>`;
   const say = text => { document.querySelector("#demo-status").textContent = text; };
   if (id === "runaway") {
-    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often, and a clean hit only makes it flinch. Its nerve runs out after eight flinches, so keep tapping." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer and a clean hit sometimes only makes it flinch, though it loses its nerve fast."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
+    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it moves faster and denies considerably more direct hits. Apparently catching it requires persistence and a paper trail." : "Chase it across the arena. On touch it moves on a timer and denies your first several direct hits. Keep tapping. Eventually it runs out of excuses."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
     const button = stage.querySelector(".runaway-button");
     const arena = stage.querySelector(".chase-arena");
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -211,9 +211,11 @@ function renderStage(id) {
     let attempts = 0;
     let lastMove = -Infinity;
     let dodgedAt = -Infinity;
+    let rejectedTouch = false;
     let directHits = 0;
-    // Hard ceiling on flinches, so the button is guaranteed to be catchable in bounded time.
-    const flinchLimit = 8;
+    // Weighted offsets keep the median at zero despite the longer positive tail.
+    const hitOffsets = [-2, -2, -1, -1, 0, 0, 0, 0, 1, 1, 2, 2, 3, 4];
+    const requiredHits = (worse ? 20 : 8) + hitOffsets[Math.floor(Math.random() * hitOffsets.length)];
     const flinches = [
       "You had it. It panicked.",
       "That was a clean hit. It left anyway.",
@@ -264,7 +266,7 @@ function renderStage(id) {
         decoy.setAttribute("aria-hidden", "true");
         decoy.style.left = `${old.x}px`;
         decoy.style.top = `${old.y}px`;
-        decoy.addEventListener("click", () => say("That was a decoy. The real button has already left."));
+        decoy.addEventListener("click", () => { if (!caught) say("That was a decoy. The real button has already left."); });
         arena.append(decoy);
         if (arena.querySelectorAll(".runaway-decoy").length > 5) arena.querySelector(".runaway-decoy").remove();
       }
@@ -296,24 +298,25 @@ function renderStage(id) {
     if (coarse.matches) startDrift();
     button.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") flee(event); });
     arena.addEventListener("pointerdown", event => {
+      rejectedTouch = false;
       if (fixed || caught || event.pointerType === "mouse" || motion.matches) return;
       startDrift();
       // The guard only ever applies to the tap that caused a dodge, so rapid tapping still wins.
       dodgedAt = -Infinity;
       if (!event.target.closest(".runaway-button")) {
+        rejectedTouch = true;
         // Near misses scare it off, so a touch has to be accurate and not merely present.
         if (gap(event) >= (worse ? 130 : 90)) return;
         flee(event);
         dodgedAt = performance.now();
         return;
       }
-      // A clean hit makes it flinch instead of surrendering, but its nerve decays fast and runs
-      // out entirely, so the chase always ends. The first tap is a guaranteed flinch.
-      const nerve = directHits === 0 ? 1
-        : directHits >= flinchLimit ? 0
-        : (worse ? 0.65 : 0.4) * Math.pow(0.6, directHits - 1);
       directHits++;
-      if (Math.random() >= nerve) return;
+      if (directHits >= requiredHits) {
+        win();
+        return;
+      }
+      rejectedTouch = true;
       escape(local(event), `${flinches[(directHits - 1) % flinches.length]} Direct hits: ${directHits}.`);
       dodgedAt = performance.now();
     });
@@ -324,7 +327,10 @@ function renderStage(id) {
       if (touch ? !(event.buttons || event.pressure > 0) : !worse) return;
       if (gap(event) < (touch ? 90 : 65)) flee(event);
       else return;
-      if (touch) dodgedAt = performance.now();
+      if (touch) {
+        rejectedTouch = true;
+        dodgedAt = performance.now();
+      }
     });
     const resize = new ResizeObserver(() => {
       if (fixed || !attempts) return;
@@ -333,14 +339,30 @@ function renderStage(id) {
     });
     resize.observe(arena);
     watcher.observe(arena);
-    cleanup = () => { resize.disconnect(); watcher.disconnect(); clearInterval(drift); };
-    button.addEventListener("click", event => {
-      // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
-      if (performance.now() - dodgedAt < 350) { event.preventDefault(); return; }
+    cleanup = () => {
+      resize.disconnect();
+      watcher.disconnect();
+      clearInterval(drift);
+      document.body.classList.remove("runaway-won");
+    };
+    function win() {
+      if (caught) return;
       caught = true;
       clearInterval(drift);
       drift = null;
-      say("You did it!");
+      watcher.disconnect();
+      arena.querySelectorAll(".runaway-decoy").forEach(decoy => decoy.remove());
+      document.body.classList.add("runaway-won");
+      button.textContent = "Caught! ✓";
+      button.disabled = true;
+      stage.querySelector("h2").textContent = "You caught it!";
+      stage.querySelector(".demo-centered > p").textContent = "The chase is over. It has officially run out of excuses.";
+      say("You win! Game stopped. Reset to chase it again.");
+    }
+    button.addEventListener("click", event => {
+      // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
+      if (!fixed && !motion.matches && event.detail !== 0 && (rejectedTouch || performance.now() - dodgedAt < 350)) { event.preventDefault(); return; }
+      win();
     });
   } else if (id === "corporate") {
     stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;

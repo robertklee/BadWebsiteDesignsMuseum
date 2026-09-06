@@ -18,6 +18,16 @@ Open **http://localhost:3000**. Set `PORT` to use a different port.
 
 The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 35 per-exhibit share pages, and 36 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
+### Generate share thumbnails
+
+The committed exhibit thumbnails in `share/` are rendered from the gallery's real HTML/CSS previews. Install Chromium once with `npx playwright install chromium`, run the museum with `npm start`, then use a second terminal:
+
+```sh
+npm run generate:share
+```
+
+The generator renders and validates one numberless 1200×630 PNG per exhibit. It fails if a preview is missing, text overflows, an exhibit number leaks into the artwork, or `share/` contains missing or stale exhibit images. Pass a different running origin with `npm run generate:share -- --url http://127.0.0.1:3019`.
+
 ### Difficulty links
 
 Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for example `/exhibit/runaway?mode=hard`. Use `?mode=fixed` for Fix it; omitted, `easy`, or unrecognized modes open easy mode. Switching difficulty—including automatic progression—updates the current URL without adding browser-history entries, so copying or refreshing the address preserves the selected mode. The toolbar Reset returns to easy and removes the mode parameter. Next exhibit links still start the next exhibit in easy mode.

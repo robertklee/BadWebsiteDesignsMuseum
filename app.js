@@ -203,7 +203,7 @@ function renderStage(id) {
   const status = `<div class="demo-status" role="status" id="demo-status"></div>`;
   const say = text => { document.querySelector("#demo-status").textContent = text; };
   if (id === "runaway") {
-    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often. Chase the real button." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer, so tap quickly."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim nothing →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
+    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often. Chase the real button." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer, so tap quickly."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
     const button = stage.querySelector(".runaway-button");
     const arena = stage.querySelector(".chase-arena");
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -247,7 +247,7 @@ function renderStage(id) {
       if (worse) {
         const decoy = document.createElement("span");
         decoy.className = "runaway-decoy";
-        decoy.textContent = "Claim nothing →";
+        decoy.textContent = "Claim your prize →";
         decoy.setAttribute("aria-hidden", "true");
         decoy.style.left = `${old.x}px`;
         decoy.style.top = `${old.y}px`;
@@ -311,7 +311,7 @@ function renderStage(id) {
       caught = true;
       clearInterval(drift);
       drift = null;
-      say("You did it! Your absolutely nothing is on its way. No shipping required.");
+      say("You did it!");
     });
   } else if (id === "corporate") {
     stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;

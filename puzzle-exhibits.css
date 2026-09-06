@@ -44,7 +44,9 @@
 .correcting-original>span,.correcting-review>span{display:block;font:9px monospace;letter-spacing:.04em}
 .correcting-original output{display:block;font:16px/1.6 monospace;overflow-wrap:anywhere;margin-top:6px}
 .correcting-review{padding:18px;border:2px dashed #bd778e;border-radius:5px;background:#f4d5df;margin-top:20px}
-.correcting-review>strong{display:block;font:600 22px/1.5 var(--heading);overflow-wrap:anywhere;margin:10px 0 16px}
+.correcting-review>strong{display:block;font:600 22px/2 var(--heading);overflow-wrap:anywhere;margin:12px 0 16px}
+.correcting-word{position:relative;display:inline-block;padding:0 6px;margin:0 4px;background:#ddf860;color:#171816;border:2px solid #171816;box-shadow:3px 3px 0 #bd778e;text-decoration:underline wavy #bd3f6c 2px;text-underline-offset:4px;transform:rotate(-2deg)}
+.correcting-word::after{content:"OFFICIAL CORRECTION";position:absolute;left:50%;top:-13px;transform:translateX(-50%) rotate(2deg);padding:2px 4px;background:#171816;color:#ddf860;font:700 7px/1.2 monospace;letter-spacing:.04em;white-space:nowrap;text-decoration:none}
 #correcting-distance{font:11px/1.6 monospace;color:#835367;margin-bottom:16px}
 .correcting-progress{font:11px/1.7 monospace;margin-top:16px;color:#86566a}
 .correcting-results h3{font-size:20px;margin:22px 0 14px;overflow-wrap:anywhere}

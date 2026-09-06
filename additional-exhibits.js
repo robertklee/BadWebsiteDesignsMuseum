@@ -1180,14 +1180,21 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("RETENTION THROUGH TARGET REDUCTION", fixed ? "Leave whenever you like." : "You have been fictionally subscribed.",
-    `Welcome to Premium Nonsense: $49 in imaginary money per month. No real subscription, account, or charge exists.${fixed ? " Cancel the demo with one click." : ` Try to cancel below. The button shrinks as your mouse gets closer, then reappears somewhere else.${worse ? " Worse mode starts shrinking sooner and jumps away earlier." : ""} Keyboard and touch users can cancel directly; reduced motion keeps the button still.`}`,
+    `Welcome to Premium Nonsense: $49 in imaginary money per month. No real subscription, account, or charge exists.${fixed ? " Cancel the demo with one click." : ` Try to cancel below. The button shrinks as your mouse gets closer, then reappears somewhere else. A finger has nothing to approach, so on touch it shrinks on a timer instead and relocates once it runs out of room, and a near miss scares it off early.${worse ? " Worse mode starts shrinking sooner, shrinks smaller, jumps away earlier, and runs the touch timer almost twice as fast." : ""} Keyboard users can focus the button and cancel directly; reduced motion keeps the button still.`}`,
     `<div class="shrink-plan"><span>PREMIUM NONSENSE</span><strong id="shrink-plan-status">Fictional subscription: ACTIVE</strong><p>Benefits include this cancellation experience.</p><div class="shrink-arena" id="shrink-arena"><button type="button" class="demo-button shrink-target" id="shrink-cancel">Cancel subscription</button></div><div class="shrink-dashboard"><span id="shrink-size">Button size: 100%</span><span id="shrink-jumps">Escape attempts: 0</span></div><p class="shrink-fine">Nothing was purchased or saved. Only the pretend subscription above can be cancelled.</p></div>`);
   const arena = stage.querySelector("#shrink-arena");
   const button = stage.querySelector("#shrink-cancel");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  const coarse = matchMedia("(hover: none), (pointer: coarse)");
   let cancelled = false;
   let scale = 1;
   let jumps = 0;
+  let shrinking = null;
+  let dodgedAt = -Infinity;
+  // Nobody should scroll down to find the button already shrunk to nothing, so the timer only
+  // runs while the arena is actually on screen.
+  let onscreen = false;
+  const watcher = new IntersectionObserver(([entry]) => { onscreen = entry.isIntersecting; }, { threshold: 0.4 });
   let position = { x: 0, y: 0 };
   const history = [];
   const limits = () => ({
@@ -1211,22 +1218,29 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
     const max = limits();
     let best = position;
     let bestScore = -1;
+    let bestFar = null;
+    let bestFarScore = -1;
     for (let index = 0; index < 32; index++) {
       const candidate = { x: 12 + Math.random() * (max.x - 12), y: 12 + Math.random() * (max.y - 12) };
       const distance = Math.hypot(candidate.x + button.offsetWidth / 2 - x, candidate.y + button.offsetHeight / 2 - y);
       const novelty = Math.min(...[position, ...history].map(previous => Math.hypot(candidate.x - previous.x, candidate.y - previous.y)));
       const score = distance + novelty * 0.7;
       if (score > bestScore) { best = candidate; bestScore = score; }
+      // Reappearing under the finger would count as a tap on the button and end the game for free.
+      if (distance > 130 && score > bestFarScore) { bestFar = candidate; bestFarScore = score; }
     }
     history.push(position);
     if (history.length > 5) history.shift();
-    position = best;
+    position = bestFar || best;
     scale = 1;
     jumps++;
     paint();
   };
   arena.addEventListener("pointermove", event => {
-    if (fixed || cancelled || motion.matches || event.pointerType !== "mouse" || button.matches(":focus-visible")) return;
+    if (fixed || cancelled || motion.matches || button.matches(":focus-visible")) return;
+    const touch = event.pointerType !== "mouse";
+    // Dragging a finger toward the button is treated exactly like an approaching mouse.
+    if (touch && !(event.buttons || event.pressure > 0)) return;
     const rect = arena.getBoundingClientRect();
     const x = event.clientX - rect.left - arena.clientLeft;
     const y = event.clientY - rect.top - arena.clientTop;
@@ -1236,10 +1250,42 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
     if (distance < (worse ? 65 : 28)) relocate(x, y);
     else paint();
   });
+  // Touch cannot trigger a proximity shrink, so the button shrinks on a schedule instead and
+  // relocates at full size once it runs out of room. Keyboard focus pauses the whole routine.
+  const startShrinking = () => {
+    if (shrinking || fixed || cancelled || motion.matches) return;
+    const floor = worse ? 0.18 : 0.3;
+    const step = worse ? 0.055 : 0.03;
+    shrinking = setInterval(() => {
+      if (document.hidden || !onscreen || cancelled || button.matches(":focus-visible")) return;
+      scale = Math.max(floor, scale - step);
+      if (scale > floor) { paint(); return; }
+      relocate(position.x + button.offsetWidth / 2, position.y + button.offsetHeight / 2);
+      say(`It shrank out of reach and moved to a fresh corner at full size. Escape attempts: ${jumps}.`);
+    }, 90);
+  };
+  const stopShrinking = () => { clearInterval(shrinking); shrinking = null; };
+  arena.addEventListener("pointerdown", event => {
+    if (fixed || cancelled || motion.matches || event.pointerType === "mouse") return;
+    startShrinking();
+    if (event.target.closest("#shrink-cancel")) return;
+    const rect = arena.getBoundingClientRect();
+    const x = event.clientX - rect.left - arena.clientLeft;
+    const y = event.clientY - rect.top - arena.clientTop;
+    const distance = Math.hypot(x - position.x - button.offsetWidth / 2, y - position.y - button.offsetHeight / 2);
+    if (distance >= (worse ? 150 : 100)) return;
+    relocate(x, y);
+    dodgedAt = performance.now();
+    say(`A near miss, which it interpreted as a threat. Escape attempts: ${jumps}.`);
+  });
+  if (coarse.matches) startShrinking();
   button.addEventListener("focus", () => { scale = 1; paint(); });
-  button.addEventListener("click", () => {
+  button.addEventListener("click", event => {
+    // Safari snaps a near miss onto the closest button, which would skip the chase entirely.
+    if (!fixed && performance.now() - dodgedAt < 350) { event.preventDefault(); return; }
     cancelled = true;
     scale = 1;
+    stopShrinking();
     button.textContent = "Cancelled";
     button.disabled = true;
     stage.querySelector("#shrink-plan-status").textContent = "Fictional subscription: CANCELLED";
@@ -1249,11 +1295,15 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
   });
   const resize = new ResizeObserver(center);
   resize.observe(arena);
-  motion.addEventListener("change", center);
+  watcher.observe(arena);
+  const remotion = () => { if (motion.matches) stopShrinking(); else if (coarse.matches) startShrinking(); center(); };
+  motion.addEventListener("change", remotion);
   center();
   return () => {
     resize.disconnect();
-    motion.removeEventListener("change", center);
+    watcher.disconnect();
+    stopShrinking();
+    motion.removeEventListener("change", remotion);
   };
 }
 

@@ -59,13 +59,13 @@ const worseChanges = {
   "elevator-date": "Skips three floors per departure unless you request a stop.",
   "expanding-form": "Makes every gap grow faster, triples the distance caps, and folds longer answers.",
   "correcting-search": "Requires five rejected corrections instead of three, plus an explanation for every rejection.",
-  "shrinking-unsubscribe": "Starts shrinking sooner and relocates the button earlier.",
+  "shrinking-unsubscribe": "Starts shrinking sooner, shrinks to a smaller minimum, relocates earlier, and runs the touch shrink timer almost twice as fast.",
   phone: "Rerolls and unlocks the digit immediately to the left after each roll.",
   "password-gym": "Expands to 32 rules and ends with a rule that contradicts the earlier requirements.",
   "word-editor": "Reshuffles every character menu after each edit.",
   cookies: "Flips three switches per click and reverses what their labels mean.",
   "address-jigsaw": "Adds four decoy pieces and reshuffles the unused tray after every edit.",
-  runaway: "Detects an approaching pointer, shrinks the real button, and leaves clickable decoys.",
+  runaway: "Detects an approaching pointer, shrinks the real button, leaves clickable decoys, and relocates on touch roughly twice as often.",
   dropdown: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.",
   "terms-game": "Doubles the agreement to 160 clauses, asks 12 questions, and hides clause references unless you spend one of five hints. Wrong answers restart the exam without refunding hints.",
   retro: "Replaces vowels, rearranges CAPTCHA tiles after every selection, and requires two rounds.",
@@ -203,34 +203,45 @@ function renderStage(id) {
   const status = `<div class="demo-status" role="status" id="demo-status"></div>`;
   const say = text => { document.querySelector("#demo-status").textContent = text; };
   if (id === "runaway") {
-    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. Chase the real button." : "Chase it across the arena. It has more escape routes than you have patience."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim nothing →</button></div>${status}<small>Keyboard and touch users: the real button won't run away from you.<br>Reduced-motion preferences disable evasion. Decoys never receive keyboard focus.</small></div>`;
+    stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "It detects your approach, shrinks, and leaves decoys. On touch it relocates on its own, twice as often. Chase the real button." : "Chase it across the arena. It has more escape routes than you have patience. On touch it relocates on a timer, so tap quickly."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim nothing →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
     const button = stage.querySelector(".runaway-button");
     const arena = stage.querySelector(".chase-arena");
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const coarse = matchMedia("(hover: none), (pointer: coarse)");
     let attempts = 0;
     let lastMove = -Infinity;
+    let dodgedAt = -Infinity;
+    // The chase should not run its course before you have even scrolled to the arena.
+    let onscreen = false;
+    const watcher = new IntersectionObserver(([entry]) => { onscreen = entry.isIntersecting; }, { threshold: 0.4 });
+    let drift = null;
+    let caught = false;
     const history = [];
-    function flee(event) {
-      if (fixed || event.pointerType !== "mouse" || matchMedia("(prefers-reduced-motion: reduce)").matches || performance.now() - lastMove < 100) return;
+    function escape(pointer, note) {
+      if (fixed || caught || motion.matches) return;
       lastMove = performance.now();
       attempts++;
       if (worse) button.style.width = `${Math.max(100, 190 - attempts * 9)}px`;
       const maxX = Math.max(0, arena.clientWidth - button.offsetWidth);
       const maxY = Math.max(0, arena.clientHeight - button.offsetHeight);
-      const bounds = arena.getBoundingClientRect();
-      const pointer = { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
       const old = { x: button.offsetLeft, y: button.offsetTop };
+      // Without a pointer to flee from, it simply flees from wherever it is standing.
+      const from = pointer || { x: old.x + button.offsetWidth / 2, y: old.y + button.offsetHeight / 2 };
       // Favor distant, unvisited destinations instead of bouncing between corners.
       const candidates = Array.from({ length: 60 }, () => {
         const x = Math.random() * maxX;
         const y = Math.random() * maxY;
         const pointerDistance = Math.hypot(
-          Math.max(x - pointer.x, 0, pointer.x - x - button.offsetWidth),
-          Math.max(y - pointer.y, 0, pointer.y - y - button.offsetHeight),
+          Math.max(x - from.x, 0, from.x - x - button.offsetWidth),
+          Math.max(y - from.y, 0, from.y - y - button.offsetHeight),
         );
         const novelty = Math.min(...[...history, old].map(point => Math.hypot(x - point.x, y - point.y)));
-        return { x, y, score: pointerDistance + novelty * 2 };
+        return { x, y, pointerDistance, score: pointerDistance + novelty * 2 };
       });
-      const destination = candidates.reduce((best, candidate) => candidate.score > best.score ? candidate : best);
+      // Landing back under the finger would hand out a free win, because the browser sends the
+      // click to whatever sits under the pointer when it lifts. Stay well clear of it.
+      const pick = candidates.filter(candidate => candidate.pointerDistance > 140);
+      const destination = (pick.length ? pick : candidates).reduce((best, candidate) => candidate.score > best.score ? candidate : best);
       history.push(destination);
       if (history.length > 8) history.shift();
       if (worse) {
@@ -246,14 +257,45 @@ function renderStage(id) {
       }
       button.style.left = `${destination.x}px`;
       button.style.top = `${destination.y}px`;
-      say(`Escape ${attempts}. ${worse ? "Smaller target. More impostors. Same absolutely nothing." : "A new destination. Another missed opportunity."}`);
+      say(note || `Escape ${attempts}. ${worse ? "Smaller target. More impostors. Same absolutely nothing." : "A new destination. Another missed opportunity."}`);
     }
-    button.addEventListener("pointerenter", flee);
-    arena.addEventListener("pointermove", event => {
-      if (!worse) return;
+    function flee(event) {
+      if (performance.now() - lastMove < 100) return;
+      const bounds = arena.getBoundingClientRect();
+      escape({ x: event.clientX - bounds.left, y: event.clientY - bounds.top });
+    }
+    function gap(event) {
       const rect = button.getBoundingClientRect();
-      const distance = Math.hypot(Math.max(rect.left - event.clientX, 0, event.clientX - rect.right), Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom));
-      if (distance < 65) flee(event);
+      return Math.hypot(Math.max(rect.left - event.clientX, 0, event.clientX - rect.right), Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom));
+    }
+    // A finger cannot hover, so on touch the button stops waiting to be approached and simply
+    // keeps moving. Keyboard focus pauses it so the accessible path still works.
+    function startDrift() {
+      if (drift || fixed || caught || motion.matches) return;
+      drift = setInterval(() => {
+        if (document.hidden || !onscreen || button.matches(":focus-visible")) return;
+        escape(null, `It moved on its own. Escape ${attempts + 1}. ${worse ? "It will not wait for you." : "Tap it before it goes again."}`);
+      }, worse ? 900 : 1400);
+    }
+    if (coarse.matches) startDrift();
+    button.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") flee(event); });
+    arena.addEventListener("pointerdown", event => {
+      if (fixed || caught || event.pointerType === "mouse" || motion.matches) return;
+      startDrift();
+      // A direct hit counts, except for the opening tap. Near misses scare it off, so a touch
+      // has to be both quick and accurate rather than merely present.
+      if (!(event.target.closest(".runaway-button") ? attempts === 0 : gap(event) < (worse ? 130 : 90))) return;
+      flee(event);
+      dodgedAt = performance.now();
+    });
+    arena.addEventListener("pointermove", event => {
+      if (fixed || caught || motion.matches) return;
+      const touch = event.pointerType !== "mouse";
+      // Dragging a finger toward it is not a shortcut either.
+      if (touch ? !(event.buttons || event.pressure > 0) : !worse) return;
+      if (gap(event) < (touch ? 90 : 65)) flee(event);
+      else return;
+      if (touch) dodgedAt = performance.now();
     });
     const resize = new ResizeObserver(() => {
       if (fixed || !attempts) return;
@@ -261,8 +303,16 @@ function renderStage(id) {
       button.style.top = `${Math.min(button.offsetTop, Math.max(0, arena.clientHeight - button.offsetHeight))}px`;
     });
     resize.observe(arena);
-    cleanup = () => resize.disconnect();
-    button.addEventListener("click", () => say("You did it! Your absolutely nothing is on its way. No shipping required."));
+    watcher.observe(arena);
+    cleanup = () => { resize.disconnect(); watcher.disconnect(); clearInterval(drift); };
+    button.addEventListener("click", event => {
+      // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
+      if (performance.now() - dodgedAt < 350) { event.preventDefault(); return; }
+      caught = true;
+      clearInterval(drift);
+      drift = null;
+      say("You did it! Your absolutely nothing is on its way. No shipping required.");
+    });
   } else if (id === "corporate") {
     stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;
     let onboardingStep = 1;

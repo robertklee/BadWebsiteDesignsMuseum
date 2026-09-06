@@ -1180,7 +1180,7 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("RETENTION THROUGH TARGET REDUCTION", fixed ? "Leave whenever you like." : "You have been fictionally subscribed.",
-    `Welcome to Premium Nonsense: $49 in imaginary money per month. No real subscription, account, or charge exists.${fixed ? " Cancel the demo with one click." : ` Try to cancel below. The button shrinks as your mouse gets closer, then reappears somewhere else. A finger has nothing to approach, so on touch it shrinks on a timer instead and relocates once it runs out of room, and a near miss scares it off early.${worse ? " Worse mode starts shrinking sooner, shrinks smaller, jumps away earlier, and runs the touch timer almost twice as fast." : ""} Keyboard users can focus the button and cancel directly; reduced motion keeps the button still.`}`,
+    `Welcome to Premium Nonsense: $49 in imaginary money per month. No real subscription, account, or charge exists.${fixed ? " Cancel the demo with one click." : ` Try to cancel below. The button shrinks as your mouse gets closer, then reappears somewhere else. A finger has nothing to approach, so on touch it shrinks on a timer, dodges near misses, and squirms out of a clean tap by collapsing to nothing and turning up elsewhere, as though you never touched it. Every escape brings it back slightly smaller.${worse ? " Worse mode starts shrinking sooner, shrinks smaller, jumps away earlier, runs the touch timer almost twice as fast, and squirms away more stubbornly." : ""} Retention gives up after eight escapes, so this always ends. Keyboard users can focus the button and cancel immediately; reduced motion keeps the button still.`}`,
     `<div class="shrink-plan"><span>PREMIUM NONSENSE</span><strong id="shrink-plan-status">Fictional subscription: ACTIVE</strong><p>Benefits include this cancellation experience.</p><div class="shrink-arena" id="shrink-arena"><button type="button" class="demo-button shrink-target" id="shrink-cancel">Cancel subscription</button></div><div class="shrink-dashboard"><span id="shrink-size">Button size: 100%</span><span id="shrink-jumps">Escape attempts: 0</span></div><p class="shrink-fine">Nothing was purchased or saved. Only the pretend subscription above can be cancelled.</p></div>`);
   const arena = stage.querySelector("#shrink-arena");
   const button = stage.querySelector("#shrink-cancel");
@@ -1190,7 +1190,25 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
   let scale = 1;
   let jumps = 0;
   let shrinking = null;
+  let dodging = null;
   let dodgedAt = -Infinity;
+  let directHits = 0;
+  let approaches = 0;
+  let surrendered = false;
+  // Hard ceiling on flinches, so cancelling is guaranteed to succeed in bounded time.
+  const flinchLimit = 8;
+  const flinches = [
+    "You hit it. Retention hit back.",
+    "Cancellation attempt logged, then declined.",
+    "That was a direct hit. It relocated anyway.",
+    "Confirmed contact. Unconfirmed cancellation.",
+    "It saw the tap coming and left.",
+    "Technically you got it. Technically it moved.",
+    "So close. Retention was closer.",
+    "That one almost worked.",
+  ];
+  // Every escape brings it back a little smaller than before, because of course it does.
+  const resetScale = () => Math.max(0.55, 1 - jumps * 0.05);
   // Nobody should scroll down to find the button already shrunk to nothing, so the timer only
   // runs while the arena is actually on screen.
   let onscreen = false;
@@ -1232,12 +1250,12 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
     history.push(position);
     if (history.length > 5) history.shift();
     position = bestFar || best;
-    scale = 1;
     jumps++;
+    scale = resetScale();
     paint();
   };
   arena.addEventListener("pointermove", event => {
-    if (fixed || cancelled || motion.matches || button.matches(":focus-visible")) return;
+    if (fixed || cancelled || motion.matches || surrendered || dodging || button.matches(":focus-visible")) return;
     const touch = event.pointerType !== "mouse";
     // Dragging a finger toward the button is treated exactly like an approaching mouse.
     if (touch && !(event.buttons || event.pressure > 0)) return;
@@ -1247,36 +1265,78 @@ function renderShrinkingUnsubscribe({ stage, mode, shell, say }) {
     const distance = Math.hypot(x - position.x - button.offsetWidth / 2, y - position.y - button.offsetHeight / 2);
     const radius = worse ? 250 : 165;
     scale = Math.min(scale, Math.max(0.12, distance / radius));
-    if (distance < (worse ? 65 : 28)) relocate(x, y);
-    else paint();
+    if (distance >= (worse ? 65 : 28)) { paint(); return; }
+    relocate(x, y);
+    // The proximity shrink always keeps the button smaller than your distance from its centre, so
+    // a pointer can never quite land on it. Retention therefore gives up after enough approaches,
+    // which keeps the mouse path bounded the same way the touch flinch is.
+    approaches++;
+    if (approaches < flinchLimit) return;
+    surrendered = true;
+    stopShrinking();
+    scale = 1;
+    paint();
+    say("Retention has run out of ideas. The button will hold still now. Cancel away.");
   });
   // Touch cannot trigger a proximity shrink, so the button shrinks on a schedule instead and
   // relocates at full size once it runs out of room. Keyboard focus pauses the whole routine.
   const startShrinking = () => {
-    if (shrinking || fixed || cancelled || motion.matches) return;
+    if (shrinking || fixed || cancelled || surrendered || motion.matches) return;
     const floor = worse ? 0.18 : 0.3;
     const step = worse ? 0.055 : 0.03;
     shrinking = setInterval(() => {
-      if (document.hidden || !onscreen || cancelled || button.matches(":focus-visible")) return;
+      if (document.hidden || !onscreen || cancelled || dodging || button.matches(":focus-visible")) return;
       scale = Math.max(floor, scale - step);
       if (scale > floor) { paint(); return; }
       relocate(position.x + button.offsetWidth / 2, position.y + button.offsetHeight / 2);
-      say(`It shrank out of reach and moved to a fresh corner at full size. Escape attempts: ${jumps}.`);
+      say(`It shrank out of reach and reappeared elsewhere, slightly smaller than last time. Escape attempts: ${jumps}.`);
     }, 90);
   };
-  const stopShrinking = () => { clearInterval(shrinking); shrinking = null; };
+  const stopShrinking = () => {
+    clearInterval(shrinking);
+    shrinking = null;
+    clearTimeout(dodging);
+    dodging = null;
+    button.classList.remove("shrink-dodging");
+  };
   arena.addEventListener("pointerdown", event => {
-    if (fixed || cancelled || motion.matches || event.pointerType === "mouse") return;
+    if (fixed || cancelled || surrendered || motion.matches || event.pointerType === "mouse") return;
     startShrinking();
-    if (event.target.closest("#shrink-cancel")) return;
+    // Ignore taps mid-dodge; it is busy pretending it was never there.
+    if (dodging) return;
+    // The guard only ever applies to the tap that caused a dodge, so rapid tapping still wins.
+    dodgedAt = -Infinity;
     const rect = arena.getBoundingClientRect();
     const x = event.clientX - rect.left - arena.clientLeft;
     const y = event.clientY - rect.top - arena.clientTop;
-    const distance = Math.hypot(x - position.x - button.offsetWidth / 2, y - position.y - button.offsetHeight / 2);
-    if (distance >= (worse ? 150 : 100)) return;
-    relocate(x, y);
+    if (!event.target.closest("#shrink-cancel")) {
+      const distance = Math.hypot(x - position.x - button.offsetWidth / 2, y - position.y - button.offsetHeight / 2);
+      if (distance >= (worse ? 150 : 100)) return;
+      relocate(x, y);
+      dodgedAt = performance.now();
+      say(`A near miss, which it interpreted as a threat. Escape attempts: ${jumps}.`);
+      return;
+    }
+    // Landing a clean tap makes retention flinch rather than give up, but its nerve decays with
+    // every hit and runs out entirely, so cancelling always succeeds in bounded time.
+    const nerve = directHits === 0 ? 1
+      : directHits >= flinchLimit ? 0
+      : (worse ? 0.65 : 0.4) * Math.pow(0.6, directHits - 1);
+    directHits++;
+    if (Math.random() >= nerve) return;
+    // Squirm out of your grip: collapse to nothing under the finger, then turn up elsewhere as
+    // though the tap never happened. Instantly teleporting read as a dropped tap instead of a joke.
     dodgedAt = performance.now();
-    say(`A near miss, which it interpreted as a threat. Escape attempts: ${jumps}.`);
+    button.classList.add("shrink-dodging");
+    scale = 0.04;
+    paint();
+    dodging = setTimeout(() => {
+      button.classList.remove("shrink-dodging");
+      dodging = null;
+      if (cancelled) return;
+      relocate(x, y);
+      say(`${flinches[(directHits - 1) % flinches.length]} Direct hits: ${directHits}.`);
+    }, 190);
   });
   if (coarse.matches) startShrinking();
   button.addEventListener("focus", () => { scale = 1; paint(); });

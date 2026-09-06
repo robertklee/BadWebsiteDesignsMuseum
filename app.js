@@ -59,7 +59,7 @@ const worseChanges = {
   "elevator-date": "Skips three floors per departure unless you request a stop.",
   "expanding-form": "Makes every gap grow faster, triples the distance caps, and folds longer answers.",
   "correcting-search": "Requires five rejected corrections instead of three, plus an explanation for every rejection.",
-  "shrinking-unsubscribe": "Starts shrinking sooner, shrinks to a smaller minimum, relocates earlier, and runs the touch shrink timer almost twice as fast.",
+  "shrinking-unsubscribe": "Starts shrinking sooner, shrinks to a smaller minimum, relocates earlier, runs the touch shrink timer almost twice as fast, and squirms out of clean taps more stubbornly.",
   phone: "Rerolls and unlocks the digit immediately to the left after each roll.",
   "password-gym": "Expands to 32 rules and ends with a rule that contradicts the earlier requirements.",
   "word-editor": "Reshuffles every character menu after each edit.",

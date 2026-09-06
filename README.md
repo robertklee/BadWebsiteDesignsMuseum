@@ -2,6 +2,10 @@
 
 A playful, interactive museum of thirty-five terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
 
+## Deployed online
+
+Visit the deployed website at: https://badwebsitedesignsmuseum.robert-k-lee.workers.dev
+
 ## Run locally
 
 Requires Node.js 18 or later.

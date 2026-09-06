@@ -375,7 +375,7 @@ function renderStage(id) {
       }
       directHits++;
       if (directHits >= requiredHits) {
-        win();
+        win("direct hit");
         return;
       }
       rejectedTouch = true;
@@ -407,7 +407,7 @@ function renderStage(id) {
       clearInterval(drift);
       document.body.classList.remove("runaway-won");
     };
-    function win() {
+    function win(method = "pointer") {
       if (caught) return;
       caught = true;
       clearInterval(drift);
@@ -419,13 +419,17 @@ function renderStage(id) {
       button.disabled = true;
       stage.querySelector("h2").textContent = "You caught it!";
       stage.querySelector(".demo-centered > p").textContent = "The chase is over. It has officially run out of excuses.";
-      say("You win! Game stopped. Reset to chase it again.");
+      const difficulty = worse ? "Hard" : fixed ? "Fix it" : "Easy";
+      const stats = method === "direct hit"
+        ? `${difficulty} mode · ${directHits} direct hits · ${attempts} escapes`
+        : `${difficulty} mode · ${method === "keyboard" ? "keyboard catch" : method === "reduced motion" ? "reduced-motion catch" : fixed ? "stable-button catch" : "pointer catch"} · ${attempts} escapes`;
+      say(`You win! ${stats}. Game stopped. Reset to chase it again.`);
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     }
     button.addEventListener("click", event => {
       // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
       if (!fixed && !motion.matches && event.detail !== 0 && (rejectedTouch || performance.now() - dodgedAt < 350)) { event.preventDefault(); return; }
-      win();
+      win(fixed ? "fixed" : motion.matches ? "reduced motion" : event.detail === 0 ? "keyboard" : "pointer");
     });
   } else if (id === "corporate") {
     stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;

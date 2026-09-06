@@ -165,6 +165,11 @@ function renderExhibit(id, focus = false) {
     return;
   }
   currentId = id;
+  const url = new URL(location.href);
+  if (mode === "worse") url.searchParams.set("mode", "hard");
+  else if (mode === "fixed") url.searchParams.set("mode", "fixed");
+  else url.searchParams.delete("mode");
+  if (url.href !== location.href) history.replaceState(history.state, "", url);
   document.title = `${exhibit.name} — Really Bad Design Museum`;
   const modeNote = mode === "fixed"
     ? "SENSIBLE MODE — a little consideration goes a long way."
@@ -825,16 +830,16 @@ function renderWordEditor(stage, mode) {
 function route() {
   cleanup();
   cleanup = () => {};
+  const requestedMode = new URLSearchParams(location.search).get("mode");
+  mode = requestedMode === "hard" ? "worse" : requestedMode === "fixed" ? "fixed" : "bad";
   const hash = location.hash.slice(1);
   const pathMatch = location.pathname.match(/^\/exhibit\/([^/]+)\/?$/);
   if (pathMatch) {
-    mode = "bad";
     renderExhibit(decodeURIComponent(pathMatch[1]), true);
     window.scrollTo(0, 0);
   } else if (hash.startsWith("exhibit/")) {
     const exhibitId = hash.slice(8);
-    history.replaceState(null, "", `/exhibit/${encodeURIComponent(exhibitId)}`);
-    mode = "bad";
+    history.replaceState(history.state, "", `/exhibit/${encodeURIComponent(exhibitId)}${location.search}`);
     renderExhibit(exhibitId, true);
     window.scrollTo(0, 0);
   } else {

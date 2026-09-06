@@ -18,6 +18,10 @@ Open **http://localhost:3000**. Set `PORT` to use a different port.
 
 The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 35 per-exhibit share pages, and 36 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
+### Difficulty links
+
+Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for example `/exhibit/runaway?mode=hard`. Use `?mode=fixed` for Fix it; omitted, `easy`, or unrecognized modes open easy mode. Switching difficulty—including automatic progression—updates the current URL without adding browser-history entries, so copying or refreshing the address preserves the selected mode. The toolbar Reset returns to easy and removes the mode parameter. Next exhibit links still start the next exhibit in easy mode.
+
 ## The collection
 
 - The CAT-PCHA (`#exhibit/cat-captcha`): prove you are human by being a mouse. Collect four cheeses and reach the mouse hole while a cat follows the shortest route toward you after every move. Worse mode starts with six cheeses, gives the cat two steps every eighth turn, and rejects your first completed exit attempt. A seventh cheese appears at the top left as a processing fee, and the exit relocates to the top right. Cheese pickups distract the Worse-mode cat for one turn, including sprint turns; both modes remain winnable. Getting caught means restarting verification, not the whole museum. Arrow keys, WASD, direction buttons, and tapping adjacent squares all work. The chase is turn-based, and reduced motion removes movement transitions. Fixed mode replaces the game with a demo checkbox and confirmation. Neither mode performs a real security check.

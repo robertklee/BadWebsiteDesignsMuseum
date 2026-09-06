@@ -593,7 +593,7 @@ function renderLatestExhibit({ id, stage, mode, shuffle, shell, say }) {
     let clicks = 0;
     shell("NAVIGATION BY PURE INTUITION", fixed ? "A menu with actual names." : "What could these possibly mean?",
       `Task: find and acknowledge the shipping policy, then retrieve your demo receipt.${fixed ? " The destinations are labeled below." : ` The menu consists of six unrelated symbols and useless tooltips.${worse ? " The icon-to-destination mappings reshuffle after every navigation click." : ""}`}`,
-      `<div class="mystery-task" id="mystery-task">0 / 2 tasks complete</div><nav class="mystery-nav" id="mystery-nav" aria-label="Demo website menu"></nav><section class="mystery-destination" id="mystery-destination" aria-live="polite"><h3>Where would you like to go?</h3><p>${fixed ? "Choose Shipping policy to begin." : "We removed the labels to make room for elegance. Good luck."}</p></section>`);
+      `<div class="mystery-task" id="mystery-task">0 / 2 tasks complete</div><nav class="mystery-nav" id="mystery-nav" aria-label="Demo website menu"></nav><section class="mystery-destination" id="mystery-destination" aria-live="polite"><h3>Where would you like to go?</h3><p>${fixed ? "Choose Shipping policy to begin." : "We removed the labels to make room for elegance. The elegance is now the only clue."}</p></section>`);
     const menu = stage.querySelector("#mystery-nav");
     const panel = stage.querySelector("#mystery-destination");
     const updateProgress = () => {

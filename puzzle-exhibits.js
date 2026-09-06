@@ -547,29 +547,148 @@ function renderNotificationSwatter({ stage, mode, shell, say }) {
   };
 }
 
-const correctionWords = (`quilt cages sweater medium horse oven worms costume snail scone actress undress
-shrimping chopping passport sittings seedlings colander starch bequest pickle coffin wetsuit
-mutton spider rookies amount candle summit massage contract profane piracy downland quest rat resign manger
+// Real dictionary words, chosen because they are unhelpful neighbours of the words people
+// actually type into a search bar. Nouns are stored in base form; the stemmer pluralises them
+// on demand. Verbs and adjectives are kept separate so that only they get -ing, -ed, or -est.
+const correctionNouns = `quilt cages sweater medium horse oven worms costume snail scone actress
+passport sittings seedlings colander bequest pickle coffin wetsuit
+mutton spider rookies amount candle summit massage contract piracy downland quest rat manger
+lotion legion column receipt thicket trouser bunion seance chestnut serviette puncture
+downpour accord contest shopper prince prize pride
+kelp yelp tablet fable crate fate gate sage cave wave farm foam fort worm firm stable catch uphold
 badger beaver ferret rabbit pigeon possum llama alpaca otter goose moose moth bees beetle lobster
 sardine donkey pony yak penguin walrus hamster turtle chicken parrot raccoon
-waffle noodles biscuit banana turnip potato tomato toast tacos pizza pasta bagel muffin custard
+aardvark armadillo axolotl capybara chinchilla pangolin platypus narwhal quokka wombat meerkat
+mongoose marmot lemur tapir okapi ibex emu kiwi dodo puffin toucan flamingo pelican cormorant
+albatross kestrel magpie starling wren finch newt gecko iguana chameleon salamander tadpole
+guppy kipper anchovy haddock halibut mackerel sturgeon plankton krill urchin barnacle
+mollusk squid octopus jellyfish seahorse weasel stoat vole shrew hedgehog wallaby
+waffle noodles biscuit banana turnip potato tomato tacos pizza pasta bagel muffin custard
 mustard avocado pretzel burrito radish pancake dumpling oatmeal sausage coconut
+crumpet flapjack fritter strudel cruller marzipan nougat truffle brittle toffee fudge sherbet
+meringue macaron eclair cannoli gnocchi ravioli linguine farfalle couscous quinoa falafel hummus
+gazpacho goulash paella risotto polenta chowder gumbo bisque kimchi wasabi paprika saffron
+oregano nutmeg cinnamon vanilla licorice rhubarb gooseberry kumquat lychee papaya guava apricot
+plantain zucchini broccoli cauliflower asparagus artichoke parsnip rutabaga kohlrabi arugula
 teapot toaster helmet bucket ladder carpet curtain pillow socks slipper trumpet shovel fridge
 kettle spoon umbrella wheelbarrow suitcase lamp broom mailbox stapler gazebo
+doorknob doorbell dustpan spatula sieve ladle tureen decanter thermos canteen satchel
+knapsack valise hamper barrel cask flagon tankard goblet chalice saucer mantel banister
+threshold awning gutter chimney weathervane sundial hourglass metronome abacus telescope
+microscope periscope kaleidoscope gramophone accordion bagpipes harmonica ukulele banjo
+tambourine xylophone kazoo tuba oboe bassoon cello harp
 wizard goblin dragon ghost vampire unicorn mermaid moon comet rocket robot pirate castle dungeon
 potion wand crown spaceship asteroid galaxy monster detective
+gargoyle griffin phoenix kraken yeti gnome troll ogre imp sprite pixie banshee wraith
+sorcerer alchemist cauldron talisman amulet scepter chariot catapult drawbridge portcullis
 meeting memo spreadsheet printer calendar invoice password manager button slider form email phone
 address search settings submit message contact profile privacy download upload browser website
-quiet noisy awkward wobbly tiny giant sideways backwards indoor windy broken confused suspicious
-urgent premium fictional local remote shiny dusty soggy crooked invisible
-cafe museum weather hours open tickets recipe volume login account cancel shipping shopping birthday
+cafe museum weather hours tickets recipe volume login account cancel shipping shopping birthday
 date price help book table save request result support service checkout
 garden garage kitchen library airport station hotel office school beach forest mountain river island
 basement attic hallway rooftop tunnel village bakery aquarium
+bazaar bodega apothecary haberdashery delicatessen patisserie brasserie tavern hostel chalet
+cottage bungalow manor chateau citadel fortress monastery observatory planetarium arboretum
+conservatory greenhouse boathouse lighthouse windmill quarry meadow marsh fjord tundra savanna
+oasis lagoon atoll isthmus plateau canyon geyser glacier
 music movie camera picture coffee sandwich bicycle train airplane taxi package parcel letter number
 color window chair blanket guitar radio newspaper
-happy sad angry polite curious sleepy hungry fancy plain strange normal random exact almost maybe
-never always yesterday tomorrow quickly slowly gently loudly secretly probably`).split(/\s+/);
+kerfuffle brouhaha hullabaloo malarkey poppycock balderdash flapdoodle codswallop
+rigmarole shenanigans tomfoolery skullduggery doohickey thingamajig widget gizmo gadget
+contraption whatnot nincompoop nitwit blunderbuss curmudgeon ragamuffin scallywag
+whippersnapper rapscallion gumption moxie pizzazz panache aplomb verve chutzpah collywobbles tizzy
+yesterday tomorrow`;
+
+// Verbs only. These are the words allowed to answer an -ing or -ed query, so irregular pasts
+// like "caught" and "upheld" are deliberately left out of this list.
+const correctionVerbs = `starch scorch march parch hatch patch latch snatch thatch scratch
+skip whip chip shop sip trip grip clip flip slip snip drip plod prod wade fade trade grade
+board hoard cook hook look rock block shave pave rave snort sport store falter blister
+wipe pipe swap swipe squash squelch bake simmer sprinkle marinate garnish whisk knit stitch
+hammer polish scrub wander wonder blunder plunder squander flounder resign profane
+unload accost bamboozle discombobulate flabbergast lollygag dillydally gallivant canoodle
+cavort waddle wobble bumble fumble mumble grumble snuggle squabble meander saunter amble traipse
+trudge scamper scurry skedaddle vamoose abscond pilfer filch purloin wrangle finagle wheedle
+cajole pester harangue bloviate pontificate dither vacillate procrastinate ruminate cogitate
+ponder brood schmooze kibitz toast undress`;
+
+// Adjectives only. These are the words allowed to answer an -er, -est, or -ly query.
+const correctionAdjectives = `quiet noisy awkward wobbly tiny giant windy broken confused suspicious
+urgent premium fictional local remote shiny dusty soggy crooked invisible sideways backwards indoor
+bewildered flustered befuddled perplexed nonplussed harried frazzled peckish chuffed gormless
+dodgy wonky murky dingy drab dowdy frumpy garish gaudy tacky quaint plucky jaunty dapper natty
+spiffy snazzy swanky posh cushy comfy snug humdrum mundane banal insipid vapid turgid bloated
+sprawling labyrinthine byzantine arcane cryptic opaque cantankerous obstreperous rambunctious
+bombastic pompous verbose loquacious garrulous taciturn lackadaisical persnickety
+slow quick loud soft warm cool damp crisp bland grim glum smug daft dim
+happy sad angry polite curious sleepy hungry fancy plain strange normal random exact
+never always secretly probably`;
+
+const correctionWords = [...new Set(`${correctionNouns} ${correctionVerbs} ${correctionAdjectives}`.split(/\s+/))];
+const correctionVerbSet = new Set(correctionVerbs.split(/\s+/));
+const correctionAdjectiveSet = new Set(correctionAdjectives.split(/\s+/));
+// Adjectives do not pluralise, so they sit out the -s round rather than suggesting "louds".
+const correctionPluralSet = new Set(correctionWords.filter(word => !correctionAdjectiveSet.has(word)));
+
+// A deliberately small suffix stripper. It exists so the bar can notice that "searching" and
+// "starching" are the same shape of word, then hand back a correction with the same ending.
+function correctionUndouble(stem) {
+  return /([^aeiou])\1$/.test(stem) && !/(?:ll|ss|ff|zz)$/.test(stem) ? stem.slice(0, -1) : stem;
+}
+
+function correctionRestoreY(stem) {
+  return stem.length > 2 && stem.endsWith("i") ? `${stem.slice(0, -1)}y` : stem;
+}
+
+// A comparative ending needs a believable adjective in front of it. "dapper" is not "dap" plus
+// a suffix, and treating it that way is how a search bar starts recommending "dappest".
+function correctionEnding(word, stem, suffix) {
+  return stem.length >= 4 ? { stem, suffix } : { stem: word, suffix: "" };
+}
+
+function correctionStem(word) {
+  if (word.length > 4 && word.endsWith("ies")) return { stem: `${word.slice(0, -3)}y`, suffix: "s" };
+  if (word.length > 4 && word.endsWith("ily")) return { stem: `${word.slice(0, -3)}y`, suffix: "ly" };
+  if (word.length > 5 && word.endsWith("ing")) return { stem: correctionUndouble(word.slice(0, -3)), suffix: "ing" };
+  if (word.length > 5 && word.endsWith("est")) return correctionEnding(word, correctionRestoreY(correctionUndouble(word.slice(0, -3))), "est");
+  if (word.length > 4 && word.endsWith("ed")) return { stem: correctionRestoreY(correctionUndouble(word.slice(0, -2))), suffix: "ed" };
+  if (word.length > 4 && word.endsWith("ly")) return correctionEnding(word, word.slice(0, -2), "ly");
+  if (word.length > 4 && word.endsWith("er")) return correctionEnding(word, correctionRestoreY(correctionUndouble(word.slice(0, -2))), "er");
+  if (word.length > 4 && /(?:ch|sh|ss|x|z|o)es$/.test(word)) return { stem: word.slice(0, -2), suffix: "s" };
+  if (word.length > 3 && /[^su]s$/.test(word)) return { stem: word.slice(0, -1), suffix: "s" };
+  return { stem: word, suffix: "" };
+}
+
+function correctionInflect(stem, suffix) {
+  if (!suffix) return stem;
+  if (suffix === "ing" || suffix === "ed" || suffix === "er" || suffix === "est") {
+    if (stem.endsWith("e") && !stem.endsWith("ee")) return stem.slice(0, -1) + suffix;
+    if (/[^aeiou]y$/.test(stem) && suffix !== "ing") return `${stem.slice(0, -1)}i${suffix}`;
+    if (stem.length > 2 && /^[^aeiou]*[aeiou][^aeiouwxy]$/.test(stem)) return stem + stem.slice(-1) + suffix;
+    return stem + suffix;
+  }
+  if (suffix === "ly") {
+    if (/[^aeiou]y$/.test(stem)) return `${stem.slice(0, -1)}ily`;
+    if (stem.endsWith("le")) return `${stem.slice(0, -1)}y`;
+    return `${stem}ly`;
+  }
+  if (/(?:ch|sh|ss|x|z)$/.test(stem) || /(?:potato|tomato|hero|echo)$/.test(stem)) return `${stem}es`;
+  if (/[^aeiou]y$/.test(stem)) return `${stem.slice(0, -1)}ies`;
+  return `${stem}s`;
+}
+
+// Candidates are stored in base form, so only strip an ending the word could genuinely have.
+// Without this, the noun "request" stems to "requ" and starts offering "requs".
+const correctionStems = correctionWords.map(word => {
+  const { stem, suffix } = correctionStem(word);
+  if ((suffix === "ing" || suffix === "ed") && !correctionVerbSet.has(word)) return word;
+  if ((suffix === "er" || suffix === "est" || suffix === "ly") && !correctionAdjectiveSet.has(word)) return word;
+  return stem;
+});
+
+function correctionBudget(length) {
+  return length >= 6 ? 3 : length >= 5 ? 2 : 1;
+}
 
 function correctionDistance(a, b) {
   const rows = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
@@ -591,19 +710,43 @@ function findQueryCorrections(query, limit) {
     const original = match[0];
     const word = original.toLowerCase();
     if (!/^[a-z]+$/.test(word)) continue;
-    const maxDistance = word.length >= 6 ? 3 : word.length >= 5 ? 2 : 1;
+    const maxDistance = correctionBudget(word.length);
+    const { stem: wordStem, suffix: wordSuffix } = correctionStem(word);
+    // Stems are shorter than the words they came from, so they get a slightly roomier budget
+    // than a raw comparison would allow, but never more than the whole word is worth.
+    const stemBudget = Math.min(maxDistance, correctionBudget(wordStem.length) + 1);
+    // Only verbs may answer an -ing query and only adjectives may answer an -est one, so the
+    // bar stays confidently wrong instead of confidently inventing words like "seancing".
+    const stemPool = wordSuffix === "s" ? correctionPluralSet
+      : wordSuffix === "ing" || wordSuffix === "ed" ? correctionVerbSet
+      : correctionAdjectiveSet;
     const choices = [];
-    correctionWords.forEach((candidate, candidateIndex) => {
-      if (candidate === word || Math.abs(candidate.length - word.length) > maxDistance) return;
-      const distance = correctionDistance(word, candidate);
-      if (distance > maxDistance) return;
-      const replacement = original === original.toUpperCase() ? candidate.toUpperCase() : original[0] === original[0].toUpperCase() ? candidate[0].toUpperCase() + candidate.slice(1) : candidate;
-      const changed = query.slice(0, match.index) + replacement + query.slice(match.index + original.length);
+    const offer = (replacement, rank, viaStem) => {
+      if (replacement === word) return;
+      const cased = original === original.toUpperCase() && original.length > 1 ? replacement.toUpperCase()
+        : original[0] === original[0].toUpperCase() ? replacement[0].toUpperCase() + replacement.slice(1)
+        : replacement;
+      const changed = query.slice(0, match.index) + cased + query.slice(match.index + original.length);
       if (changed.length > 80 || seen.has(changed)) return;
       seen.add(changed);
-      choices.push({ query: changed, original, replacement, distance, index: match.index, candidateIndex });
+      choices.push({ query: changed, original, replacement: cased, distance: correctionDistance(word, replacement), viaStem, rank });
+    };
+    correctionWords.forEach((candidate, candidateIndex) => {
+      if (candidate === word) return;
+      const candidateStem = correctionStems[candidateIndex];
+      // "results" to "result" is not a correction, it is the same word wearing a different hat.
+      if (candidateStem === wordStem) return;
+      // A stem match keeps the grammar intact, so it is offered ahead of an equally close
+      // literal match: "searching" deserves "starching", not "starch".
+      if (wordSuffix && stemPool.has(candidate) && Math.abs(candidateStem.length - wordStem.length) <= stemBudget) {
+        const stemDistance = correctionDistance(wordStem, candidateStem);
+        if (stemDistance <= stemBudget) offer(correctionInflect(candidateStem, wordSuffix), stemDistance - 0.5 + candidateIndex / 1e6, true);
+      }
+      if (Math.abs(candidate.length - word.length) > maxDistance) return;
+      const distance = correctionDistance(word, candidate);
+      if (distance <= maxDistance) offer(candidate, distance + candidateIndex / 1e6, false);
     });
-    choices.sort((a, b) => a.distance - b.distance || a.candidateIndex - b.candidateIndex);
+    choices.sort((a, b) => a.rank - b.rank);
     if (choices.length) groups.push(choices);
   }
   const selected = [];
@@ -613,7 +756,7 @@ function findQueryCorrections(query, limit) {
       if (selected.length === limit) break;
     }
   }
-  return selected.map(({ candidateIndex, ...choice }) => choice);
+  return selected.map(({ rank, ...choice }) => choice);
 }
 
 function renderCorrectingSearch({ stage, mode, shell, say }) {
@@ -621,7 +764,7 @@ function renderCorrectingSearch({ stage, mode, shell, say }) {
   const worse = mode === "worse";
   const rounds = worse ? 5 : 3;
   shell("YOUR INTENT, REVISED BY COMMITTEE", fixed ? "Search exactly what you typed." : "Did you mean something completely different?",
-    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps words for nearby spellings from a small, unusually varied vocabulary. Suggestions rotate across the words in your query instead of obsessing over the first one. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance, including adjacent letter swaps. No big dictionary download or external service. Words with no close match stay unchanged.`,
+    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps words for nearby spellings from a large and unnecessarily enthusiastic vocabulary. Suggestions rotate across the words in your query instead of obsessing over the first one. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance with adjacent letter swaps, plus a small stemmer: plurals and -ing endings are matched on their base word and handed back re-conjugated, so "searching" becomes "starching" rather than "starch". No big dictionary download or external service. Words with no close match stay unchanged.`,
     `<div class="correcting-machine"><form id="correcting-form" novalidate><label for="correcting-input">Your search query</label><input type="text" id="correcting-input" maxlength="80" autocomplete="off" placeholder="quiet cafes" required>${fixed ? "" : '<div class="correcting-original"><span>WHAT YOU ACTUALLY TYPED</span><output id="correcting-original">(empty)</output></div>'}<button class="demo-button" id="correcting-submit" ${fixed ? "" : "disabled"}>Search local demo</button></form>${fixed ? "" : `<div class="correcting-review" id="correcting-review" hidden><span>OUR UNREQUESTED IMPROVEMENT</span><strong id="correcting-change"></strong><p id="correcting-distance"></p>${worse ? '<label for="correcting-reason">Explain why your original words were correct (8+ characters)</label><input type="text" id="correcting-reason" maxlength="120" autocomplete="off">' : ""}<button type="button" class="plain-button" id="correcting-reject">Reject correction</button></div><p class="correcting-progress" id="correcting-progress">Type a query to begin defending it.</p>`}<div class="correcting-results" id="correcting-results"></div></div>`);
   const input = stage.querySelector("#correcting-input");
   const submit = stage.querySelector("#correcting-submit");
@@ -647,7 +790,7 @@ function renderCorrectingSearch({ stage, mode, shell, say }) {
       input.value = correction.query;
       pending = true;
       stage.querySelector("#correcting-change").textContent = input.value;
-      stage.querySelector("#correcting-distance").textContent = `${correction.original} → ${correction.replacement} / ${correction.distance} edit${correction.distance === 1 ? "" : "s"} apart`;
+      stage.querySelector("#correcting-distance").textContent = `${correction.original} → ${correction.replacement} / ${correction.distance} edit${correction.distance === 1 ? "" : "s"} apart${correction.viaStem ? " · matched by word stem, then helpfully re-conjugated" : ""}`;
       paint();
       say("Your query was replaced without permission. Reject the correction to restore your original words.");
     }, worse ? 450 : 700);

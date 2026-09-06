@@ -141,7 +141,7 @@ button{border-radius:0}
 .exhibit-heading h1{font-size:clamp(30px,4vw,53px);font-weight:500;margin-bottom:12px}
 .exhibit-heading p{margin:0;color:var(--muted)}
 .specimen-label{font:10px/1.6 var(--heading);letter-spacing:1px;color:var(--muted);flex-shrink:0;transform:rotate(-5deg)}
-.exhibit-toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:15px 0;display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.exhibit-toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:15px 0;display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .mode-controls{display:flex;gap:8px;flex-wrap:wrap}
 .mode-controls button,.reset-button{font-size:12px;background:transparent;border:1px solid var(--line);padding:9px 13px;color:var(--text);border-radius:4px}
 .mode-controls button[aria-pressed=true]{background:var(--acid);border-color:var(--acid);color:var(--bg)}
@@ -159,7 +159,7 @@ button{border-radius:0}
 .difficulty-countdown{height:4px;margin:24px auto;max-width:280px;background:var(--acid);transform-origin:left;animation:difficulty-countdown 3s linear forwards}
 @keyframes difficulty-reveal{from{opacity:0}to{opacity:1}}
 @keyframes difficulty-countdown{to{transform:scaleX(0)}}
-.reset-button{flex-shrink:0;align-self:start}
+.reset-button{flex-shrink:0}
 .toolbar-actions{display:flex;gap:10px;align-items:center}
 .toolbar-exit{color:var(--acid);font-size:12px;white-space:nowrap;padding:9px 5px}
 .mode-note{font:9px/1.6 var(--heading);letter-spacing:1px;color:var(--muted);margin:15px 0}

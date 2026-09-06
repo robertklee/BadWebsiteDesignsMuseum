@@ -713,7 +713,9 @@ function correctionDistance(a, b) {
 function findQueryCorrections(query, limit) {
   const groups = [];
   const seen = new Set();
+  let scannedWords = 0;
   for (const match of query.matchAll(/\p{L}+/gu)) {
+    if (scannedWords++ >= 10) break;
     const original = match[0];
     const word = original.toLowerCase();
     if (!/^[a-z]+$/.test(word)) continue;
@@ -757,8 +759,10 @@ function findQueryCorrections(query, limit) {
     if (choices.length) groups.push(choices);
   }
   const selected = [];
+  const start = groups.length ? Math.floor(Math.random() * groups.length) : 0;
   for (let rank = 0; selected.length < limit && groups.some(group => rank < group.length); rank++) {
-    for (const group of groups) {
+    for (let offset = 0; offset < groups.length; offset++) {
+      const group = groups[(start + offset) % groups.length];
       if (group[rank]) selected.push(group[rank]);
       if (selected.length === limit) break;
     }
@@ -771,7 +775,7 @@ function renderCorrectingSearch({ stage, mode, shell, say }) {
   const worse = mode === "worse";
   const rounds = worse ? 5 : 3;
   shell("YOUR INTENT, REVISED BY COMMITTEE", fixed ? "Search exactly what you typed." : "Did you mean something completely different?",
-    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps words for nearby spellings from a large and unnecessarily enthusiastic vocabulary. Suggestions rotate across the words in your query instead of obsessing over the first one. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance with adjacent letter swaps, plus a small stemmer: plurals and -ing endings are matched on their base word and handed back re-conjugated, so "searching" becomes "starching" rather than "starch". No big dictionary download or external service. Words with no close match stay unchanged.`,
+    fixed ? "Try quiet cafes, weather, museum hours, accessible forms, or cat pictures. Results are fictional and local; nothing is sent to a search service." : `After you stop typing, the bar swaps words for nearby spellings from a large and unnecessarily enthusiastic vocabulary. It starts at a random replaceable word among the first five, then rotates across them instead of obsessing over the first one. Reject up to ${rounds} unsolicited corrections to search your original words.${worse ? " Each rejection also needs an explanation of at least 8 characters. It is a silly length check, not AI." : ""} Matching uses edit distance with adjacent letter swaps, plus a small stemmer: plurals and -ing endings are matched on their base word and handed back re-conjugated, so "searching" becomes "starching" rather than "starch". No big dictionary download or external service. Words with no close match stay unchanged.`,
     `<div class="correcting-machine"><form id="correcting-form" novalidate><label for="correcting-input">Your search query</label><input type="text" id="correcting-input" maxlength="80" autocomplete="off" placeholder="quiet cafes" required>${fixed ? "" : '<div class="correcting-original"><span>WHAT YOU ACTUALLY TYPED</span><output id="correcting-original">(empty)</output></div>'}<button class="demo-button" id="correcting-submit" ${fixed ? "" : "disabled"}>Search local demo</button></form>${fixed ? "" : `<div class="correcting-review" id="correcting-review" hidden><span>OUR UNREQUESTED IMPROVEMENT</span><strong id="correcting-change"></strong><p id="correcting-distance"></p>${worse ? '<label for="correcting-reason">Explain why your original words were correct (8+ characters)</label><input type="text" id="correcting-reason" maxlength="120" autocomplete="off">' : ""}<button type="button" class="plain-button" id="correcting-reject">Reject correction</button></div><p class="correcting-progress" id="correcting-progress">Type a query to begin defending it.</p>`}<div class="correcting-results" id="correcting-results"></div></div>`);
   const input = stage.querySelector("#correcting-input");
   const submit = stage.querySelector("#correcting-submit");

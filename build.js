@@ -1,21 +1,20 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
 
 const publicFiles = [
   "index.html",
   "styles.css",
+  "exhibits.css",
   "app.js",
-  "additional-exhibits.js",
-  "arcade-exhibits.js",
-  "arcade-exhibits.css",
-  "puzzle-exhibits.js",
-  "puzzle-exhibits.css",
 ];
-const metadataFiles = [
-  "app.js",
-  "additional-exhibits.js",
-  "arcade-exhibits.js",
-  "puzzle-exhibits.js",
+const exhibitModules = [
+  "exhibits/shared.js",
+  "exhibits/registry.js",
+  "exhibits/forms-and-inputs.js",
+  "exhibits/interaction-and-simulation.js",
+  "exhibits/content-and-navigation.js",
+  "exhibits/commerce-and-messaging.js",
 ];
 
 const outputDirectory = path.join(__dirname, "dist");
@@ -57,46 +56,36 @@ function shareMetadata(exhibit) {
   <!-- SHARE_META_END -->`;
 }
 
-function readExhibits() {
-  const entries = [];
-  for (const file of metadataFiles) {
-    const source = fs.readFileSync(path.join(__dirname, file), "utf8");
-    for (const match of source.matchAll(/\{ id: "[^"\n]+"[^\n]*\},/g)) {
-      try {
-        const entry = Function(`"use strict"; return (${match[0].slice(0, -1)});`)();
-        if (entry.name && entry.tagline && entry.description && entry.color) entries.push(entry);
-      } catch {
-        // Non-metadata object literals are ignored.
-      }
-    }
+async function readExhibits() {
+  // The registry is the single source of exhibit metadata and order; it already validates
+  // uniqueness and completeness, so the build simply imports it instead of re-parsing source.
+  const registryPath = path.join(__dirname, "exhibits", "registry.js");
+  const { getCatalog } = await import(pathToFileURL(registryPath));
+  return getCatalog();
+}
+
+async function main() {
+  fs.rmSync(outputDirectory, { recursive: true, force: true });
+  fs.mkdirSync(outputDirectory);
+
+  for (const file of publicFiles) {
+    fs.copyFileSync(path.join(__dirname, file), path.join(outputDirectory, file));
   }
-  const appSource = fs.readFileSync(path.join(__dirname, "app.js"), "utf8");
-  const orderSource = appSource.match(/const exhibitOrder = (\[[\s\S]*?\]);/)?.[1];
-  if (!orderSource) throw new Error("Unable to find exhibitOrder in app.js");
-  const order = Function(`"use strict"; return (${orderSource});`)();
-  const byId = new Map(entries.map(entry => [entry.id, entry]));
-  if (byId.size !== order.length) throw new Error(`Expected ${order.length} unique exhibit metadata records, found ${byId.size}`);
-  return order.map((id, index) => {
-    const exhibit = byId.get(id);
-    if (!exhibit) throw new Error(`Missing share metadata for ${id}`);
-    return { ...exhibit, number: String(index + 1).padStart(2, "0") };
-  });
+  for (const file of exhibitModules) {
+    fs.mkdirSync(path.join(outputDirectory, path.dirname(file)), { recursive: true });
+    fs.copyFileSync(path.join(__dirname, file), path.join(outputDirectory, file));
+  }
+
+  if (!fs.existsSync(shareDirectory)) throw new Error("Missing share image directory");
+  fs.cpSync(shareDirectory, path.join(outputDirectory, "share"), { recursive: true });
+
+  const template = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+  const metadataPattern = /<!-- SHARE_META_START -->[\s\S]*?<!-- SHARE_META_END -->/;
+  for (const exhibit of await readExhibits()) {
+    const routeDirectory = path.join(outputDirectory, "exhibit", exhibit.id);
+    fs.mkdirSync(routeDirectory, { recursive: true });
+    fs.writeFileSync(path.join(routeDirectory, "index.html"), template.replace(metadataPattern, shareMetadata(exhibit)));
+  }
 }
 
-fs.rmSync(outputDirectory, { recursive: true, force: true });
-fs.mkdirSync(outputDirectory);
-
-for (const file of publicFiles) {
-  fs.copyFileSync(path.join(__dirname, file), path.join(outputDirectory, file));
-}
-
-if (!fs.existsSync(shareDirectory)) throw new Error("Missing share image directory");
-fs.cpSync(shareDirectory, path.join(outputDirectory, "share"), { recursive: true });
-
-const template = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
-const metadataPattern = /<!-- SHARE_META_START -->[\s\S]*?<!-- SHARE_META_END -->/;
-for (const exhibit of readExhibits()) {
-  const routeDirectory = path.join(outputDirectory, "exhibit", exhibit.id);
-  fs.mkdirSync(routeDirectory, { recursive: true });
-  fs.writeFileSync(path.join(routeDirectory, "index.html"), template.replace(metadataPattern, shareMetadata(exhibit)));
-}
+main();

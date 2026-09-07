@@ -59,7 +59,8 @@ function pngDimensions(buffer) {
 }
 
 async function renderShareSheet(page, id, reverse = false) {
-  return page.evaluate(({ exhibitId, reverseCatalog }) => {
+  return page.evaluate(async ({ exhibitId, reverseCatalog }) => {
+    const { exhibits, preview } = await import("/app.js");
     const catalog = reverseCatalog ? [...exhibits].reverse() : exhibits;
     const exhibit = catalog.find(item => item.id === exhibitId);
     if (!exhibit) throw new Error(`Unknown exhibit: ${exhibitId}`);
@@ -116,11 +117,14 @@ const browser = await chromium.launch(executablePath ? { executablePath } : {});
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
-  await page.waitForFunction(() => typeof exhibits !== "undefined" && exhibits.length > 0);
+  await page.waitForSelector(".exhibit-card");
   await page.evaluate(() => document.fonts.ready);
   await page.addStyleTag({ content: shareStyles });
 
-  const ids = await page.evaluate(() => exhibits.map(({ id }) => id).sort());
+  const ids = await page.evaluate(async () => {
+    const { exhibits } = await import("/app.js");
+    return exhibits.map(({ id }) => id).sort();
+  });
   for (const id of ids) {
     const result = await renderShareSheet(page, id);
     const reordered = await renderShareSheet(page, id, true);

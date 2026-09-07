@@ -8,12 +8,8 @@ const publicFiles = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
+  ["/exhibits.css", ["exhibits.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
-  ["/additional-exhibits.js", ["additional-exhibits.js", "text/javascript; charset=utf-8"]],
-  ["/arcade-exhibits.js", ["arcade-exhibits.js", "text/javascript; charset=utf-8"]],
-  ["/arcade-exhibits.css", ["arcade-exhibits.css", "text/css; charset=utf-8"]],
-  ["/puzzle-exhibits.js", ["puzzle-exhibits.js", "text/javascript; charset=utf-8"]],
-  ["/puzzle-exhibits.css", ["puzzle-exhibits.css", "text/css; charset=utf-8"]],
 ]);
 
 http.createServer(async (request, response) => {
@@ -22,8 +18,10 @@ http.createServer(async (request, response) => {
   let file = publicFiles.get(pathname);
   const exhibit = pathname.match(/^\/exhibit\/([a-z0-9-]+)\/?$/);
   const shareImage = pathname.match(/^\/share\/([a-z0-9-]+\.png)$/);
+  const registryModule = pathname.match(/^\/exhibits\/([a-z-]+)\.js$/);
   if (exhibit) file = [path.join("dist", "exhibit", exhibit[1], "index.html"), "text/html; charset=utf-8"];
   if (shareImage) file = [path.join("share", shareImage[1]), "image/png"];
+  if (registryModule) file = [path.join("exhibits", `${registryModule[1]}.js`), "text/javascript; charset=utf-8"];
   if (!file) {
     response.writeHead(404, { "Content-Type": "text/plain" });
     response.end("This exhibit does not exist. Even we have standards.");

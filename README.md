@@ -2,6 +2,8 @@
 
 A playful, interactive museum of thirty-five terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
 
+The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 35 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
+
 ## Deployed online
 
 Visit the deployed website at: https://badwebsitedesignsmuseum.robert-k-lee.workers.dev

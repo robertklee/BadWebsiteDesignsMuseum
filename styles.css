@@ -303,7 +303,7 @@ body.runaway-won{--bg:#153c2b;--line:#527b60;--muted:#c1d9c7}
 .preview-dial{background:#fff7fb;border:1px solid #896779;padding:9px 14px;font:600 34px var(--heading);box-shadow:4px 4px #b58d9f}
 .preview-dial small{font:10px monospace;float:right;margin-top:10px}
 .preview-dial>div{font:15px monospace;letter-spacing:2px;color:#80538d}
-.permit-stamp{display:inline-block;font:700 8px monospace;border:2px solid #8c3b62;color:#8c3b62;padding:5px;margin-top:14px;transform:rotate(-7deg)}
+.receiver-stamp{display:inline-block;font:700 8px monospace;border:1px solid #8c3b62;color:#8c3b62;padding:5px;margin-top:14px}
 .obstacle-panel{background:#ffffffd9;color:#263c50;border:2px solid currentColor;border-radius:4px;padding:20px;margin-top:25px}
 .obstacle-panel h3{font-size:25px;letter-spacing:-.03em;margin:8px 0 18px}
 .obstacle-panel label,.reading-quiz>label{display:block;font-size:13px;font-weight:600;margin:14px 0 8px}
@@ -315,23 +315,22 @@ body.runaway-won{--bg:#153c2b;--line:#527b60;--muted:#c1d9c7}
 .obstacle-check input{margin-top:4px;flex-shrink:0}
 .obstacle-panel input[type=range]{display:block;width:100%;margin:16px 0;accent-color:#a6221a}
 .character-machine{background:#fae8f3;border:2px solid #976981;padding:23px;margin:26px 0;color:#432d3d;border-radius:4px}
-.frequency-directory{font:11px/1.9 monospace;border:1px dashed #b78b9f;padding:10px;margin-bottom:22px}
+.receiver-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.receiver-header>span:last-child{font:10px monospace}
+.receiver-scale{display:flex;justify-content:space-between;gap:4px;padding-top:23px;margin:16px 0;background:repeating-linear-gradient(90deg,#976981 0 1px,transparent 1px 5%) left top/100% 16px no-repeat;font:9px monospace}
+.frequency-directory{font:11px/1.9 monospace;border-top:1px dashed #b78b9f;padding-top:14px;margin-top:20px}
 .frequency-directory summary{cursor:pointer;font:11px/1.6 var(--body)}
-#frequency-directory{margin-top:12px;overflow-wrap:anywhere;max-height:150px;overflow:auto}
+#frequency-directory{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:4px 18px;margin-top:12px;overflow-wrap:anywhere;max-height:150px;overflow:auto}
+#frequency-directory>span{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #dfc3d0}
 #letter-dial{width:100%;display:block;accent-color:#8c336c;margin:20px 0}
-.dial-readout{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#3b2b39;color:#ffdeee;padding:16px;font-family:monospace;border:4px inset #976981}
-.dial-readout strong{font-size:28px;line-height:1.2}
+.dial-readout{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:114px;background:repeating-linear-gradient(0deg,transparent 0 3px,#ffffff06 3px 4px),#292d29;color:#e4e9d7;padding:16px;font-family:monospace;border:4px inset #976981}
+.dial-readout[data-locked=true]{color:#dafa85;border-color:#71905b}
+.dial-readout strong{font-size:24px;line-height:1.2;min-width:7ch}
 .dial-readout output{font-size:16px;margin-left:auto}
-.dial-readout>span{width:100%;font-size:10px;color:#f4bace}
-#tuner-help{font-size:11px;margin:14px 0}
+.dial-readout>span{width:100%;font-size:10px;min-height:2.8em;line-height:1.4;color:inherit}
 .character-machine .letter-controls{flex-wrap:wrap;gap:7px;margin-bottom:0}
 .character-machine .letter-controls button{font-size:11px;flex-grow:1;min-height:40px}
 .exhibit-stage button:disabled{opacity:.4;cursor:not-allowed}
-#character-permit{margin-top:24px;border-top:2px dashed #b58b9f;padding-top:20px}
-#character-permit p{font-size:12px}
-.permit-stamps{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
-.permit-stamps button{flex:1;min-width:82px;min-height:40px;font:11px monospace;text-transform:uppercase;background:#f7d3e7;border:2px dashed #a26b8a}
-#character-permit>.demo-button{width:100%;min-height:44px}
 .reading-progress{max-width:620px;margin:20px auto;font:11px var(--heading);letter-spacing:1px;background:#e0e7cc;padding:15px}
 .reading-quiz{font-family:var(--body);background:#e9ebdb;padding:22px;border:1px solid #adb79e}
 .reading-quiz .demo-button{margin:10px 0}

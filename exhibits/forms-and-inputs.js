@@ -2,7 +2,7 @@
 import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
-  { id: "dropdown", name: "The Character Bureaucracy", category: "Forms", color: "pink", tagline: "Every letter needs a permit.", description: "Tune a precision dial. File the paperwork. Earn one character.", lesson: "One letter is a serious administrative event. Please allow three to five stamps for processing.", fix: "The paperwork was archived. A text box is now handling the letters.", worseChange: "Requires five approval stamps, changes frequency offsets, destroys incorrect permits, and makes Undo remove two characters.", preview: `<div class="preview-dropdown"><span class="form-label">Apply for one letter.</span><div class="preview-dial">H <small>2496 Hz</small><div>━━━━●━━━━</div></div><span class="permit-stamp">APPROVAL PENDING</span><span class="dropdown-note">now file the paperwork.</span></div>`, render: renderDropdown },
+  { id: "dropdown", name: "The Radio Text Receiver", category: "Forms", color: "pink", tagline: "Your message is somewhere in the static.", description: "Tune into one letter at a time. Reception must be painfully exact.", lesson: "The keyboard was receiving too many letters at once. Each character now broadcasts on its own inconvenient frequency.", fix: "The antenna was unplugged. A text box now receives entire sentences.", worseChange: "Reassigns every station and changes frequency offsets after each received character.", preview: `<div class="preview-dropdown"><span class="form-label">NOW RECEIVING: ONE LETTER</span><div class="preview-dial">H <small>2496 Hz</small><div>━━━━●━━━━</div></div><span class="receiver-stamp">NARROWBAND TEXT / MONO</span><span class="dropdown-note">One hertz off. Nothing but static.</span></div>`, render: renderRadioText },
   { id: "word-editor", name: "The Dropdown Word Processor", category: "Forms", color: "orange", tagline: "A whole document. One dropdown per character.", description: "Write, edit, and regret every letter you select from a menu.", lesson: "Typing was alarmingly efficient, so every character now gets its own tiny meeting. Minutes will be distributed one letter at a time.", fix: "The keyboard has been reinstated and is eager to put this behind it.", worseChange: "Reshuffles every character menu after each edit.", preview: `<div class="preview-word-editor"><span>UNTITLED DOCUMENT</span><div class="preview-word-toolbar">File &nbsp; Edit &nbsp; Suffer</div><strong><span>H ⌄</span><span>e ⌄</span><span>l ⌄</span><span>l ⌄</span><span>o ⌄</span></strong><div class="fake-lines"></div><small>5 letters. 5 dropdowns.</small></div>`, render: renderWordEditor },
   { id: "alphabet", name: "The Alphabet Shuffle", category: "Forms", color: "pink", tagline: "A slider with no alphabetic loyalties.", description: "Find a letter. Add it. The entire slider order changes.", lesson: "The alphabet has entered its experimental phase. Familiar order was rejected as creatively limiting.", fix: "The letters have returned to their assigned seats, and the keyboard handles introductions.", worseChange: "Also reshuffles the alphabet whenever you commit a slider adjustment.", preview: `<div class="new-preview preview-alphabet"><span>THE ALPHABET, RECONSIDERED</span><strong>Q &nbsp; A &nbsp; Z &nbsp; ?</strong><div class="preview-track"><i></i></div><small>Same slider. New alphabet.</small></div>`, render: renderAlphabet },
   { id: "phone", name: "The Phone Number Casino", category: "Forms", color: "orange", tagline: "Your number is somewhere in these odds.", description: "Roll each digit. Lock it. Hope the next roll respects it.", lesson: "Your phone number is in there somewhere. The house remains confident that persistence is statistically similar to typing.", fix: "The reels are closed. The whole number can now be entered without placing a bet.", worseChange: "Rerolls and unlocks the digit immediately to the left after each roll.", preview: `<div class="new-preview preview-phone"><span>PLEASE GAMBLE YOUR NUMBER</span><div class="preview-reels"><b>5</b><b>?</b><b>3</b></div><small>Roll. Lock. Regret. ↻</small></div>`, render: renderPhone },
@@ -237,76 +237,36 @@ function findQueryCorrections(query, limit) {
   return selected.map(({ rank, ...choice }) => choice);
 }
 
-function renderDropdown({ stage, mode, shuffle }) {
+function renderRadioText({ stage, mode, shuffle }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { status, say } = createDemoStatus();
-  stage.innerHTML = `<div class="form-demo"><span class="demo-kicker">DEPARTMENT OF INDIVIDUAL CHARACTER APPROVAL</span><h2>${fixed ? "Tell us something." : "Apply for one letter."}</h2><p>${fixed ? "A message should take seconds, not geological eras." : `Find a character's frequency. Tune to the exact integer. Lock it. Obtain ${worse ? "five" : "three"} approvals in the specified order. Repeat for every letter, space, and punctuation mark.`}</p><form id="message-form">${fixed ? "" : `<div id="character-machine" class="character-machine"><span class="demo-kicker">01 / TUNE YOUR CHARACTER</span><details class="frequency-directory"><summary>Character frequency directory (not clickable, naturally)</summary><div id="frequency-directory"></div></details><label for="letter-dial">Character tuner: 0–9999 Hz</label><input id="letter-dial" type="range" min="0" max="9999" step="1" value="5000" aria-describedby="tuner-help"><div class="dial-readout"><strong id="tuned-letter">?</strong><output id="frequency-value" for="letter-dial">5000 Hz</output><span id="signal-quality"></span></div><p id="tuner-help">Drag to get close. Use arrow keys or the ±1 buttons for precision. Only the exact frequency is accepted.</p><div class="letter-controls"><button type="button" class="plain-button" id="dial-down" aria-label="Decrease frequency by one">−1 Hz</button><button type="button" class="plain-button" id="dial-up" aria-label="Increase frequency by one">+1 Hz</button><button type="button" class="demo-button" id="lock-letter">Lock character</button></div><div id="character-permit" hidden></div></div>`}<label for="message">${fixed ? "Your message" : "Your painstakingly assembled message"}</label><textarea id="message" maxlength="280" ${fixed ? "required" : "readonly"} placeholder="${fixed ? "Type something nice. Or constructive." : "The empty page awaits its first approved character."}"></textarea><div class="form-bottom"><span id="letter-count">0 / 280 characters</span>${!fixed ? `<button type="button" class="plain-button" id="undo-letter">${worse ? "Undo (deletes TWO)" : "Undo"}</button>` : ""}<button class="demo-button" type="submit">Send message →</button></div></form>${status}<small>${!fixed ? `The alphabet is reshuffled after every character.${worse ? " Frequencies change too. Incorrect paperwork destroys the permit." : ""}<br>` : ""}Demo only. Your message is never sent or saved.</small></div>`;
+  stage.innerHTML = `<div class="form-demo"><span class="demo-kicker">${fixed ? "BROADBAND TEXT / KEYBOARD CONNECTED" : "NARROWBAND TEXT / MODEL RX-280"}</span><h2>${fixed ? "Tell us something." : "Your sentence is on the air."}</h2><p>${fixed ? "Reception has never been clearer." : worse ? "Pirate radio. Every letter changes stations after reception." : "29 stations. One letter per broadcast. Absolutely no predictive tuning."}</p><form id="message-form">${fixed ? "" : `<div id="character-machine" class="character-machine"><div class="receiver-header"><span class="demo-kicker">RX-280 / TEXT RECEIVER</span><span>${worse ? "PIRATE BAND" : "AM / ALPHABET MODULATION"}</span></div><div class="dial-readout" data-locked="false"><strong id="tuned-letter">~ ~ ~</strong><output id="frequency-value" for="letter-dial">5000 Hz</output><span id="signal-quality"></span></div><div class="receiver-scale" aria-hidden="true"><span>0</span><span>2500</span><span>5000</span><span>7500</span><span>9999 Hz</span></div><label for="letter-dial">Tuning frequency</label><input id="letter-dial" type="range" min="0" max="9999" step="1" value="5000"><div class="letter-controls"><button type="button" class="plain-button" id="dial-down" aria-label="Decrease frequency by one" title="Decrease frequency by one">−1 Hz</button><button type="button" class="plain-button" id="dial-up" aria-label="Increase frequency by one" title="Increase frequency by one">+1 Hz</button><button type="button" class="demo-button" id="receive-letter">Receive character</button></div><details class="frequency-directory"><summary>Station directory / A–Z, space, . !</summary><div id="frequency-directory"></div></details></div>`}<label for="message">${fixed ? "Your message" : "Received message"}</label><textarea id="message" maxlength="280" ${fixed ? "required" : "readonly"} placeholder="${fixed ? "Type something nice. Or constructive." : "Awaiting transmission..."}"></textarea><div class="form-bottom"><span id="letter-count">0 / 280 characters</span>${!fixed ? `<button type="button" class="plain-button" id="undo-letter">↶ Undo</button>` : ""}<button class="demo-button" type="submit">Send message →</button></div></form>${status}<small>Demo only. Your message is never sent or saved.</small></div>`;
   const message = stage.querySelector("#message");
   const update = () => { stage.querySelector("#letter-count").textContent = `${message.value.length} / 280 characters`; };
   message.addEventListener("input", update);
   if (!fixed) {
     const dial = stage.querySelector("#letter-dial");
-    const permit = stage.querySelector("#character-permit");
-    const lock = stage.querySelector("#lock-letter");
+    const receive = stage.querySelector("#receive-letter");
     let frequencies = [];
     let selected = null;
-    let locked = null;
-    let approvals = [];
-    let approved = 0;
     const label = letter => letter === " " ? "[space]" : letter;
     const tune = () => {
       const value = Number(dial.value);
       selected = frequencies.find(item => item.frequency === value) || null;
       const nearest = frequencies.reduce((best, item) => Math.abs(item.frequency - value) < Math.abs(best.frequency - value) ? item : best);
-      stage.querySelector("#tuned-letter").textContent = selected ? label(selected.letter) : "≈ " + label(nearest.letter);
+      stage.querySelector("#tuned-letter").textContent = selected ? label(selected.letter) : "~ ~ ~";
       stage.querySelector("#frequency-value").textContent = `${value} Hz`;
-      stage.querySelector("#signal-quality").textContent = selected ? "SIGNAL LOCKED. Now request a permit." : `${Math.abs(nearest.frequency - value)} Hz away from ${label(nearest.letter)}. Not acceptable.`;
+      stage.querySelector("#signal-quality").textContent = selected ? "SIGNAL LOCKED / ONE CHARACTER READY" : `STATIC / ${label(nearest.letter)} is ${Math.abs(nearest.frequency - value)} Hz away`;
+      stage.querySelector(".dial-readout").dataset.locked = String(Boolean(selected));
       dial.setAttribute("aria-valuetext", `${value} hertz. ${selected ? label(selected.letter) : "No exact character"}`);
-      lock.disabled = !selected || locked !== null;
+      receive.disabled = !selected || message.value.length >= 280;
     };
     const scramble = () => {
-      const offset = worse ? 20 + Math.floor(Math.random() * 280) : 137;
+      let offset = worse ? 20 + Math.floor(Math.random() * 280) : 137;
+      if (worse && offset === frequencies[0]?.frequency) offset = 20 + (offset - 19) % 280;
       frequencies = shuffle("ABCDEFGHIJKLMNOPQRSTUVWXYZ .!").map((letter, index) => ({ letter, frequency: offset + index * 337 }));
-      stage.querySelector("#frequency-directory").textContent = frequencies.map(item => `${label(item.letter)} = ${item.frequency}`).join("   /   ");
-      dial.value = "5000";
-      locked = null;
-      permit.hidden = true;
-      dial.disabled = false;
-      stage.querySelector("#dial-down").disabled = false;
-      stage.querySelector("#dial-up").disabled = false;
-      tune();
-    };
-    const renderPermit = () => {
-      permit.hidden = false;
-      permit.innerHTML = `<span class="demo-kicker">02 / CHARACTER PERMIT: ${label(locked)}</span><p>Obtain stamps in this order: <strong>${approvals.join(" → ")}</strong></p><p>${approved} / ${approvals.length} approvals. A wrong stamp ${worse ? "destroys this permit" : "resets all approvals"}.</p><div class="permit-stamps">${shuffle(approvals).map(stamp => `<button type="button" class="plain-button" data-stamp="${stamp}">${stamp}</button>`).join("")}</div><button type="button" class="demo-button" id="add-letter" ${approved < approvals.length ? "disabled" : ""}>03 / Append approved character</button>`;
-      permit.querySelectorAll("[data-stamp]").forEach(button => button.addEventListener("click", () => {
-        if (button.dataset.stamp !== approvals[approved]) {
-          approved = 0;
-          if (worse) {
-            scramble();
-            say("Incorrect stamp. Permit shredded. Frequencies reassigned. Start this character again.");
-            dial.focus();
-            return;
-          }
-          say("Wrong department. All approvals have been reset.");
-        } else {
-          approved++;
-          say(`Stamp ${approved} of ${approvals.length} obtained.`);
-        }
-        renderPermit();
-        if (approved === approvals.length) permit.querySelector("#add-letter").focus();
-        else permit.querySelector("[data-stamp]").focus();
-      }));
-      if (approved === approvals.length) permit.querySelectorAll("[data-stamp]").forEach(button => { button.disabled = true; });
-      permit.querySelector("#add-letter").addEventListener("click", () => {
-        if (message.value.length >= 280) { say("The 280-character limit has been reached. Your approved text is preserved."); return; }
-        message.value += locked;
-        update();
-        scramble();
-        say("ONE character approved. All frequencies reassigned. Please apply again.");
-        dial.focus();
-      });
+      stage.querySelector("#frequency-directory").innerHTML = [...frequencies].sort((first, second) => first.letter.localeCompare(second.letter)).map(item => `<span>${label(item.letter)} <b>${item.frequency} Hz</b></span>`).join("");
     };
     dial.addEventListener("input", tune);
     for (const [id, delta] of [["dial-down", -1], ["dial-up", 1]]) {
@@ -315,25 +275,26 @@ function renderDropdown({ stage, mode, shuffle }) {
         tune();
       });
     }
-    lock.addEventListener("click", () => {
-      locked = selected.letter;
-      approved = 0;
-      approvals = shuffle(worse ? ["Legal", "Finance", "Vowels", "Compliance", "Management"] : ["Legal", "Vowels", "Management"]);
-      dial.disabled = true;
-      stage.querySelector("#dial-down").disabled = true;
-      stage.querySelector("#dial-up").disabled = true;
-      lock.disabled = true;
-      renderPermit();
-      permit.querySelector("[data-stamp]").focus();
+    receive.addEventListener("click", () => {
+      if (!selected || message.value.length >= 280) return;
+      const letter = selected.letter;
+      message.value += letter;
+      update();
+      if (worse) scramble();
+      dial.value = "5000";
+      tune();
+      say(message.value.length === 280 ? "Receiver memory full. 280 characters received." : `${label(letter)} received.${worse ? " All stations have changed frequencies." : " Tuner returned to the middle of the band."}`);
+      dial.focus();
     });
     stage.querySelector("#undo-letter").addEventListener("click", () => {
-      const count = worse ? 2 : 1;
-      if (!message.value) { say("There is nothing to undo. The bureaucracy has already achieved that."); return; }
-      message.value = message.value.slice(0, -count);
+      if (!message.value) { say("Nothing received. Nothing to undo."); return; }
+      message.value = message.value.slice(0, -1);
       update();
-      say(`Removed up to ${count} character${count === 1 ? "" : "s"}. Their paperwork cannot be recovered.`);
+      tune();
+      say("Last character erased. Reception not refunded.");
     });
     scramble();
+    tune();
   }
   stage.querySelector("form").addEventListener("submit", event => {
     event.preventDefault();

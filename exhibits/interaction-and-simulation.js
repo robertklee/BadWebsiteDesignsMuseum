@@ -70,8 +70,8 @@ function renderRunaway({ stage, mode }) {
       const novelty = Math.min(...[...history, old].map(point => Math.hypot(x - point.x, y - point.y)));
       return { x, y, pointerDistance, score: pointerDistance + novelty * 2 };
     });
-    // Landing back under the finger would hand out a free win, because the browser sends the
-    // click to whatever sits under the pointer when it lifts. Stay well clear of it.
+    // Keep the destination clear of the pointer because the browser dispatches the click to the
+    // element under the pointer when it lifts.
     const pick = candidates.filter(candidate => candidate.pointerDistance > 140);
     const destination = (pick.length ? pick : candidates).reduce((best, candidate) => candidate.score > best.score ? candidate : best);
     history.push(destination);
@@ -103,8 +103,8 @@ function renderRunaway({ stage, mode }) {
     const rect = button.getBoundingClientRect();
     return Math.hypot(Math.max(rect.left - event.clientX, 0, event.clientX - rect.right), Math.max(rect.top - event.clientY, 0, event.clientY - rect.bottom));
   }
-  // A finger cannot hover, so on touch the button stops waiting to be approached and simply
-  // keeps moving. Keyboard focus pauses it so the accessible path still works.
+  // Touch has no hover state, so use timed movement instead. Keyboard focus pauses movement to
+  // preserve the accessible path.
   function startDrift() {
     if (drift || fixed || caught || motion.matches) return;
     drift = setInterval(() => {

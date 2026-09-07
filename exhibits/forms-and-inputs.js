@@ -20,9 +20,9 @@ export const exhibits = [
   { id: "correcting-search", category: "Forms", color: "pink", name: "The Self-Correcting Search Bar", tagline: "We know what you meant. Unfortunately.", description: "Your query keeps becoming something else. Defend your original words.", lesson: "The search bar knows what you meant because it briefly considered what you typed. Appeals must include a short explanation.", fix: "The search bar has agreed to search for the words it was given.", worseChange: "Requires five rejected corrections instead of three, plus an explanation for every rejection.", preview: '<div class="new-preview preview-correcting"><span>HELPFULLY REWRITING YOUR INTENT</span><s>quiet cafes</s><strong>quiet cages</strong><small>Obviously you wanted bird supplies.</small></div>', render: renderCorrectingSearch },
 ];
 
-// Real dictionary words, chosen because they are unhelpful neighbours of the words people
-// actually type into a search bar. Nouns are stored in base form; the stemmer pluralises them
-// on demand. Verbs and adjectives are kept separate so that only they get -ing, -ed, or -est.
+// Real dictionary words selected as plausible but unhelpful alternatives to common search terms.
+// Nouns are stored in base form; the stemmer pluralises them on demand. Verbs and adjectives are 
+// kept separate so that only they get -ing, -ed, or -est.
 const correctionNouns = `quilt cages sweater medium horse oven worms costume snail scone actress
 passport sittings seedlings colander bequest pickle coffin wetsuit
 mutton spider rookies amount candle summit massage contract piracy downland quest rat manger
@@ -113,8 +113,8 @@ function correctionRestoreY(stem) {
   return stem.length > 2 && stem.endsWith("i") ? `${stem.slice(0, -1)}y` : stem;
 }
 
-// A comparative ending needs a believable adjective in front of it. "dapper" is not "dap" plus
-// a suffix, and treating it that way is how a search bar starts recommending "dappest".
+// A comparative ending requires a valid adjective stem. For example, "dapper" must not be parsed
+// as "dap" plus a suffix, which would produce invalid forms such as "dappest".
 function correctionEnding(word, stem, suffix) {
   return stem.length >= 4 ? { stem, suffix } : { stem: word, suffix: "" };
 }
@@ -190,8 +190,9 @@ function findQueryCorrections(query, limit) {
     // Stems are shorter than the words they came from, so they get a slightly roomier budget
     // than a raw comparison would allow, but never more than the whole word is worth.
     const stemBudget = Math.min(maxDistance, correctionBudget(wordStem.length) + 1);
-    // Only verbs may answer an -ing query and only adjectives may answer an -est one, so the
-    // bar stays confidently wrong instead of confidently inventing words like "seancing".
+    // Only verbs may answer an -ing query and only adjectives may answer an -est one, so
+    // restrict inflected matches by part of speech so suggestions remain real words even when
+    // their meaning is deliberately unhelpful.
     const stemPool = wordSuffix === "s" ? correctionPluralSet
       : wordSuffix === "ing" || wordSuffix === "ed" ? correctionVerbSet
       : correctionAdjectiveSet;
@@ -209,7 +210,7 @@ function findQueryCorrections(query, limit) {
     correctionWords.forEach((candidate, candidateIndex) => {
       if (candidate === word) return;
       const candidateStem = correctionStems[candidateIndex];
-      // "results" to "result" is not a correction, it is the same word wearing a different hat.
+      // Exclude candidates that reduce to the same stem, such as "results" and "result".
       if (candidateStem === wordStem) return;
       // A stem match keeps the grammar intact, so it is offered ahead of an equally close
       // literal match: "searching" deserves "starching", not "starch".
@@ -466,7 +467,7 @@ function renderAlphabet({ stage, mode, shuffle }) {
     const randomize = () => {
       const previous = order.join("");
       order = shuffle(characters);
-      // Guarantee a changed order even if the random permutation repeats.
+      // Rotate an identical shuffle so each revision produces a new order.
       if (order.join("") === previous) order.push(order.shift());
       shuffles++;
       stage.querySelector("#alphabet-order").innerHTML = order.map(letter => `<span>${letter === " " ? "␣" : letter}</span>`).join("");
@@ -591,6 +592,7 @@ function renderCookies({ stage, mode }) {
   const { shell, say } = createStageShell(stage);
   const names = ["Analytics", "Marketing", "Personalization", "Partner sharing"];
   // Generic IDs such as cookie-1 and cookie-2 are hidden by cookie-blocker lists.
+  // Use museum-specific IDs so content blockers do not hide the demo controls.
   shell("WE TAKE YOUR PREFERENCES PERSONALLY", fixed ? "Your cookies. Your choice." : "Try to turn everything off.",
     fixed ? "Essential cookies are not needed in this demo. Optional preferences are independent." : `Task: disable all four optional categories. Every switch also flips the next ${worse ? "TWO switches" : "switch"}, wrapping around to the top.${worse ? " The labels are negated: ON means “disabled.” All four switches must show ON to reject everything." : ""}`,
     `<div class="cookie-machine">${names.map((name, index) => `<div class="cookie-row"><label for="rbm-switchboard-option-${index}">${worse ? "Disable " : ""}${name}</label><button type="button" class="preference-switch" role="switch" aria-checked="true" id="rbm-switchboard-option-${index}" data-cookie="${index}">ON</button></div>`).join("")}</div><div class="new-actions">${fixed ? `<button class="demo-button" id="reject-all">Reject all optional cookies</button>` : ""}<button class="${fixed ? "plain-button" : "demo-button"}" id="save-cookies">Save preferences</button></div><div id="cookie-summary"></div>`);
@@ -718,7 +720,7 @@ function renderPasswordGym({ stage, mode }) {
   ];
   let revealed = 1;
   shell("STRENGTH TRAINING FOR A COMPLETELY FAKE PASSWORD", fixed ? "A passphrase, without the obstacle course." : "Your password needs more reps.",
-    `Invent a throwaway phrase. NEVER enter a real password.${fixed ? " There is one requirement, shown upfront and checked as you type." : ` There are ${rules.length} rules. Meeting all visible requirements automatically reveals the next one, including when you paste. No submit button. Earlier rules never stop applying.${worse ? " This mode is deliberately impossible: its final requirement contradicts earlier ones. Fix it and Exit remain available." : " The default challenge is long but solvable."}`} This is a design puzzle, not security advice or a password-strength test.`,
+    `Invent a throwaway phrase. NEVER enter a real password.${fixed ? " There is one requirement, shown upfront and checked as you type." : ` There are ${rules.length} rules. Meeting all visible requirements automatically reveals the next one, including when you paste.${worse ? " This mode is deliberately impossible: its final requirement contradicts earlier ones. Fix it and Exit remain available." : " The default challenge is long but solvable."}`} This is a design puzzle, not security advice or a password-strength test.`,
     `<div class="gym-warning">DEMO ONLY — do not reuse a real password here or use this puzzle's solution for a real account.</div><form class="gym-form" id="gym-form"><label for="gym-phrase">Invented demo phrase (visible text)</label><input id="gym-phrase" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="240" aria-describedby="gym-warning-text"><small id="gym-warning-text">Live evaluation. Your phrase stays in this page; nothing is sent to a server.</small><p class="gym-progress" id="gym-progress"></p><ol class="gym-rules" id="gym-rules" tabindex="0" aria-label="Revealed password requirements"></ol></form>`);
   const input = stage.querySelector("#gym-phrase");
   const evaluate = () => {

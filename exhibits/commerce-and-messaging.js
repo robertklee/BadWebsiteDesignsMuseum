@@ -95,7 +95,7 @@ function renderShrinkingUnsubscribe({ stage, mode }) {
     "So close. Retention was closer.",
     "That one almost worked.",
   ];
-  // Every escape brings it back a little smaller than before, because of course it does.
+  // Each escape restores the button at a slightly smaller scale.
   const resetScale = () => Math.max(0.55, 1 - jumps * 0.05);
   // Nobody should scroll down to find the button already shrunk to nothing, so the timer only
   // runs while the arena is actually on screen.
@@ -190,7 +190,7 @@ function renderShrinkingUnsubscribe({ stage, mode }) {
   arena.addEventListener("pointerdown", event => {
     if (fixed || cancelled || surrendered || motion.matches || event.pointerType === "mouse") return;
     startShrinking();
-    // Ignore taps mid-dodge; it is busy pretending it was never there.
+    // Ignore taps during the dodge animation to prevent overlapping transitions.
     if (dodging) return;
     // The guard only ever applies to the tap that caused a dodge, so rapid tapping still wins.
     dodgedAt = -Infinity;
@@ -212,8 +212,8 @@ function renderShrinkingUnsubscribe({ stage, mode }) {
       : (worse ? 0.65 : 0.4) * Math.pow(0.6, directHits - 1);
     directHits++;
     if (Math.random() >= nerve) return;
-    // Squirm out of your grip: collapse to nothing under the finger, then turn up elsewhere as
-    // though the tap never happened. Instantly teleporting read as a dropped tap instead of a joke.
+    // Collapse under the pointer before relocating so the dodge reads as intentional rather than
+    // as an unregistered tap.
     dodgedAt = performance.now();
     button.classList.add("shrink-dodging");
     scale = 0.04;

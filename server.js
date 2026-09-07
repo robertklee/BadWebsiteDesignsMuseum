@@ -24,7 +24,7 @@ http.createServer(async (request, response) => {
   if (registryModule) file = [path.join("exhibits", `${registryModule[1]}.js`), "text/javascript; charset=utf-8"];
   if (!file) {
     response.writeHead(404, { "Content-Type": "text/plain" });
-    response.end("This exhibit does not exist. Even we have standards.");
+    response.end("This exhibit is not part of the collection. Please consider applying for exhibition if it's bad enough.");
     return;
   }
   try {
@@ -35,7 +35,7 @@ http.createServer(async (request, response) => {
   } catch (error) {
     console.error("Unable to serve file:", error);
     response.writeHead(500, { "Content-Type": "text/plain" });
-    response.end("The museum is having a genuinely unintended technical difficulty.");
+    response.end("The museum is temporarily unable to display this exhibit.");
   }
 }).listen(port, "127.0.0.1", () => {
   console.log(`The museum is open at http://localhost:${port}`);

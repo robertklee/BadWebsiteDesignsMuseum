@@ -2,6 +2,7 @@ import { exhibits as formsExhibits } from "./forms-and-inputs.js";
 import { exhibits as interactionExhibits } from "./interaction-and-simulation.js";
 import { exhibits as contentExhibits } from "./content-and-navigation.js";
 import { exhibits as commerceExhibits } from "./commerce-and-messaging.js";
+import { exhibits as websiteExhibits } from "./website-behavior.js";
 
 // The single ordered, validated source of truth for every exhibit. Each domain module
 // contributes its own records (metadata + preview + render); this registry only orders,
@@ -40,11 +41,10 @@ const exhibitOrder = [
   "horizontal",
   "corporate",
   "loading",
-  "volume",
-  "calendar",
+  "validation-afterthought",
 ];
 
-const allExhibits = [...formsExhibits, ...interactionExhibits, ...contentExhibits, ...commerceExhibits];
+const allExhibits = [...formsExhibits, ...interactionExhibits, ...contentExhibits, ...commerceExhibits, ...websiteExhibits];
 
 const exhibitsById = new Map(allExhibits.map(exhibit => [exhibit.id, exhibit]));
 if (exhibitsById.size !== allExhibits.length) {

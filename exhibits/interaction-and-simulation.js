@@ -3,7 +3,6 @@ import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
   { id: "runaway", name: "The Runaway Button", category: "Interaction", color: "lilac", tagline: "A call to action. A refusal to cooperate.", description: "Finally, a button with a healthy fear of commitment.", lesson: "The button has considered your request and chosen flight. It is currently exploring opportunities near the opposite edge of the box.", fix: "After extensive negotiations, the button has agreed to remain in one place.", worseChange: "The button brought decoys and a much stronger sense of self-preservation.", preview: `<div class="preview-runaway"><span class="pointer p1">↖</span><span class="little-label">come back here.</span><span class="fake-button">Click me <span>↗</span></span><span class="pointer p2">↖</span><span class="dotted-path"></span></div>`, render: renderRunaway },
-  { id: "volume", name: "The Volume Gym", category: "Interaction", color: "green", tagline: "Turn it up. Do some math. Start again.", description: "A volume control that requires modular arithmetic and physical effort.", lesson: "Volume is a privilege earned through arithmetic. Please stretch before attempting 37 percent.", fix: "The slider now moves directly to the requested number. No warm-up required.", worseChange: "Changes the controls to +17 and -11, then lowers the value every two seconds.", preview: `<div class="new-preview preview-volume"><span>SET VOLUME TO 37%</span><strong>36<span>%</span></strong><div class="preview-volume-buttons">+7 &nbsp; −3 &nbsp; WHY?</div><small>No sound. Just suffering.</small></div>`, render: renderVolumeGym },
   { id: "loading", name: "The Loading Experience", category: "Interaction", color: "lilac", tagline: "Almost ready to start getting ready.", description: "An entire loading ceremony for one sentence. Please approve the wait.", lesson: "Nothing important is happening, but it is happening in ten impressive stages. Stage eleven is reflecting on the journey.", fix: "The sentence was ready the whole time. It has finally been allowed indoors.", worseChange: "The wait now requires your active participation.", preview: `<div class="new-preview preview-loading"><span>PREPARING TO ALMOST FINISH</span><div class="preview-loader-ring"></div><strong>99%</strong><small>Reconsidering the first 98%.</small></div>`, render: renderLoading },
   { id: "seismic-editor", name: "The Seismic Text Editor", category: "Interaction", color: "pink", tagline: "Every keystroke is a structural risk.", description: "Type carefully. The editor shakes, and your whole sentence might tumble.", lesson: "The sentence was built on ambitious foundations. Punctuation remains a known seismic risk, especially the excitable kind.", fix: "The editor passed inspection. Exclamation marks may now enter without a hard hat.", worseChange: "The editor is feeling every keystroke more intensely.", preview: `<div class="new-preview preview-seismic"><span>STRUCTURAL INTEGRITY: QUESTIONABLE</span><div><b>T</b><b>Y</b><b>P</b><b>E</b></div><small>One more letter. What could go wrong?</small><i>CAUTION: UNSTABLE WORDS</i></div>`, render: renderSeismicEditor },
   { id: "wind-volume", name: "The Windswept Volume Slider", category: "Interaction", color: "blue", tagline: "Forecast: scattered decibels.", description: "Drag a volume slider through a gale. Up is subject to weather.", lesson: "Today's forecast calls for shifting controls with a chance of accidental silence. Up may become down by evening.", fix: "The slider has been moved indoors, where the forecast is consistently 37 percent.", worseChange: "The forecast has worsened. The slider may lose its sense of up.", preview: `<div class="new-preview preview-wind"><span>VOLUME ADVISORY IN EFFECT</span><strong>~~~ / ~~~</strong><div>37% &nbsp; 82% &nbsp; 4%?</div><small>The slider is experiencing weather.</small></div>`, render: renderWindVolume },
@@ -187,43 +186,6 @@ function renderRunaway({ stage, mode }) {
     win(fixed ? "fixed" : motion.matches ? "reduced motion" : event.detail === 0 ? "keyboard" : "pointer");
   });
   return cleanup;
-}
-
-function renderVolumeGym({ stage, mode }) {
-  const fixed = mode === "fixed";
-  const worse = mode === "worse";
-  const { shell, say } = createStageShell(stage);
-  shell("FITNESS FOR YOUR FINGERTIPS", fixed ? "Set the volume. Leave it there." : "Lift your way to 37%.",
-    `Set the simulated volume to exactly 37%. No sound will play.${fixed ? "" : worse ? " The controls have joined an advanced training program, and the number refuses to stay still." : " Pump it up, release it down, and expect the counter to loop when pushed too far."}`,
-    `<div class="volume-machine"><output id="volume-value" aria-live="off">0%</output><meter id="volume-meter" min="0" max="100" value="0" aria-label="Simulated volume"></meter>${fixed ? `<label for="volume-slider">Volume percentage</label><input id="volume-slider" type="range" min="0" max="100" value="0">` : `<div class="new-actions"><button class="demo-button" id="volume-up">Pump +${worse ? 17 : 7}</button><button class="plain-button" id="volume-down">Release −${worse ? 11 : 3}</button></div>`}</div><button class="demo-button" id="apply-volume">Apply exactly 37%</button>`);
-  let volume = 0;
-  let timer = null;
-  let complete = false;
-  const paint = () => {
-    stage.querySelector("#volume-value").textContent = `${volume}%`;
-    stage.querySelector("#volume-meter").value = volume;
-    if (fixed) stage.querySelector("#volume-slider").setAttribute("aria-valuetext", `${volume} percent`);
-  };
-  const adjust = delta => {
-    volume = (volume + delta + 101) % 101;
-    paint();
-    if (worse && timer === null && !complete) timer = setInterval(() => { volume = Math.max(0, volume - 1); paint(); }, 2000);
-  };
-  if (fixed) stage.querySelector("#volume-slider").addEventListener("input", event => { volume = Number(event.target.value); paint(); });
-  else {
-    stage.querySelector("#volume-up").addEventListener("click", () => adjust(worse ? 17 : 7));
-    stage.querySelector("#volume-down").addEventListener("click", () => adjust(worse ? -11 : -3));
-  }
-  stage.querySelector("#apply-volume").addEventListener("click", () => {
-    if (volume !== 37) { say(`That is ${volume}%, not 37%. Keep ${fixed ? "adjusting" : "doing unnecessary arithmetic"}.`); return; }
-    complete = true;
-    clearInterval(timer);
-    timer = null;
-    say("Exactly 37%. Setting accepted; any decay has stopped. Still no sound.");
-    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
-  });
-  paint();
-  return () => clearInterval(timer);
 }
 
 function renderLoading({ stage, mode }) {

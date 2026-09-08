@@ -1,8 +1,8 @@
 # Really Bad Design Museum
 
-A playful, interactive museum of thirty-five terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
+A playful, interactive museum of thirty-four terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
 
-The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 35 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
+The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 34 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). `website-behavior.js` contains the destructive registration-validation exhibit. Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
 
 ## Deployed online
 
@@ -18,7 +18,7 @@ npm start
 
 Open **http://localhost:3000**. Set `PORT` to use a different port.
 
-The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 35 per-exhibit share pages, and 36 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
+The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 34 per-exhibit share pages, and 35 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
 ### Generate share thumbnails
 
@@ -69,8 +69,7 @@ Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for exampl
 - The Horizontal Lifestyle (`/exhibit/horizontal`): navigate a four-panel sideways website to reach a demo contact form. The horizontal scrolling stays inside the exhibit. Section buttons, keyboard arrows, touch gestures, and the mouse wheel work; worse mode reverses the arrow buttons and vertical wheel direction. Fixed mode restores vertical page flow.
 - The Corporate Fog Machine (`/exhibit/corporate`): mandatory onboarding adds more steps every time you complete one. Going back discards your progress.
 - The Loading Experience (`/exhibit/loading`): ten fake progress stages, including a backwards jump from 99%, reveal one sentence. Worse mode pauses for three approvals. Loading can be cancelled, and timers stop on reset or navigation. Fixed mode reveals the sentence immediately.
-- The Volume Gym (`/exhibit/volume`): reach exactly 37% using +7/-3 buttons with wraparound at 0 and 100. Worse mode uses +17/-11 and loses one point every two seconds after the first adjustment. Success stops the decay. No audio is played.
-- The Calendar Treadmill (`/exhibit/calendar`): navigate from January 1 to January 12, 2000, using one-day buttons. Worse mode makes Forward alternate between advancing seven days and retreating six.
+- The Validation Afterthought (`/exhibit/validation-afterthought`): register for a fictional open house using four fields. A failed submission reveals only the first unmet formatting rule and clears all other answers. Worse mode omits the field name from the error banner. Fixed mode shows requirements up front, validates inline, and preserves input. All modes accept the same reachable solution. Replaces Calendar Treadmill with a new URL. Use invented details; nothing is submitted or stored.
 
 Every exhibit has original, worse, and fixed modes, a reset button, a curator's note, and a persistent mode toolbar. Worse mode displays a highlighted summary of exactly what it adds to the original version. Use **Escape** to return to the collection. Filter the collection by category or navigate directly to an exhibit, such as `/exhibit/runaway`.
 

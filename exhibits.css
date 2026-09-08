@@ -164,3 +164,29 @@
 .seesaw-controls{display:flex;flex-wrap:wrap;gap:8px}.seesaw-controls button{min-height:44px}
 .seesaw-note{font-size:11px;line-height:1.7;color:#58727a}
 @media(max-width:700px){.auction-house,.jigsaw-table,.seesaw-machine{padding:15px}.jigsaw-slots,.jigsaw-tray{gap:8px}.jigsaw-slot,.jigsaw-piece{padding:10px;font-size:12px}.seesaw-controls button{font-size:11px;padding:10px}.auction-ledger{font-size:10px}}
+
+.validation-afterthought-stage{background:#d2e2eb}
+.web-demo{--web-ink:#292e2b;--web-line:#c7cec8;--web-accent:#3a6057;background:#fff;color:var(--web-ink);padding:24px;position:relative;margin:24px 0;min-width:0;text-align:left}
+.web-demo *{letter-spacing:0;box-sizing:border-box}
+.web-demo [hidden]{display:none!important}
+.web-demo button{min-height:44px;white-space:normal;overflow-wrap:anywhere;max-width:100%;font-size:12px}
+.web-demo .demo-button{background:var(--web-accent);color:#fff}
+.web-demo label{font-size:13px;display:block}
+.web-demo button:focus-visible,.web-demo input:focus-visible,.web-demo select:focus-visible,.web-demo [tabindex]:focus-visible{outline:3px solid #ad3d51;outline-offset:3px}
+.web-masthead{font:700 25px/1.2 Georgia,serif;padding:18px 0;border-bottom:3px double var(--web-ink)}
+.web-masthead small{display:block;font:10px/1.6 monospace;margin-top:8px}
+.registration-site{--web-accent:#355d78}
+.registration-field{margin:22px 0}
+.web-demo .registration-field input{width:100%;max-width:100%;padding:12px;margin:8px 0;border:1px solid #aab8c1;background:#fff;color:#25333b;font-size:16px}
+.registration-field small,.registration-field-error{display:block;font:12px/1.6 var(--body)}
+.registration-field [aria-invalid=true]{border:2px solid #ab3044!important}
+.registration-field-error{color:#a02e40}
+.registration-error{background:#fae2e5;border-left:4px solid #ab3044;padding:14px;font:13px/1.6 var(--body);margin-top:20px}
+.new-preview[class*=preview-web]{gap:16px;color:#333f37;letter-spacing:0}
+.new-preview[class*=preview-web] strong{font:600 25px/1.15 var(--heading);letter-spacing:0}
+.new-preview[class*=preview-web]>div{font:12px/1.7 monospace;border:1px solid currentColor;padding:14px;background:#ffffff70}
+.preview-web-validation>strong{color:#973747}
+@media(max-width:600px){
+  .web-demo{padding:16px 12px}
+  .web-masthead{font-size:22px}
+}

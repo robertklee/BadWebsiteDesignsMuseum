@@ -6,7 +6,6 @@ export const exhibits = [
   { id: "word-editor", name: "The Dropdown Word Processor", category: "Forms", color: "orange", tagline: "A whole document. One dropdown per character.", description: "Write, edit, and regret every letter you select from a menu.", lesson: "Typing was alarmingly efficient, so every character now gets its own tiny meeting. Minutes will be distributed one letter at a time.", fix: "The keyboard has been reinstated and is eager to put this behind it.", worseChange: "Every menu changes the moment you make a choice.", preview: `<div class="preview-word-editor"><span>UNTITLED DOCUMENT</span><div class="preview-word-toolbar">File &nbsp; Edit &nbsp; Suffer</div><strong><span>H ⌄</span><span>e ⌄</span><span>l ⌄</span><span>l ⌄</span><span>o ⌄</span></strong><div class="fake-lines"></div><small>5 letters. 5 dropdowns.</small></div>`, render: renderWordEditor },
   { id: "alphabet", name: "The Alphabet Shuffle", category: "Forms", color: "pink", tagline: "A slider with no alphabetic loyalties.", description: "Find a letter. Add it. The entire slider order changes.", lesson: "The alphabet has entered its experimental phase. Familiar order was rejected as creatively limiting.", fix: "The letters have returned to their assigned seats, and the keyboard handles introductions.", worseChange: "Even touching the slider sends the alphabet scrambling.", preview: `<div class="new-preview preview-alphabet"><span>THE ALPHABET, RECONSIDERED</span><strong>Q &nbsp; A &nbsp; Z &nbsp; ?</strong><div class="preview-track"><i></i></div><small>Same slider. New alphabet.</small></div>`, render: renderAlphabet },
   { id: "phone", name: "The Phone Number Casino", category: "Forms", color: "orange", tagline: "Your number is somewhere in these odds.", description: "Roll each digit. Lock it. Hope the next roll respects it.", lesson: "Your phone number is in there somewhere. The house remains confident that persistence is statistically similar to typing.", fix: "The reels are closed. The whole number can now be entered without placing a bet.", worseChange: "Each roll may unsettle progress you thought was safe.", preview: `<div class="new-preview preview-phone"><span>PLEASE GAMBLE YOUR NUMBER</span><div class="preview-reels"><b>5</b><b>?</b><b>3</b></div><small>Roll. Lock. Regret. ↻</small></div>`, render: renderPhone },
-  { id: "calendar", name: "The Calendar Treadmill", category: "Forms", color: "blue", tagline: "A date picker with no sense of direction.", description: "Book an appointment, one painfully small calendar step at a time.", lesson: "Every journey begins with a single day. Unfortunately, this one also continues with several thousand more.", fix: "The calendar now permits dates to be selected before everyone involved grows older.", worseChange: "Makes Forward alternate between jumping seven days ahead and moving six days back.", preview: `<div class="new-preview preview-calendar"><span>JANUARY 2000</span><strong>01</strong><small>← Yesterday &nbsp; Tomorrow? →</small><i>Appointment: January 12</i></div>`, render: renderCalendar },
   { id: "cookies", name: "The Cookie Switchboard", category: "Forms", color: "yellow", tagline: "Your preferences. Our creative interpretation.", description: "Turn one cookie off. Watch another turn on. Try to reject them all.", lesson: "The switches are a close-knit community and refuse to make decisions alone. Your preferences have been noted as a group suggestion.", fix: "Each switch has agreed to mind its own business.", worseChange: "Each switch brings friends, and the labels cannot be trusted.", preview: `<div class="new-preview preview-cookies"><span>WE RESPECT YOUR CHOICES*</span><div><b>Analytics</b><i>ON</i></div><div><b>Marketing</b><i>OFF?</i></div><small>*Not independently.</small></div>`, render: renderCookies },
   { id: "unix-birthday", name: "The Unix Birthday Picker", category: "Forms", color: "green", tagline: "Happy 631152000000 to you.", description: "Slide through milliseconds since 1970. Snap your birthday to midnight.", lesson: "Birthdays are more festive when expressed as very large integers. Candles may be counted from the Unix epoch.", fix: "The computer keeps the milliseconds to itself and shows everyone else a date.", worseChange: "The calendar has vanished. Bring your best enormous number.", preview: `<div class="new-preview preview-unix"><span>WHEN WERE YOU BORN?</span><strong>631152000000</strong><small>January 1, 1990. In computer.</small><div>YYYY? MM? NO. MILLISECONDS.</div></div>`, render: renderUnixBirthday },
   { id: "password-gym", name: "The Password Gym", category: "Forms", color: "orange", tagline: "Twenty rules. Hard mode brought a clipboard.", description: "Rules unlock as you type. Each one has fresh opinions about your password.", lesson: "Your password is almost strong enough to lift a car. It only needs a color, an apology, the moon, and several incompatible beliefs.", fix: "The password field now asks for length instead of a complete personality.", worseChange: "The rules keep coming until they stop agreeing with each other.", preview: `<div class="new-preview preview-password"><span>RULE 8 OF ALMOST FINISHED</span><strong>••••••••</strong><div>✓ Has a number<br>✕ Has not apologized</div><small>Try adding “sorry.”</small></div>`, render: renderPasswordGym },
@@ -511,37 +510,6 @@ function renderPhone({ stage, mode }) {
       say(digits.every(digit => digit !== null) && digits.join("") === target ? `Number accepted after ${rolls} rolls. No call or message will be sent.` : `That is not ${target}. Keep rolling. You are not allowed to type.`);
       if (digits.every(digit => digit !== null) && digits.join("") === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
-    paint();
-  }
-  return () => {};
-}
-
-function renderCalendar({ stage, mode }) {
-  const fixed = mode === "fixed";
-  const worse = mode === "worse";
-  const { shell, say } = createStageShell(stage);
-  shell("TRAVEL THROUGH TIME, INEFFICIENTLY", fixed ? "Choose an appointment date." : "Please advance to January 12.",
-    `Select January 12, 2000.${fixed ? " Direct date entry is allowed again." : ` We begin on January 1 with no month picker and no typing.${worse ? " Forward has its own ideas about progress." : " Only one-day steps."}`}`,
-    `${fixed ? `<form id="date-form"><label for="appointment-date">Appointment date</label><input type="date" id="appointment-date" value="2000-01-01" required><button class="demo-button">Book fictional appointment</button></form>` : `<div class="calendar-machine"><span>JANUARY? EVENTUALLY.</span><output id="calendar-date" aria-live="polite"></output><div class="new-actions"><button class="plain-button" id="date-back">← Back one day</button><button class="demo-button" id="date-forward">Forward →</button></div><p id="date-step"></p></div><button class="demo-button" id="confirm-date">Book the date shown</button>`}`);
-  const confirm = date => {
-    say(date === "2000-01-12" ? "January 12 booked in our fictional calendar. No real appointment was created." : "Wrong date. The fictional appointment must be January 12, 2000.");
-    if (date === "2000-01-12") stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
-  };
-  if (fixed) {
-    stage.querySelector("form").addEventListener("submit", event => { event.preventDefault(); confirm(stage.querySelector("#appointment-date").value); });
-  } else {
-    const date = new Date("2000-01-01T12:00:00Z");
-    let clicks = 0;
-    const paint = () => {
-      stage.querySelector("#calendar-date").textContent = date.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
-      stage.querySelector("#date-step").textContent = worse ? `Next “Forward” step: ${clicks % 2 ? "−6" : "+7"} days. Arithmetic not included.` : "There are no shortcuts. That is the design.";
-    };
-    stage.querySelector("#date-forward").addEventListener("click", () => {
-      date.setUTCDate(date.getUTCDate() + (worse ? (clicks++ % 2 ? -6 : 7) : 1));
-      paint();
-    });
-    stage.querySelector("#date-back").addEventListener("click", () => { date.setUTCDate(date.getUTCDate() - 1); paint(); });
-    stage.querySelector("#confirm-date").addEventListener("click", () => confirm(date.toISOString().slice(0, 10)));
     paint();
   }
   return () => {};

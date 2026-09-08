@@ -9,7 +9,7 @@
     "generate:share": "node scripts/generate-share-thumbnails.mjs",
     "deploy": "wrangler deploy",
     "preview": "wrangler dev",
-    "check": "node --input-type=module --check < app.js && node --input-type=module --check < exhibits/shared.js && node --input-type=module --check < exhibits/registry.js && node --input-type=module --check < exhibits/forms-and-inputs.js && node --input-type=module --check < exhibits/interaction-and-simulation.js && node --input-type=module --check < exhibits/content-and-navigation.js && node --input-type=module --check < exhibits/commerce-and-messaging.js && node --check server.js && node --check build.js && node --check worker.mjs && node --check scripts/generate-share-thumbnails.mjs"
+    "check": "node --input-type=module --check < app.js && node --input-type=module --check < exhibits/shared.js && node --input-type=module --check < exhibits/registry.js && node --input-type=module --check < exhibits/forms-and-inputs.js && node --input-type=module --check < exhibits/interaction-and-simulation.js && node --input-type=module --check < exhibits/content-and-navigation.js && node --input-type=module --check < exhibits/commerce-and-messaging.js && node --input-type=module --check < exhibits/website-behavior.js && node --check server.js && node --check build.js && node --check worker.mjs && node --check scripts/generate-share-thumbnails.mjs"
   },
   "devDependencies": {
     "playwright": "1.55.0",

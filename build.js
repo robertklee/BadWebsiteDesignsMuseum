@@ -15,6 +15,7 @@ const exhibitModules = [
   "exhibits/interaction-and-simulation.js",
   "exhibits/content-and-navigation.js",
   "exhibits/commerce-and-messaging.js",
+  "exhibits/website-behavior.js",
 ];
 
 const outputDirectory = path.join(__dirname, "dist");

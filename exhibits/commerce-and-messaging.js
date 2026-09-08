@@ -530,18 +530,23 @@ function renderCancel({ stage, mode, shuffle }) {
     fixed ? "Cancel this fictional subscription with one clear action." : `Task: cancel a subscription that never existed. Choose carefully.${worse ? " A wrong answer resets all progress, and button positions shuffle at every step." : " A wrong answer sends you back one step."}`,
     `<div class="cancellation-machine" id="cancel-maze"></div>`);
   const maze = stage.querySelector("#cancel-maze");
-  const questions = [
+  const baseQuestions = [
     { question: "Do you want to stop not cancelling?", yes: "Yes, stop not cancelling", no: "No, continue not cancelling" },
     { question: "Should we disable renewal prevention?", yes: "No, keep renewal prevention", no: "Yes, disable renewal prevention" },
     { question: "Would you decline the option to remain?", yes: "Yes, decline remaining", no: "No, do not decline remaining" },
     { question: "Do not undo your cancellation?", yes: "Correct, do not undo it", no: "Incorrect, undo the cancellation" },
+  ];
+  const hardQuestions = [
     { question: "Must we not avoid declining your refusal to reject cancellation?", yes: "Don't avoid declining the refusal to reject it", no: "Avoid not declining my unrefusal" },
     { question: "Final provisional confirmation: do not fail to prevent us from not ceasing to discontinue renewal?", yes: "Confirmed: don't fail to prevent not discontinuing it", no: "Unconfirmed: cease preventing the failure not to continue" },
+    { question: "Would you object if we didn't refuse not to disregard your request to stop staying?", yes: "Yes, I object to not refusing to disregard it", no: "No, don't not disregard my continued staying" },
+    { question: "Should the Department of Uncancellation refrain from not reversing your non-renewal reversal?", yes: "Yes, refrain from not reversing the reversal", no: "No, reverse the refusal not to unrefrain" },
   ];
+  let questions = worse ? shuffle([...baseQuestions, ...hardQuestions]) : baseQuestions;
   let step = 0;
   let mistakes = 0;
-  const visits = [];
-  const total = fixed ? 1 : worse ? 6 : 4;
+  const visits = new Map();
+  const total = fixed ? 1 : questions.length;
   const render = () => {
     if (step === total) {
       maze.innerHTML = `<div class="cancelled-stamp">CANCELLED</div><p>Fictional subscription ended. No account or billing system was involved.</p>`;
@@ -550,11 +555,11 @@ function renderCancel({ stage, mode, shuffle }) {
       return;
     }
     const question = questions[step];
-    visits[step] = (visits[step] || 0) + 1;
+    visits.set(question, (visits.get(question) || 0) + 1);
     const options = fixed ? [{ text: "Cancel my fictional subscription", correct: true }] : [
       { text: question.yes, correct: true }, { text: question.no, correct: false },
     ];
-    maze.innerHTML = `${fixed ? "" : `<span class="demo-kicker">RETENTION CHECKPOINT ${step + 1} / ${total}</span><h3>${question.question}</h3>`}<div class="cancel-options">${(worse ? shuffle(options) : options).map(option => `<button class="demo-button${!fixed && visits[step] > 1 && option.correct ? " cancel-answer-hint" : ""}" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div>`;
+    maze.innerHTML = `${fixed ? "" : `<span class="demo-kicker">RETENTION CHECKPOINT ${step + 1} / ${total}</span><h3>${question.question}</h3>`}<div class="cancel-options">${(!fixed ? shuffle(options) : options).map(option => `<button class="demo-button${!fixed && visits.get(question) > 1 && option.correct ? " cancel-answer-hint" : ""}" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div>`;
     maze.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
       if (button.dataset.cancelCorrect === "true") {
         step++;
@@ -562,6 +567,7 @@ function renderCancel({ stage, mode, shuffle }) {
       } else {
         mistakes++;
         step = worse ? 0 : Math.max(0, step - 1);
+        if (worse) questions = shuffle(questions);
         say(worse ? "We couldn't fail to interpret that as not leaving. All non-retention progress has been retained at zero." : "Wrong turn. You have successfully remained subscribed to nothing. Back one checkpoint.");
       }
       render();

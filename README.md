@@ -30,6 +30,14 @@ npm run generate:share
 
 The generator renders and validates one numberless 1200×630 PNG per exhibit. It fails if a preview is missing, text overflows, an exhibit number leaks into the artwork, or `share/` contains missing or stale exhibit images. Pass a different running origin with `npm run generate:share -- --url http://127.0.0.1:3019`.
 
+Use `npm run generate:share -- --older` to regenerate only exhibits without the **New** badge. This also verifies that the excluded images and `museum.png` remain byte-for-byte unchanged. Older previews use either responsive miniature scenes or a scaled gallery-proportioned composition so their jokes remain readable in social images.
+
+Thumbnail tone: show the absurd task and its consequence, with the joke aimed at the interface, not the visitor. Keep the exhibit recognizable, the punchline brief, and fictional money or subscriptions clearly fictional. Strong existing visual jokes do not need replacing just to make the collection uniform.
+
+### Check thumbnails
+
+With the museum running and Chromium installed, run `npm run test:thumbnails`. Set `MUSEUM_URL` to test another origin. The check covers the 18 redesigned previews at 1440, 768, 390, and 320 pixels, including internal text clipping, artwork bounds, and spacing below exhibit numbers. It also loads all 32 older share images and checks their dimensions. Gallery/share contact sheets and mobile close-ups are saved to `/tmp/museum-thumbnails` for visual review.
+
 ### Difficulty links
 
 Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for example `/exhibit/runaway?mode=hard`. Use `?mode=fixed` for Fix it; omitted, `easy`, or unrecognized modes open easy mode. Switching difficulty—including automatic progression—updates the current URL without adding browser-history entries, so copying or refreshing the address preserves the selected mode. The toolbar Reset returns to easy and removes the mode parameter. Next exhibit links still start the next exhibit in easy mode.

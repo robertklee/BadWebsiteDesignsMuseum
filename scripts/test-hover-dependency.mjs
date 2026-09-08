@@ -55,6 +55,19 @@ try {
     await touch.clock.pauseAt(await touch.evaluate(() => Date.now() + 1000));
     for (const mode of ["easy", "hard"]) {
       await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
+      await touch.evaluate(() => {
+        window.hoverCompletions = 0;
+        document.querySelector("#stage").addEventListener("exhibit-complete", () => { window.hoverCompletions++; });
+      });
+      assert.equal(await touch.locator("#hover-product").isVisible(), true, "Product is visible before playing");
+      assert.equal(await touch.locator(".hover-merch").count(), 0, "Old teaser is removed");
+      assert.match(await touch.locator("#hover-product-attempts").textContent(), /menu has other plans/);
+      await touch.locator("#hover-lamp-switch").uncheck();
+      await touch.locator("#hover-lamp-switch").check();
+      assert.equal(await touch.evaluate(() => window.hoverCompletions), 0, "Product interaction must not complete the challenge");
+      assert.equal(await touch.locator(".hover-navigation").isVisible(), true);
+      assert.equal(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      if (mode === "easy") await touch.locator(".hover-shop").screenshot({ path: `${screenshots}/initial-product-${width}.png` });
       const duration = mode === "hard" ? 420 : 650;
       await touch.locator('[data-depth="0"]').tap();
       await touch.clock.runFor(duration - 50);
@@ -72,6 +85,7 @@ try {
         await touch.clock.runFor(200);
       }
       assert.equal(await touch.locator("#hover-product").isVisible(), true, `${mode} touch must be completable`);
+      assert.equal(await touch.evaluate(() => window.hoverCompletions), 1, "Only reaching the final menu completes the challenge");
       await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
       const lastMenu = mode === "hard" ? 3 : 2;
       for (let depth = 0; depth <= lastMenu; depth++) {
@@ -84,6 +98,7 @@ try {
       assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} deeper menus must expire sooner`);
     }
     await touch.goto(`${origin}/exhibit/hover-menu?mode=fixed`);
+    assert.equal(await touch.locator("#hover-product").isVisible(), true, "Fixed mode also shows the product immediately");
     await touch.locator('[data-depth="0"]').tap();
     await touch.clock.runFor(6000);
     assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, "Fixed touch must not expire");

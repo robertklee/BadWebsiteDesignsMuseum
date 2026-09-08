@@ -21,6 +21,7 @@ const exhibitOrder = [
   "cancel",
   "recipe",
   "scroll-modal",
+  "validation-afterthought",
   "expanding-form",
   "dropdown",
   "seismic-editor",
@@ -41,7 +42,6 @@ const exhibitOrder = [
   "alphabet",
   "corporate",
   "loading",
-  "validation-afterthought",
 ];
 
 const allExhibits = [...formsExhibits, ...interactionExhibits, ...contentExhibits, ...commerceExhibits, ...websiteExhibits];

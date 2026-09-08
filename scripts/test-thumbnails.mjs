@@ -14,7 +14,7 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(museumUrl, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator(".thumb-scene").count(), 18, "All eighteen redesigned previews must render");
+    assert.equal(await page.locator(".thumb-scene").count(), 32, "All thirty-two older previews must render");
     const issues = await page.evaluate(() => {
       const failures = [];
       for (const scene of document.querySelectorAll(".thumb-scene")) {
@@ -22,6 +22,13 @@ try {
         const label = scene.closest(".card-art").querySelector(".exhibit-number").getBoundingClientRect();
         if (scene.querySelector(".thumb-kicker").getBoundingClientRect().top < label.bottom + 4) {
           failures.push(`${scene.className}: kicker crowds exhibit label`);
+        }
+        if (scene.matches(".thumb-runaway")) {
+          const caption = scene.querySelector(".thumb-chase>small").getBoundingClientRect();
+          for (const obstacle of scene.querySelectorAll(".thumb-fleeing-button,.thumb-chase-pointer")) {
+            const bounds = obstacle.getBoundingClientRect();
+            if (caption.left < bounds.right && caption.right > bounds.left && caption.top < bounds.bottom && caption.bottom > bounds.top) failures.push("Runaway caption is obscured");
+          }
         }
         for (const element of [scene, ...scene.querySelectorAll("*")]) {
           const bounds = element.getBoundingClientRect();
@@ -57,11 +64,67 @@ try {
     assert.deepEqual(issues, [], `Thumbnail fit at ${width}px`);
     await page.screenshot({ path: `${outputDirectory}/gallery-${width}.png`, fullPage: true });
     if (width === 320) {
-      for (const id of ["terms-game", "expanding-form", "corporate"]) {
+      for (const id of ["terms-game", "expanding-form", "corporate", "phone", "word-editor", "cookies", "retro", "alphabet", "ai-store", "fonts"]) {
         await page.locator(`.exhibit-card[href="/exhibit/${id}"]`).screenshot({ path: `${outputDirectory}/mobile-${id}.png` });
       }
     }
   }
+  const animatedIds = ["runaway", "phone", "cookies", "seismic-editor", "alphabet"];
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto(museumUrl, { waitUntil: "networkidle" });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  for (const trigger of ["hover", "focus"]) {
+    for (const id of animatedIds) {
+      await page.mouse.move(0, 0);
+      await page.evaluate(() => document.activeElement?.blur());
+      const card = page.locator(`.exhibit-card[href="/exhibit/${id}"]`);
+      if (trigger === "hover") await card.hover();
+      else await card.focus();
+      const result = await card.evaluate(element => {
+        const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"));
+        if (!animations.length) return { error: "No preview animation" };
+        const finite = animations.every(animation => animation.effect.getTiming().iterations === 1);
+        const sample = [];
+        for (const progress of [0, .5, 1]) {
+          for (const animation of animations) {
+            animation.pause();
+            animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
+          }
+          const art = element.querySelector(".card-art").getBoundingClientRect();
+          for (const child of element.querySelectorAll(".thumb-scene *")) {
+            const bounds = child.getBoundingClientRect();
+            if (bounds.width && bounds.height && (bounds.left < art.left - 1 || bounds.right > art.right + 1 || bounds.top < art.top - 1 || bounds.bottom > art.bottom + 1)) {
+              return { error: `Animation leaves artwork: ${child.className}` };
+            }
+          }
+          sample.push(animations.map(animation => {
+            const style = getComputedStyle(animation.effect.target, animation.effect.pseudoElement);
+            return [style.translate, style.scale, style.rotate].join(";");
+          }).join("|"));
+        }
+        return { finite, moves: sample[0] !== sample[2] };
+      });
+      assert.equal(result.error, undefined, `${id} ${trigger}: ${result.error}`);
+      assert.ok(result.finite && result.moves, `${id} ${trigger} must visibly animate once`);
+      await card.screenshot({ path: `${outputDirectory}/${trigger}-${id}.png` });
+    }
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(museumUrl, { waitUntil: "networkidle" });
+  for (const id of animatedIds) {
+    const card = page.locator(`.exhibit-card[href="/exhibit/${id}"]`);
+    await card.hover();
+    await card.focus();
+    assert.equal(await card.evaluate(element => element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-")).length), 0, `${id} must respect reduced motion`);
+  }
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  const runawayCard = page.locator('.exhibit-card[href="/exhibit/runaway"]');
+  await runawayCard.hover();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  assert.equal(await runawayCard.evaluate(element => {
+    getComputedStyle(element.querySelector(".thumb-fleeing-button")).animationName;
+    return element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-")).length;
+  }), 0, "Enabling reduced motion must stop a live replay");
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   await page.evaluate(async () => {

@@ -12,9 +12,11 @@ const urlArgument = process.argv.indexOf("--url");
 const museumUrl = urlArgument === -1 ? "http://127.0.0.1:3000" : process.argv[urlArgument + 1];
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
 const olderOnly = process.argv.includes("--older");
+const idsArgument = process.argv.indexOf("--ids");
+const requestedIds = idsArgument === -1 ? null : process.argv[idsArgument + 1]?.split(",");
 
-if (!museumUrl || (urlArgument !== -1 && museumUrl.startsWith("--"))) {
-  throw new Error("Usage: npm run generate:share -- [--url http://127.0.0.1:3000] [--older]");
+if (!museumUrl || (urlArgument !== -1 && museumUrl.startsWith("--")) || (idsArgument !== -1 && (!requestedIds || requestedIds.some(id => !/^[a-z0-9-]+$/.test(id))))) {
+  throw new Error("Usage: npm run generate:share -- [--url http://127.0.0.1:3000] [--older] [--ids runaway,phone]");
 }
 
 const shareStyles = `
@@ -111,6 +113,13 @@ async function renderShareSheet(page, id, reverse = false) {
     brand.textContent = "REALLY BAD DESIGN MUSEUM";
     document.body.append(sheet, brand);
     await document.fonts.ready;
+    if (exhibitId === "runaway") {
+      const caption = art.querySelector(".thumb-chase>small").getBoundingClientRect();
+      for (const obstacle of art.querySelectorAll(".thumb-fleeing-button,.thumb-chase-pointer")) {
+        const bounds = obstacle.getBoundingClientRect();
+        if (caption.left < bounds.right && caption.right > bounds.left && caption.top < bounds.bottom && caption.bottom > bounds.top) throw new Error("Runaway share caption is obscured");
+      }
+    }
 
     const text = document.body.innerText;
     if (/\bexhibit\s*(?:#\s*)?\d+\b/i.test(text)) throw new Error(`Ordinal leaked: ${exhibitId}`);
@@ -153,7 +162,9 @@ try {
     return exhibits.map(({ id, new: isNew }) => ({ id, isNew }));
   });
   const ids = catalog.map(({ id }) => id).sort();
-  const selectedIds = catalog.filter(({ isNew }) => !olderOnly || !isNew).map(({ id }) => id).sort();
+  if (requestedIds?.some(id => !ids.includes(id))) throw new Error("Unknown exhibit in --ids");
+  const selectedIds = catalog.filter(({ id, isNew }) => (!olderOnly || !isNew) && (!requestedIds || requestedIds.includes(id))).map(({ id }) => id).sort();
+  if (!selectedIds.length) throw new Error("No exhibits match the requested selection");
   const untouchedHashes = new Map(await Promise.all(ids.filter(id => !selectedIds.includes(id)).map(async id => [id, hash(await readFile(path.join(outputDirectory, `${id}.png`)))])));
   for (const id of selectedIds) {
     const result = await renderShareSheet(page, id);

@@ -30,13 +30,15 @@ npm run generate:share
 
 The generator renders and validates one numberless 1200×630 PNG per exhibit. It fails if a preview is missing, text overflows, an exhibit number leaks into the artwork, or `share/` contains missing or stale exhibit images. Pass a different running origin with `npm run generate:share -- --url http://127.0.0.1:3019`.
 
-Use `npm run generate:share -- --older` to regenerate only exhibits without the **New** badge. This also verifies that the excluded images and `museum.png` remain byte-for-byte unchanged. Older previews use either responsive miniature scenes or a scaled gallery-proportioned composition so their jokes remain readable in social images.
+Use `npm run generate:share -- --older` to regenerate only exhibits without the **New** badge, or `npm run generate:share -- --ids runaway,phone` for specific exhibits. Both selections verify that the excluded images and `museum.png` remain byte-for-byte unchanged. All 32 older previews use responsive compositions with larger artwork for social images.
 
 Thumbnail tone: show the absurd task and its consequence, with the joke aimed at the interface, not the visitor. Keep the exhibit recognizable, the punchline brief, and fictional money or subscriptions clearly fictional. Strong existing visual jokes do not need replacing just to make the collection uniform.
 
 ### Check thumbnails
 
-With the museum running and Chromium installed, run `npm run test:thumbnails`. Set `MUSEUM_URL` to test another origin. The check covers the 18 redesigned previews at 1440, 768, 390, and 320 pixels, including internal text clipping, artwork bounds, and spacing below exhibit numbers. It also loads all 32 older share images and checks their dimensions. Gallery/share contact sheets and mobile close-ups are saved to `/tmp/museum-thumbnails` for visual review.
+With the museum running and Chromium installed, run `npm run test:thumbnails`. Set `MUSEUM_URL` to test another origin. The check covers all 32 older previews at 1440, 768, 390, and 320 pixels, including internal text clipping, artwork bounds, spacing below exhibit numbers, and Runaway caption overlap. It also loads all 32 older share images and checks their dimensions. Gallery/share contact sheets and mobile close-ups are saved to `/tmp/museum-thumbnails` for visual review.
+
+Runaway, Phone Casino, Cookie Switchboard, Seismic Editor, and Alphabet Shuffle replay a short animation on hover or keyboard focus. Replays run once per interaction, preserve the card layout, and are disabled for reduced motion. Their static compositions carry the same joke on touch screens and in share images. The thumbnail test checks both triggers, sampled animation bounds, and reduced-motion behavior, including a live preference change.
 
 ### Difficulty links
 

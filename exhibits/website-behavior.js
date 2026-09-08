@@ -187,6 +187,14 @@ function renderHoverDependency({ stage, mode }) {
   const path = ["Shop", "Home", "Lighting", ...(worse ? ["Desk lamps"] : []), "Pivot desk lamp"];
   shell("ATELIER / OBJECTS FOR EVERYDAY", "A lamp, several menus away.", "Open the Pivot desk lamp product page.",
     `<div class="web-demo hover-shop ${worse ? "hover-hostile" : ""}"><div class="web-tools"><label><input type="checkbox" id="menu-hold" ${reduced.matches ? "checked" : ""}> Hold menu open</label><button class="plain-button" id="menu-close" aria-label="Close product menus" title="Close product menus">&#215;</button></div><nav class="hover-navigation" aria-label="Product categories">${path.map((name, index) => `<div class="hover-level" data-level="${index}" ${index ? "hidden" : ""}><button class="${index === path.length - 1 ? "demo-button" : "plain-button"}" data-depth="${index}" ${index < path.length - 1 ? `aria-expanded="false" aria-controls="hover-level-${index + 1}"` : ""}>${name}${index < path.length - 1 ? " +" : ""}</button>${index ? `<button class="plain-button" data-other="${index}">${["", "Outdoor", "Textiles", "Ceiling lights", "Studio lamp"][index]}</button>` : ""}</div>`).join("")}</nav><div class="hover-merch"><span>THE EVERYDAY COLLECTION</span><div class="web-lamp" role="img" aria-label="Pivot desk lamp"><i></i><b></b></div><h3>Light. Within reach, allegedly.</h3></div><section id="hover-product" tabindex="-1" hidden><h3>Pivot desk lamp</h3><p>Adjustable arm. Warm light. $48. No purchase required.</p></section></div>`);
+  const product = stage.querySelector("#hover-product");
+  product.setAttribute("aria-label", "Pivot desk lamp product details");
+  product.innerHTML = `<header class="hover-product-header"><span>ATELIER / YOU MADE IT</span><span>OBJECT NO. 048</span></header><div class="hover-product-layout"><figure class="hover-product-photo"><div class="web-lamp" role="img" aria-label="Forest-green Pivot desk lamp, switched on"><i></i><b></b></div><figcaption>SMALL LAMP. LONG JOURNEY.</figcaption></figure><div class="hover-product-copy"><span class="hover-product-stock">IN STOCK. UNLIKE YOUR PATIENCE.</span><h3>Pivot desk lamp</h3><p class="hover-product-tagline">Finally. Something on this website that stays put.</p><div class="hover-product-price"><strong>$48</strong><span>Emotional handling fee: waived.</span></div><dl class="hover-product-specs"><div><dt>Finish</dt><dd>Forest green</dd></div><div><dt>Arm</dt><dd>Adjustable. Unlike the menu.</dd></div><div><dt>Light</dt><dd>Warm. Unlike this welcome.</dd></div></dl><label class="hover-product-switch"><input type="checkbox" id="hover-lamp-switch" checked> Lamp on</label><p class="hover-product-disclaimer">Not for sale. You've paid enough in effort.</p></div></div><footer class="hover-product-footer"><blockquote>&ldquo;The lamp is lovely. I aged three years finding it.&rdquo;<cite>A fictional verified survivor</cite></blockquote><div class="hover-product-receipt"><span>YOUR JOURNEY</span><strong id="hover-product-attempts"></strong><small>One very ordinary lamp.</small></div></footer>`;
+  product.querySelector("#hover-lamp-switch").addEventListener("change", event => {
+    const lit = event.target.checked;
+    product.classList.toggle("hover-lamp-off", !lit);
+    product.querySelector('[role="img"]').setAttribute("aria-label", `Forest-green Pivot desk lamp, switched ${lit ? "on" : "off"}`);
+  });
   const levels = [...stage.querySelectorAll("[data-level]")];
   levels.forEach((level, index) => {
     level.id = `hover-level-${index}`;
@@ -237,8 +245,13 @@ function renderHoverDependency({ stage, mode }) {
       complete = true;
       clear();
       stage.querySelector(".hover-merch").hidden = true;
-      stage.querySelector("#hover-product").hidden = false;
-      stage.querySelector("#hover-product").focus();
+      navigation.hidden = true;
+      stage.querySelector(".hover-shop > .web-tools").hidden = true;
+      product.querySelector("#hover-product-attempts").textContent = failedTries ? `${failedTries} menu ${failedTries === 1 ? "meltdown" : "meltdowns"}.` : "Zero menu meltdowns. Suspicious.";
+      product.hidden = false;
+      product.style.scrollMarginTop = `${(document.querySelector(".exhibit-toolbar")?.getBoundingClientRect().height || 0) + 16}px`;
+      product.focus({ preventScroll: true });
+      product.scrollIntoView({ block: "start", behavior: "instant" });
       say("Pivot desk lamp found. No purchase made.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       return;

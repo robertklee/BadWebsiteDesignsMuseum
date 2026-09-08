@@ -106,6 +106,16 @@ try {
     await touch.locator("#stage").screenshot({ path: `${screenshots}/hard-${width}.png` });
     await touch.locator('[data-depth="4"]').tap();
     assert.equal(await touch.locator("#hover-product").isVisible(), true);
+    assert.equal(await touch.locator(".hover-navigation").isVisible(), false);
+    assert.equal(await touch.locator("#hover-product-attempts").textContent(), "2 menu meltdowns.");
+    assert.equal(await touch.locator("#hover-product").evaluate(element => element.contains(document.activeElement)), true);
+    assert.equal(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Product page fits at ${width}`);
+    assert.equal(await touch.locator("#hover-product").evaluate(element => element.getBoundingClientRect().top >= document.querySelector(".exhibit-toolbar").getBoundingClientRect().bottom), true, "Product starts below the sticky toolbar");
+    await touch.screenshot({ path: `${screenshots}/product-${width}.png` });
+    await touch.locator("#hover-lamp-switch").uncheck();
+    assert.equal(await touch.locator("#hover-product .web-lamp b").evaluate(element => getComputedStyle(element).opacity), "0");
+    await touch.locator("#hover-lamp-switch").check();
+    assert.equal(await touch.locator("#hover-product .web-lamp b").evaluate(element => getComputedStyle(element).opacity), "0.3");
     await touch.emulateMedia({ reducedMotion: "reduce" });
     await touch.goto(`${origin}/exhibit/hover-menu?mode=hard`);
     assert.equal(await touch.locator("#menu-hold").isChecked(), true);

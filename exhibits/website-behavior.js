@@ -1,9 +1,182 @@
 import { createStageShell } from "./shared.js";
 
 export const exhibits = [
+  { id: "layout-earthquake", name: "The Layout Earthquake", category: "Content", color: "green", tagline: "The link was right there a second ago.", description: "Read the news while oversized ads push the story and its bookmark out of reach.", lesson: "Nobody reserved space for the content. Unfortunately, your click already had a reservation.", fix: "The ads have their own space. Your story stays where you left it.", worseChange: "The library story is further down, the ads are harder to shake, and even the columns won't sit still.", preview: `<div class="new-preview preview-earthquake-paper"><span class="earthquake-preview-masthead">THE DAILY DISPLACEMENT</span><strong>Just one quick article.</strong><img src="/assets/library.jpg" alt="" width="1200" height="800"><div class="earthquake-preview-ad"><span>BREAKING: SPONSORED CONTENT</span><b>THIS AD HAS<br>RIGHT OF WAY.</b><small>Your article can take the stairs.</small></div><span class="earthquake-preview-link">Read arti&hellip; <i aria-hidden="true">&#8595;</i></span><span class="earthquake-preview-pointer" aria-hidden="true">&#8598;</span><small class="earthquake-preview-punchline">You clicked here.<br>The article didn't.</small></div>`, render: renderLayoutEarthquake },
   { id: "validation-afterthought", name: "The Validation Afterthought", category: "Forms", color: "blue", tagline: "Four fields. One error. Start over.", description: "Hidden registration rules arrive one rejection at a time, taking the rest with them.", lesson: "The form knew the requirements all along. Apparently that information was on a need-to-fail basis.", fix: "Requirements are visible, errors belong to their fields, and your other answers stay put.", worseChange: "Useful guidance has been replaced by one cryptic complaint.", preview: `<div class="new-preview preview-validation-rejection"><span class="validation-preview-kicker">APPLICATION / NOT EVEN CLOSE</span><strong class="validation-preview-verdict">INVALID.</strong><div class="validation-preview-question"><b>Which field?</b><span>That's a secret.</span></div><div class="validation-preview-answers"><span>NAME <s>Alex Example</s></span><span>EMAIL <s>alex@example.test</s></span><b>ANSWERS DELETED</b></div><small class="validation-preview-footer">Start over. Guess better.</small></div>`, render: renderValidationAfterthought },
   { id: "scroll-modal", name: "The Scroll-Through Modal", category: "Interaction", color: "lilac", tagline: "You're scrolling. Just not the dialog.", description: "Save one day for $5,000. Free delivery? Keep scrolling. Wrong window.", lesson: "Two scroll containers entered. The one you couldn't use got every gesture.", fix: "The active dialog owns its scrolling, and the background stays still.", worseChange: "Shipping speed requires a third dialog, opened from the bottom of the second. Each gesture randomly scrolls one, two, or all three layers, sometimes in opposite directions.", preview: `<div class="new-preview preview-scroll-checkout"><div class="scroll-preview-back"><span>YOUR ORDER</span><span>Delivery: still deciding</span></div><div class="scroll-preview-front"><span class="scroll-preview-title">DELIVERY OPTIONS <b aria-hidden="true">&times;</b></span><span class="scroll-preview-offer">SAVE ONE DAY.</span><strong>$5,000</strong><small>One day. Five grand.</small><span class="scroll-preview-free">Free? Further down.</span><i class="scroll-preview-rail" aria-hidden="true"></i></div><span class="scroll-preview-punchline">YOU SCROLLED THE WRONG WINDOW.</span></div>`, render: renderScrollModal },
 ];
+
+function renderLayoutEarthquake({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const { shell, say } = createStageShell(stage);
+  shell("THE DAILY DISPLACEMENT", "News that won't stay put.", "Find the article 'The public library opens late' and bookmark it.",
+    `<div class="web-demo earthquake-paper"><div class="web-tools news-tools"><button class="demo-button" id="edition-open">Load live edition</button><button class="plain-button" id="edition-pause" disabled>Pause loading</button><button class="plain-button" id="edition-step" hidden>Load next section</button><output id="edition-state">Edition ready</output></div><div class="web-viewport news-viewport" tabindex="0" aria-label="Newspaper"><header class="news-masthead"><div class="news-edition"><span>INDEPENDENT SINCE THIS MORNING</span><span>VOL. 01 / CITY EDITION</span></div><h3>The Daily Displacement</h3><div class="news-sections"><span>LOCAL</span><span>CULTURE</span><span>TRANSPORT</span><span class="news-live">LIVE EDITION</span></div></header><div id="news-feed"><div class="news-insert" data-slot="0"></div><div class="news-front"><article class="news-lead"><span class="news-category">NEIGHBORHOOD / THE BIG READ</span><h3>The public library opens late</h3><p>More time for the next chapter. The reading room is keeping its lights on until nine.</p><figure class="news-photo"><img src="/assets/library.jpg" alt="Rows of books and reading tables inside a public library" width="1200" height="800"><figcaption>A longer evening between the shelves. / City desk</figcaption></figure><div class="news-insert" data-slot="1"></div><div class="news-byline"><span>By the City Desk / 3 min read</span><button class="demo-button" data-article="library">Read library article</button></div></article><aside class="news-briefs" aria-label="More headlines"><span class="news-column-label">ELSEWHERE TODAY</span><article><span class="news-category">TRANSPORT</span><h3>A new timetable. Eventually.</h3><p>The last bus is running late. So is the announcement.</p><button class="plain-button" data-article="transport">Read transport report</button></article><article><span class="news-category">CULTURE</span><h3>A museum of questionable decisions</h3><p>Critics describe the new collection as deeply inconvenient.</p><button class="plain-button" data-article="museum">Read museum article</button></article><div class="news-insert" data-slot="2"></div></aside></div><footer class="news-footer">ALL THE NEWS THAT FITS. PLUS THE ADS THAT DON'T.</footer></div><section id="news-story" tabindex="-1" hidden></section></div></div>`);
+  const feed = stage.querySelector("#news-feed");
+  const story = stage.querySelector("#news-story");
+  const pause = stage.querySelector("#edition-pause");
+  const step = stage.querySelector("#edition-step");
+  const state = stage.querySelector("#edition-state");
+  const viewport = stage.querySelector(".news-viewport");
+  if (!fixed) {
+    const front = stage.querySelector(".news-front");
+    const briefs = stage.querySelector(".news-briefs");
+    front.classList.add("news-buried-library");
+    front.insertBefore(briefs, front.firstElementChild);
+    if (worse) {
+      front.classList.add("news-deep-library");
+      briefs.insertAdjacentHTML("beforeend", `<article><span class="news-category">CITY LIFE</span><h3>The queue for the new cafe now has its own postcode.</h3><p>Residents are advised to bring a book. And possibly a second book.</p><button class="plain-button" data-article="cafe">Read cafe report</button></article><article><span class="news-category">WEATHER</span><h3>Tomorrow's forecast delayed by today's weather.</h3><p>The outlook remains uncertain, but the statement is confidently formatted.</p><button class="plain-button" data-article="weather">Read weather report</button></article>`);
+    }
+  }
+  if (worse) {
+    feed.insertAdjacentHTML("afterbegin", '<div class="news-insert news-extra" data-slot="3"></div>');
+    stage.querySelector(".news-lead .news-photo").insertAdjacentHTML("beforebegin", '<div class="news-insert news-extra" data-slot="4"></div>');
+    stage.querySelector(".news-byline").insertAdjacentHTML("beforebegin", '<div class="news-insert news-extra" data-slot="5"></div>');
+  }
+  const slots = [...stage.querySelectorAll("[data-slot]")];
+  const heights = worse ? [[300, 0, 0, 140, 0, 0], [300, 340, 0, 0, 240, 0], [0, 340, 240, 160, 0, 220], [360, 0, 240, 0, 280, 0], [0, 380, 0, 140, 0, 260], [320, 0, 260, 0, 240, 0], [0, 340, 260, 180, 0, 220], [360, 340, 0, 0, 280, 0], [0, 0, 260, 160, 0, 260], [300, 320, 240, 0, 240, 0]] : fixed ? [[160, 0, 0], [160, 180, 0], [220, 180, 0], [220, 180, 160], [240, 220, 160], [240, 220, 180]] : [[160, 0, 0], [160, 180, 0], [0, 180, 160], [220, 0, 160], [0, 220, 0], [240, 0, 180]];
+  const reserved = [240, 220, 180];
+  const dismissed = new Set();
+  let timer;
+  let started = false;
+  let paused = false;
+  let updates = 0;
+  let complete = false;
+  let intercepted = 0;
+  const interceptionLimit = fixed ? 0 : worse ? 4 : 2;
+  const stop = () => { clearInterval(timer); timer = undefined; };
+  const paintInsert = (slot, index, height) => {
+    const hidden = dismissed.has(index);
+    slot.style.height = `${fixed ? reserved[index] : hidden ? 0 : height}px`;
+    slot.classList.toggle("news-insert-reserved", fixed && (!height || hidden));
+    if (!height || hidden) { slot.innerHTML = fixed ? '<span class="news-reserved-label">ADVERTISEMENT</span>' : ""; return; }
+    if (index >= 3) {
+      const [label, title, description] = [
+        ["BREAKING / CITY DESK", "An update before your update.", "The city has issued another statement about an upcoming statement."],
+        ["THE DAILY EMAIL", "Make room in your inbox.", "Every headline. Every morning. Every available inch of this page."],
+        ["READ THIS NEXT", "Three more stories. Right here.", "Your next read has arrived before you finished this one."],
+      ][index - 3];
+      slot.innerHTML = `<div class="news-ad-copy"><span>${label}</span><strong>${title}</strong><p>${description}</p></div><button class="plain-button news-dismiss" type="button" data-dismiss="${index}" aria-label="Dismiss ${label}" title="Dismiss placement">&#215;</button>`;
+      return;
+    }
+    slot.innerHTML = index === 2
+      ? `<img src="/share/museum.png" alt="Really Bad Design Museum" width="1200" height="630">`
+      : `<div class="news-ad-copy"><span>PAID PLACEMENT / ${index ? "RECOMMENDED FOR YOU" : "A WORD FROM OUR SPONSOR"}</span><strong>${index ? "Before you read on.<br>A word about premium." : "Your attention.<br>Now available to rent."}</strong><p>${index ? "The story can wait. This offer apparently cannot." : "An announcement with an unusually large footprint."}</p></div><button class="plain-button news-dismiss" type="button" data-dismiss="${index}" aria-label="Dismiss ${index ? "recommendation" : "sponsor"}" title="Dismiss advertisement">&#215;</button>`;
+  };
+  const paint = () => {
+    const sizes = updates ? heights[(updates - 1) % heights.length] : [0, 0, 0, 0, 0, 0];
+    viewport.classList.toggle("news-squeezed", worse && updates > 0 && updates % 3 !== 0);
+    slots.forEach(slot => {
+      const index = Number(slot.dataset.slot);
+      paintInsert(slot, index, sizes[index]);
+    });
+    story.querySelectorAll("[data-story-slot]").forEach(slot => {
+      const index = Number(slot.dataset.storySlot);
+      paintInsert(slot, index, sizes[index]);
+    });
+  };
+  const advance = () => {
+    if (!started || paused || complete || (fixed && updates >= heights.length)) return;
+    if (worse) dismissed.clear();
+    updates++;
+    paint();
+    state.textContent = fixed ? updates === heights.length ? "All sections loaded" : `Loading section ${updates} / ${heights.length}` : `Live update ${updates}`;
+    if (fixed && updates === heights.length) { stop(); pause.disabled = true; step.disabled = true; }
+  };
+  const schedule = () => {
+    stop();
+    step.hidden = !reduced.matches || !started;
+    step.disabled = paused || complete || (fixed && updates >= heights.length);
+    if (started && !paused && !complete && !reduced.matches && (!fixed || updates < heights.length)) timer = setInterval(() => {
+      if (!document.hidden) advance();
+    }, worse ? 1100 : 1800);
+  };
+  const start = () => {
+    if (started || complete) return;
+    started = true;
+    stage.querySelector("#edition-open").disabled = true;
+    pause.disabled = false;
+    state.textContent = "Loading images and recommendations";
+    schedule();
+  };
+  stage.querySelector("#edition-open").addEventListener("click", start);
+  const startEvents = ["pointerenter", "pointerdown", "focusin", "keydown", "wheel", "scroll"];
+  startEvents.forEach(type => viewport.addEventListener(type, start, { passive: true }));
+  stage.querySelector(".news-viewport").addEventListener("click", event => {
+    const dismiss = event.target.closest("[data-dismiss]");
+    if (!dismiss) return;
+    dismissed.add(Number(dismiss.dataset.dismiss));
+    const focusTarget = story.hidden ? stage.querySelector('[data-article="library"]') : story.querySelector("#news-bookmark");
+    paint();
+    focusTarget.focus({ preventScroll: true });
+    say(worse && !complete ? "Ad closed. Don't get too comfortable." : "Ad closed. Back to the news.");
+  });
+  pause.addEventListener("click", () => {
+    paused = !paused;
+    pause.textContent = paused ? "Resume loading" : "Pause loading";
+    pause.setAttribute("aria-pressed", String(paused));
+    schedule();
+  });
+  step.addEventListener("click", advance);
+  stage.querySelectorAll("[data-article]").forEach(button => button.addEventListener("click", () => {
+    start();
+    if (button.dataset.article === "library" && intercepted < interceptionLimit) {
+      intercepted++;
+      const intrusion = document.createElement("section");
+      intrusion.className = `news-click-intrusion${worse ? " news-click-intrusion-large" : ""}`;
+      intrusion.tabIndex = -1;
+      intrusion.setAttribute("aria-label", "Advertisement before the article");
+      const messages = ["You clicked. We monetized.", "One more thing before your one thing.", "This space was your article.", "Your patience is valuable ad inventory."];
+      intrusion.innerHTML = `<span>A WORD FROM OUR SPONSOR</span><h3>${messages[intercepted - 1]}</h3><p>${worse ? "Our sponsor asked for more room. We gave them yours." : "The article was here a moment ago. This announcement needed the spot."}</p><button type="button" class="plain-button news-click-dismiss">Close ad</button>`;
+      const scrollTop = viewport.scrollTop;
+      button.before(intrusion);
+      viewport.scrollTop = scrollTop;
+      intrusion.focus({ preventScroll: true });
+      intrusion.querySelector("button").addEventListener("click", () => {
+        intrusion.remove();
+        button.focus({ preventScroll: true });
+      });
+      say(intercepted === interceptionLimit ? "That was the last ad. Your story is just below it." : "You asked for the story. Our sponsor answered first.");
+      return;
+    }
+    feed.hidden = true;
+    story.hidden = false;
+    const library = button.dataset.article === "library";
+    story.innerHTML = `<button class="plain-button" id="news-back">Back to headlines</button><div class="news-insert" data-story-slot="0"></div><div class="news-story-copy"><span class="news-category">${library ? "NEIGHBORHOOD" : "CITY DESK"} / TODAY</span><h3>${library ? "The public library opens late" : button.dataset.article === "museum" ? "A museum of questionable decisions" : "A new timetable. Eventually."}</h3><p class="news-standfirst">${library ? "An extra chapter for the city: the reading room will stay open until 9 pm from Monday." : "An interesting development, but not the library story you came to bookmark."}</p><span class="news-story-byline">THE CITY DESK / 3 MIN READ</span>${library ? `<figure class="news-photo"><img src="/assets/library.jpg" alt="Library shelves and reading tables" width="1200" height="800"><figcaption>More room in the day for a good book.</figcaption></figure><p>Evening visitors will have access to the reading room and lending desk. The new hours give commuters a chance to stop by after work, without racing the closing announcement.</p><p>The change follows requests from residents for a quiet place to read in the evening. Entry remains free, and no appointment is needed.</p>` : `<p>The full report is available in today's edition. The library opening-hours announcement is under Neighborhood.</p>`}<div class="news-insert" data-story-slot="1"></div><div class="news-story-end"><span>KEEP THIS STORY FOR LATER</span><button class="demo-button" id="news-bookmark">Bookmark article</button></div></div>`;
+    if (!library) {
+      story.querySelector(".news-story-copy>h3").textContent = button.closest("article").querySelector("h3").textContent;
+    }
+    if (worse) {
+      story.querySelector(".news-story-copy").insertAdjacentHTML("afterbegin", '<div class="news-insert news-extra" data-story-slot="3"></div>');
+      story.querySelector(".news-story-byline").insertAdjacentHTML("afterend", '<div class="news-insert news-extra" data-story-slot="4"></div>');
+      story.querySelector(".news-story-end").insertAdjacentHTML("beforebegin", '<div class="news-insert news-extra" data-story-slot="5"></div>');
+    }
+    paint();
+    viewport.scrollTop = 0;
+    story.focus();
+    story.querySelector("#news-back").addEventListener("click", () => { story.hidden = true; feed.hidden = false; button.focus(); });
+    story.querySelector("#news-bookmark").addEventListener("click", event => {
+      if (!library) { say("Not the library story. Have another look at the headlines."); return; }
+      if (complete) return;
+      complete = true;
+      stop();
+      pause.disabled = true;
+      step.disabled = true;
+      state.textContent = "Edition settled";
+      event.currentTarget.disabled = true;
+      say("You found the library story. Even the ads have gone quiet.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    });
+  }));
+  paint();
+  reduced.addEventListener("change", schedule);
+  return () => {
+    stop();
+    reduced.removeEventListener("change", schedule);
+    startEvents.forEach(type => viewport.removeEventListener(type, start));
+  };
+}
 
 function renderValidationAfterthought({ stage, mode }) {
   const fixed = mode === "fixed";

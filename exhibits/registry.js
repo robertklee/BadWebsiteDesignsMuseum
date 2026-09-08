@@ -12,6 +12,7 @@ const exhibitOrder = [
   "runaway",
   "password-gym",
   "correcting-search",
+  "layout-earthquake",
   "scroll-modal",
   "validation-afterthought",
   "notification-swatter",

@@ -175,6 +175,123 @@
 .web-demo button:focus-visible,.web-demo input:focus-visible,.web-demo select:focus-visible,.web-demo [tabindex]:focus-visible{outline:3px solid #ad3d51;outline-offset:3px}
 .web-masthead{font:700 25px/1.2 Georgia,serif;padding:18px 0;border-bottom:3px double var(--web-ink)}
 .web-masthead small{display:block;font:10px/1.6 monospace;margin-top:8px}
+.layout-earthquake-stage{background:#d5e4d4}
+.web-demo h3{font:600 22px/1.25 var(--heading);margin:12px 0}
+.web-demo p{font:14px/1.7 var(--body);margin:12px 0}
+.web-demo .plain-button{border-color:var(--web-line);color:var(--web-ink);background:#fff}
+.web-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.web-tools output{font:11px/1.6 monospace;min-width:130px}
+.web-viewport{height:470px;overflow:auto;overscroll-behavior:contain;overflow-anchor:none;border:1px solid var(--web-line);background:#fff}
+.layout-earthquake-stage>.new-demo{max-width:1120px;padding:36px 28px}
+.layout-earthquake-stage .demo-status{min-height:64px}
+.earthquake-paper{padding:0;--web-accent:#234f49;--web-line:#c8ceca;background:#fafbf9}
+.news-tools{padding:14px 18px;margin:0;border-bottom:1px solid var(--web-line);background:#e7efeb;min-height:76px}
+.news-tools output{margin-left:auto;font-size:10px}
+.news-tools #edition-step[hidden]{display:block!important;visibility:hidden}
+.news-tools button{min-height:48px}
+.news-viewport{padding:0 24px;background:#fafbf9;height:640px;scroll-behavior:auto;position:relative}
+.news-masthead{padding-top:18px}
+.news-edition{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font:8px/1.5 monospace;color:#53635c;border-top:1px solid #31463c;padding:9px 0}
+.earthquake-paper .news-masthead h3{font:700 42px/1.05 Georgia,serif;text-align:center;margin:14px 0 20px;color:#203b32}
+.news-sections{display:flex;gap:24px;border-top:3px double #31463c;border-bottom:1px solid #31463c;padding:11px 0;font:700 10px/1.4 var(--heading)}
+.news-live{margin-left:auto;color:#a13641}
+.news-front{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:26px;padding:22px 0}
+.news-front article{min-width:0}
+.news-buried-library>.news-briefs{grid-column:1/-1;min-height:660px;border-left:0;padding-left:0;display:flex;flex-direction:column;justify-content:space-between}
+.news-buried-library>.news-lead{grid-column:1/-1}
+.news-deep-library>.news-briefs{min-height:1100px}
+.news-click-intrusion{box-sizing:border-box;width:100%;min-height:210px;padding:24px;background:#ad3548;color:#fff7e9;border:4px solid #752737;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.news-click-intrusion-large{min-height:340px;background:#e9ca65;color:#392e1c;border-color:#aa8230}
+.news-click-intrusion>span{font:9px/1.5 monospace}
+.earthquake-paper .news-click-intrusion h3{font:700 26px/1.15 var(--heading);margin:0}
+.earthquake-paper .news-click-intrusion p{font:13px/1.6 var(--body);margin:0}
+.news-click-intrusion button{align-self:flex-start}
+.news-squeezed .news-front{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.news-squeezed .news-story-copy{max-width:460px;padding-inline:18px;border-inline:1px solid var(--web-line)}
+.news-extra[data-slot="3"],.news-extra[data-story-slot="3"]{background:#ab3549;color:#fff}
+.news-extra[data-slot="4"],.news-extra[data-story-slot="4"]{background:#d8e8f1;color:#243f51}
+.news-extra[data-slot="5"],.news-extra[data-story-slot="5"]{background:#eedbaa;color:#493d27}
+.news-extra .news-ad-copy{padding:32px 12px 10px}
+.news-extra strong{font-size:22px;margin:10px 0}
+.news-extra[data-slot="3"] strong,.news-extra[data-story-slot="3"] strong{font-size:19px;margin:8px 0}
+.news-extra[data-slot="3"] p,.news-extra[data-story-slot="3"] p{display:none}
+.news-category,.news-column-label{font:700 9px/1.6 var(--heading);color:#426455;display:block}
+.earthquake-paper .news-lead>h3{font:700 34px/1.08 Georgia,serif;margin:12px 0}
+.earthquake-paper .news-lead>p{font:16px/1.55 Georgia,serif;color:#54645b;margin:12px 0 18px}
+.news-photo{margin:18px 0}
+.news-photo img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;display:block;filter:saturate(.65)}
+.news-photo figcaption{font:10px/1.5 var(--body);color:#5a6960;padding-top:7px}
+.news-byline{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:16px 0;border-top:1px solid var(--web-line)}
+.news-byline>span,.news-story-byline{font:9px/1.5 monospace;color:#506559}
+.news-briefs{min-width:0;border-left:1px solid var(--web-line);padding-left:22px}
+.news-column-label{padding-bottom:12px;border-bottom:3px solid #344e40}
+.news-briefs article{padding:20px 0;border-bottom:1px solid var(--web-line)}
+.earthquake-paper .news-briefs h3{font:700 21px/1.2 Georgia,serif}
+.earthquake-paper .news-briefs p{font:13px/1.6 var(--body);color:#54645b}
+.news-footer{border-top:3px double #31463c;padding:20px 0;font:9px/1.6 monospace;color:#526258}
+.news-insert{position:relative;height:0;min-width:0;overflow:hidden;background:repeating-linear-gradient(135deg,#ffffff0b 0 1px,transparent 1px 9px),#224d45;color:#fff;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.news-insert[data-slot="1"],.news-insert[data-story-slot="1"]{background:#f0d676;color:#303628}
+.news-ad-copy{padding:36px 18px 16px}
+.news-insert span{font:8px/1.5 monospace}
+.news-insert strong{display:block;font:700 27px/1.05 var(--heading);margin:14px 0}
+.earthquake-paper .news-insert p{font:12px/1.5 var(--body);margin:8px 0}
+.earthquake-paper .news-dismiss{position:absolute;right:6px;top:6px;width:28px;min-height:28px;height:28px;padding:0;font:20px/1 monospace;border:0;background:#ffffffd9;color:#243b32}
+.news-insert-reserved{background:#edf0ec!important;color:#647568!important;justify-content:flex-start;padding-top:10px}
+.news-insert img{width:100%;height:100%;object-fit:contain;display:block}
+#news-story{padding:20px 0;outline-offset:-3px}
+#news-story>#news-back{margin-bottom:20px}
+.news-story-copy{max-width:650px;margin:24px auto}
+.earthquake-paper .news-story-copy>h3{font:700 36px/1.1 Georgia,serif;margin:12px 0}
+.earthquake-paper .news-story-copy>p{font:17px/1.75 Georgia,serif;margin:22px 0}
+.earthquake-paper .news-story-copy>.news-standfirst{font-size:20px;line-height:1.5;color:#53675a}
+.news-story-end{border-top:3px double #31463c;padding:24px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-top:24px}
+.news-story-end>span{font:9px/1.5 monospace}
+.new-preview.preview-earthquake-paper{background:#fafbf9;color:#243f32;padding:10px 12px;gap:5px;border:1px solid #7f9686;overflow:hidden;justify-content:flex-start;text-align:left;inset:38px 18px 12px}
+.preview-earthquake-paper .earthquake-preview-masthead{font:700 8px/1.4 Georgia,serif;border-bottom:3px double #324b3c;padding-bottom:5px;letter-spacing:0}
+.new-preview.preview-earthquake-paper>strong{font:700 20px/1.1 Georgia,serif;letter-spacing:0;text-align:left}
+.preview-earthquake-paper>img{display:block;width:100%;height:48px;object-fit:cover}
+.earthquake-preview-ad{position:absolute;inset:30% 8px 27%;background:#b43243;color:#fff8e8;padding:8px 10px;transform:rotate(-4deg);box-shadow:0 5px 0 #47202a35;display:flex;flex-direction:column;justify-content:center;text-align:center;z-index:2}
+.earthquake-preview-ad>span{font:7px/1.3 monospace;letter-spacing:0;margin-bottom:5px}
+.earthquake-preview-ad b{font:800 24px/.98 var(--heading);letter-spacing:0}
+.earthquake-preview-ad small{font:9px/1.4 var(--body);margin-top:6px}
+.preview-earthquake-paper .earthquake-preview-link{position:absolute;bottom:20%;left:16px;font:700 11px/1.2 var(--body);letter-spacing:0;text-decoration:underline;transform:rotate(5deg)}
+.earthquake-preview-link i{font:22px/1 monospace;display:inline-block;margin-left:8px;text-decoration:none}
+.preview-earthquake-paper .earthquake-preview-pointer{position:absolute;bottom:20%;right:24px;font:700 36px/1 Georgia,serif;letter-spacing:0;color:#20231f;text-shadow:2px 2px #fff}
+.preview-earthquake-paper .earthquake-preview-punchline{position:absolute;bottom:8px;left:12px;right:12px;font:700 12px/1.1 var(--heading);letter-spacing:0;border-top:1px solid #81958a;padding-top:6px;color:#293e31}
+.share-sheet .preview-earthquake-paper{inset:44px 24px 20px;padding:18px;gap:12px}
+.share-sheet .earthquake-preview-masthead{font-size:13px;padding-bottom:10px}
+.share-sheet .preview-earthquake-paper>strong{font-size:32px}
+.share-sheet .preview-earthquake-paper>img{height:130px}
+.share-sheet .earthquake-preview-ad{inset:29% 10px 29%;padding:18px}
+.share-sheet .earthquake-preview-ad>span{font-size:11px;margin-bottom:12px}
+.share-sheet .earthquake-preview-ad b{font-size:48px}
+.share-sheet .earthquake-preview-ad small{font-size:16px;margin-top:12px}
+.share-sheet .earthquake-preview-link{font-size:19px;bottom:22%;left:24px}
+.share-sheet .earthquake-preview-pointer{font-size:58px;bottom:20%;right:46px}
+.share-sheet .earthquake-preview-punchline{font-size:24px;bottom:16px;left:18px;right:18px;padding-top:12px}
+.card-art:has(.preview-earthquake-paper){container-type:size}
+@container (max-height:245px){
+  .earthquake-preview-ad{top:36%;padding:8px}
+  .earthquake-preview-ad>span,.earthquake-preview-ad>small{display:none}
+  .earthquake-preview-ad b{font-size:22px}
+}
+@media(max-width:700px){
+  .layout-earthquake-stage>.new-demo{padding:26px 14px}
+  .web-demo.earthquake-paper{padding:0}
+  .earthquake-paper .news-viewport{padding:0 14px;height:580px}
+  .earthquake-paper .news-masthead h3{font-size:30px}
+  .news-front{grid-template-columns:1fr;gap:22px}
+  .news-squeezed .news-front{grid-template-columns:1fr;padding-inline:14px}
+  .news-squeezed .news-story-copy{padding-inline:14px}
+  .news-briefs{border-left:0;border-top:1px solid var(--web-line);padding:18px 0 0}
+  .news-sections{gap:12px;font-size:8px;flex-wrap:wrap}
+  .earthquake-paper .news-lead>h3,.earthquake-paper .news-story-copy>h3{font-size:28px}
+  .news-tools{padding:12px;gap:8px}
+  .news-tools button{flex:1 1 110px;padding:10px 8px}
+  .news-tools output{margin-left:0;flex-basis:100%}
+  .news-insert strong{font-size:23px}
+  .news-ad-copy{padding:32px 12px 10px}
+}
 .registration-site{--web-accent:#355d78}
 .registration-field{margin:22px 0}
 .web-demo .registration-field input{width:100%;max-width:100%;padding:12px;margin:8px 0;border:1px solid #aab8c1;background:#fff;color:#25333b;font-size:16px}

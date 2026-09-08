@@ -68,6 +68,7 @@ async function readExhibits() {
 async function main() {
   fs.rmSync(outputDirectory, { recursive: true, force: true });
   fs.mkdirSync(outputDirectory);
+  fs.cpSync(path.join(__dirname, "assets"), path.join(outputDirectory, "assets"), { recursive: true });
 
   for (const file of publicFiles) {
     fs.copyFileSync(path.join(__dirname, file), path.join(outputDirectory, file));

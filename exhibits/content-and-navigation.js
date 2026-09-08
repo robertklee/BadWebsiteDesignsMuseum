@@ -376,7 +376,7 @@ function renderRetro({ stage, mode, shuffle }) {
       if (event.isComposing) return;
       const reversed = [...nickname.value].reverse().join("");
       nickname.value = worse ? reversed.replace(/[aeiou]/gi, vowel => ({ a: "4", e: "3", i: "1", o: "0", u: "8" })[vowel.toLowerCase()]) : reversed;
-      say("Your nickname was reversed for backwards compatibility. No, that is not how compatibility works.");
+      say("Your nickname was reversed. Backwards compatibility has been interpreted very literally.");
     });
     guestForm.append(captcha);
   }

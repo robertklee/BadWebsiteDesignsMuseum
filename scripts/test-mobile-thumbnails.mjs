@@ -123,7 +123,7 @@ try {
   assert.equal(await activeCount(), 0, "The row stops after each card has played once");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
-  for (const id of ["correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store"]) {
+  for (const id of ["correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store", "dropdown", "cat-captcha", "mystery-menu", "recipe", "layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal", "unix-birthday"]) {
     await position(id);
     await advance(220);
     assert.equal(await page.locator(`.thumb-scroll-active[href="/exhibit/${id}"]`).count(), 1, `${id} must activate on mobile scroll`);
@@ -169,6 +169,15 @@ try {
   await advance(250);
   assert.equal(await hybrid.locator("#exhibit-grid").getAttribute("data-thumb-input"), "mouse", "Trackpad or wheel input restores cursor mode");
   assert.equal(await hybrid.locator(".thumb-scroll-active").count(), 0, "Wheel scrolling must not start touch playback");
+  for (const id of ["layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal"]) {
+    const card = hybrid.locator(`.exhibit-card[href="/exhibit/${id}"]`);
+    await card.hover();
+    assert.ok(await card.evaluate(element => element.getAnimations({ subtree: true }).some(animation => animation.animationName?.startsWith("thumb-"))), `${id} responds to cursor hover`);
+    await hybrid.evaluate(() => document.dispatchEvent(new PointerEvent("pointerdown", { pointerType: "touch" })));
+    assert.equal(await card.evaluate(element => element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-")).length), 0, `${id} suppresses stale hover after touch input`);
+    await hybrid.evaluate(() => document.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch" })));
+    await hybrid.mouse.move(1, 1);
+  }
 
   await page.setViewportSize({ width: 768, height: 900 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });

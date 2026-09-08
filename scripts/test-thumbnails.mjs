@@ -69,10 +69,11 @@ try {
       }
     }
   }
-  const animatedIds = ["runaway", "phone", "cookies", "seismic-editor", "alphabet", "wind-volume", "volume-seesaw", "password-crane", "physics-cart", "notification-swatter", "loading", "checkbox-ecosystem", "shrinking-unsubscribe", "tetris-volume", "correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store"];
+  const animatedIds = ["runaway", "phone", "cookies", "seismic-editor", "alphabet", "wind-volume", "volume-seesaw", "password-crane", "physics-cart", "notification-swatter", "loading", "checkbox-ecosystem", "shrinking-unsubscribe", "tetris-volume", "correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store", "dropdown", "cat-captcha", "mystery-menu", "recipe"];
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  animatedIds.push("layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal", "unix-birthday");
   for (const { width, trigger } of [1440, 768, 320].flatMap(width => ["hover", "focus"].map(trigger => ({ width, trigger })))) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(museumUrl, { waitUntil: "networkidle" });
@@ -92,7 +93,10 @@ try {
           "elevator-date": [".thumb-lift-display", "↓ 1994", "↓ 1993"],
           "email-auction": [".thumb-auction-lot>div>b", "8 coins", "10 coins"],
           "retro": [".thumb-retro-input>b", "Alex|", "Alex|"],
+          "unix-birthday": [".thumb-timestamp>b", "Jan 1, 1990", "Jan 1, 1990"],
         }[element.getAttribute("href").split("/").pop()];
+        const stillSelectors = [".scroll-preview-front", ".scroll-preview-back", ".earthquake-preview-pointer", ".thumb-birthday-calendar"];
+        const stillBounds = stillSelectors.map(selector => element.querySelector(selector)?.getBoundingClientRect().toJSON());
         const sample = [];
         for (const progress of [0, .25, .5, .6, .75, 1]) {
           for (const animation of animations) {
@@ -100,7 +104,22 @@ try {
             animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
           }
           const art = element.querySelector(".card-art").getBoundingClientRect();
-          for (const child of element.querySelectorAll(".thumb-scene *")) {
+          for (const [index, selector] of stillSelectors.entries()) {
+            const bounds = element.querySelector(selector)?.getBoundingClientRect().toJSON();
+            if (JSON.stringify(bounds) !== JSON.stringify(stillBounds[index])) return { error: `${selector} must remain stationary` };
+          }
+          if (progress === 0 || progress === 1) {
+            const revealSelectors = [".thumb-radio-readout>strong", ".thumb-radio-message", ".thumb-timestamp>b"];
+            for (const selector of revealSelectors) {
+              const target = element.querySelector(selector);
+              if (target && getComputedStyle(target, "::before").opacity !== (progress === 0 ? "1" : "0")) return { error: `${selector} must reveal its final text` };
+            }
+            for (const selector of [".thumb-recipe-gate", ".validation-preview-verdict", ".validation-preview-answers>b", ".hover-preview-verdict", ".earthquake-preview-ad"]) {
+              const target = element.querySelector(selector);
+              if (target && getComputedStyle(target).opacity !== String(progress)) return { error: `${selector} must arrive after the setup` };
+            }
+          }
+          for (const child of element.querySelectorAll(".thumb-scene *, .new-preview *")) {
             const bounds = child.getBoundingClientRect();
             if (bounds.width && bounds.height && (bounds.left < art.left - 1 || bounds.right > art.right + 1 || bounds.top < art.top - 1 || bounds.bottom > art.bottom + 1)) {
               return { error: `Animation leaves artwork: ${child.className}` };
@@ -114,7 +133,7 @@ try {
           }
           sample.push(animations.map(animation => {
             const style = getComputedStyle(animation.effect.target, animation.effect.pseudoElement);
-            return [style.translate, style.scale, style.rotate, style.width, style.opacity, style.clipPath, style.content, style.fontFamily, style.color, style.backgroundColor, style.transform].join(";");
+            return [style.translate, style.scale, style.rotate, style.width, style.opacity, style.clipPath, style.content, style.fontFamily, style.color, style.backgroundColor, style.transform, style.textDecorationColor].join(";");
           }).join("|"));
         }
         return { finite, moves: sample.some(state => state !== sample[0]) };

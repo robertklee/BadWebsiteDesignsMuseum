@@ -355,7 +355,7 @@
 .delivery-body fieldset label{padding:14px 0}
 .web-demo #delivery-scroll{writing-mode:vertical-lr;direction:ltr;width:20px;height:305px;flex-shrink:0;margin:24px 6px;accent-color:#496856;padding:0}
 .new-preview.preview-scroll-checkout{inset:34px 18px 8px;display:block;max-width:360px;margin:auto;text-align:left;letter-spacing:0}
-.scroll-preview-back{position:absolute;inset:0 25px 36px 0;padding:9px 12px;background:#edf2e9;border:1px solid #526558;box-shadow:3px 3px 0 #52655830;font:9px/1.6 monospace}
+.scroll-preview-back{position:absolute;inset:0 25px 36px 0;padding:9px 12px;background:#edf2e9;border:1px solid #526558;box-shadow:3px 3px 0 #52655830;font:9px/1.6 monospace;overflow:hidden}
 .scroll-preview-back span{display:block}
 .scroll-preview-front{position:absolute;inset:25px 0 23px 18px;padding:6px 23px 6px 12px;border:1px solid #35483b;border-radius:4px;background:#fffdf7;box-shadow:4px 4px 0 #35483b35;overflow:hidden;display:flex;flex-direction:column;justify-content:center;color:#253c30}
 .scroll-preview-title{display:flex;justify-content:space-between;gap:8px;padding-bottom:4px;border-bottom:1px solid #d7ddd6;font:9px/1.2 monospace}
@@ -470,4 +470,24 @@
 .share-sheet .hover-preview-course>.hover-preview-fall{font-size:18px}
 .share-sheet .hover-preview-verdict>b{font-size:34px}
 .share-sheet .hover-preview-verdict>span{font-size:23px}
+@keyframes thumb-ad-expands{0%,20%{scale:1 .05;opacity:0}50%,100%{scale:1;opacity:1}}
+@keyframes thumb-article-displaced{0%,20%{translate:2em -1em}55%,100%{translate:0 0}}
+@keyframes thumb-bridge-miss{0%{right:calc(100% - 50px);translate:0 0}45%{right:32px;translate:0 0}65%{right:32px;translate:0 .3em}100%{right:32px;translate:0 0}}
+@keyframes thumb-menu-closes{0%,48%{opacity:1}60%,85%{opacity:0}100%{opacity:.55}}
+@keyframes thumb-failure-revealed{0%,55%{opacity:0}70%,100%{opacity:1}}
+@keyframes thumb-rejection-arrives{0%,20%{opacity:0}35%,100%{opacity:1}}
+@keyframes thumb-answers-struck{0%,40%{text-decoration-color:transparent}55%,100%{text-decoration-color:#b02f3c}}
+@keyframes thumb-wrong-window{0%,15%{translate:0 0}40%,55%{translate:0 -.8em}80%,100%{translate:0 -1.6em}}
+@media(prefers-reduced-motion:no-preference){
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .earthquake-preview-ad{transform-origin:top center;animation:thumb-ad-expands 1.4s ease-out both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .earthquake-preview-link{animation:thumb-article-displaced 1.4s ease-out both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .hover-preview-cursor{animation:thumb-bridge-miss 1.5s ease-in-out both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .hover-preview-destination{animation:thumb-menu-closes 1.5s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) :is(.hover-preview-verdict,.hover-preview-fall){animation:thumb-failure-revealed 1.5s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .validation-preview-verdict{animation:thumb-rejection-arrives 1.4s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) :is(.validation-preview-question,.validation-preview-footer){animation:thumb-failure-revealed 1.4s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .validation-preview-answers s{animation:thumb-answers-struck 1.4s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .validation-preview-answers>b{animation:thumb-failure-revealed 1.7s linear both}
+  .exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .scroll-preview-back>span{animation:thumb-wrong-window 1.5s ease-in-out both}
+}
 @media(max-width:600px){.hover-shop{min-height:650px}}

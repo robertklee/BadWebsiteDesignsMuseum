@@ -25,22 +25,6 @@ const shareStyles = `
     gap:64px; padding:65px 54px; align-items:center;
   }
   .share-sheet .card-art { width:540px; height:500px; border-radius:8px; }
-  .share-sheet .preview-scroll-checkout { inset:62px 30px 25px; max-width:none; }
-  .share-sheet .scroll-preview-back { font-size:13px; padding:12px 16px; }
-  .share-sheet .scroll-preview-front { inset:38px 0 35px 24px; padding:20px 32px 20px 20px; }
-  .share-sheet .scroll-preview-title { font-size:14px; padding-bottom:12px; }
-  .share-sheet .scroll-preview-offer { font-size:24px; margin-top:22px; }
-  .share-sheet .scroll-preview-front strong { font-size:88px; }
-  .share-sheet .scroll-preview-front small { font-size:18px; margin-top:12px; }
-  .share-sheet .scroll-preview-free { font-size:16px; margin-top:24px; padding-top:12px; }
-  .share-sheet .scroll-preview-punchline { font-size:14px; }
-  .share-sheet .preview-validation-rejection { inset:65px 35px 35px; max-width:none; gap:18px; }
-  .share-sheet .validation-preview-kicker { font-size:13px; padding-bottom:12px; }
-  .share-sheet .validation-preview-verdict { font-size:80px; }
-  .share-sheet .validation-preview-question { font-size:21px; }
-  .share-sheet .validation-preview-answers { font-size:16px; padding:18px 0; gap:12px; }
-  .share-sheet .validation-preview-answers>b { top:30px; font-size:20px; padding:8px 10px; border-width:3px; }
-  .share-sheet .validation-preview-footer { font-size:20px; }
   .share-sheet .art-label {
     position:absolute; top:23px; left:25px; font:11px monospace;
     letter-spacing:1.3px; color:#23231f; z-index:2;

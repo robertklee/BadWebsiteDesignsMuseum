@@ -4,7 +4,6 @@ import { createStageShell, createDemoStatus } from "./shared.js";
 export const exhibits = [
   { id: "recipe", name: "The Recipe Odyssey", category: "Content", color: "green", tagline: "Two ingredients. Six compulsory quizzes.", description: "Prove you read the memoir before you're allowed to make toast.", lesson: "Toast should never be attempted without a full understanding of the author's childhood summers. The bread can wait.", fix: "The ingredients have been moved above the memoir. Breakfast may now proceed.", worseChange: "The memoir has a long memory, especially when you get an answer wrong.", preview: `<div class="preview-recipe"><span class="recipe-blog">a pinch of patience</span><strong>It all began<br>with my grandmother...</strong><div class="fake-lines"></div><div class="fake-lines short"></div><span class="recipe-distance">↓ Recipe: 6 quizzes away</span></div>`, render: renderRecipe },
   { id: "terms-game", name: "Terms & Conditions: The Game", category: "Content", color: "lilac", tagline: "You clicked “I read it.” Defend your thesis.", description: "An absurdly long agreement. Buried facts. A compulsory reading exam.", lesson: "By continuing, you confirm that you remember Clause 47 and its emotional arc. The oral defense has been postponed.", fix: "The agreement has become a short summary with two buttons and no final exam.", worseChange: "The fine print has expanded, and the exam is no longer feeling generous.", preview: `<div class="new-preview preview-terms"><span>JUST A FEW QUICK TERMS</span><strong>§ 74.2(b)</strong><div class="fake-lines"></div><div class="fake-lines"></div><small>There will be an exam.</small></div>`, render: renderTermsGame },
-  { id: "horizontal", name: "The Horizontal Lifestyle", category: "Navigation", color: "yellow", tagline: "Your next section is somewhere to the right.", description: "A sideways website with vertical navigation and directionally confused arrows.", lesson: "The page has rejected the traditional concept of down. Your mouse wheel is invited to broaden its horizons.", fix: "Down once again means down. Navigation historians are calling it a classic.", worseChange: "Reverses the arrow buttons and the direction of vertical mouse-wheel scrolling.", preview: `<div class="new-preview preview-horizontal"><span>SCROLL DOWN TO GO RIGHT</span><div><b>01</b><b>02</b><b>03</b><i>→</i></div><small>This page took a wrong turn.</small></div>`, render: renderHorizontal },
   { id: "mystery-menu", name: "The Mystery Meat Menu", category: "Navigation", color: "blue", tagline: "Six icons. Zero useful clues.", description: "Find a shipping policy and a receipt behind meaningless symbols.", lesson: "Labels would spoil the surprise. Each icon is a tiny adventure with paperwork hidden at the end.", fix: "The icons now have names. Their mysterious era was brief but influential.", worseChange: "The icons refuse to stay loyal to any destination.", preview: `<div class="new-preview preview-mystery"><span>YOU KNOW WHAT THESE MEAN. RIGHT?</span><div>⌘ &nbsp; ◇ &nbsp; ✳<br>◌ &nbsp; ⧉ &nbsp; ⌁</div><small>Tooltip: “The other thing.”</small></div>`, render: renderMysteryMenu },
   { id: "retro", name: "The Retro Personal Homepage", category: "Nostalgia", color: "yellow", tagline: "The guestbook requires a typing license.", description: "A backwards keyboard and a very suspicious cat CAPTCHA.", lesson: "The early web had room for stars, counters, guestbooks, and at least one unexplained planet. It also had opinions about your vowels.", fix: "The personality survived. The guestbook has stopped fighting visitors.", worseChange: "The keyboard and cat inspection have both become less cooperative.", preview: `<div class="preview-retro"><span class="retro-stars">✦ &nbsp; ☆ &nbsp; ✧ &nbsp; ☆ &nbsp; ✦</span><strong>WELCOME TO<br>MY HOMEPAGE!</strong><span class="retro-globe">◎</span><span class="construction">🚧 UNDER CONSTRUCTION 🚧</span><span class="visitor">YOU ARE VISITOR 000042</span></div>`, render: renderRetro },
 ];
@@ -236,64 +235,6 @@ function renderTermsGame({ stage, mode, shuffle }) {
       renderQuestion();
     });
   }
-  return () => {};
-}
-
-function renderHorizontal({ stage, mode, shuffle }) {
-  const fixed = mode === "fixed";
-  const worse = mode === "worse";
-  const { shell, say } = createStageShell(stage);
-  const sections = ["Welcome", "Our work", "Our process", "Contact"];
-  shell("A WEBSITE THAT TOOK A WRONG TURN", fixed ? "Down is down again." : "Live life sideways.",
-    fixed ? "A normal page flows vertically. Navigate to Contact and request a fictional quote." : `Find Contact at the far end of the sideways website. Use the section buttons, arrows, a trackpad, or swipe.${worse ? " The arrow buttons and vertical mouse wheel run backwards." : " Scrolling down inside the panels moves you right."} At the ends, ordinary page scrolling still works.`,
-    `<div class="sideways-site"><nav class="sideways-nav" aria-label="Exhibit sections">${(worse ? shuffle(sections.map((name, index) => ({ name, index }))) : sections.map((name, index) => ({ name, index }))).map(item => `<button class="plain-button" data-side-panel="${item.index}">${item.name}</button>`).join("")}</nav><div class="sideways-track" id="sideways-track" tabindex="0" role="region" aria-label="${fixed ? "Website sections" : "Horizontally scrolling website; use left and right arrow keys"}"><section class="sideways-panel"><span>01 / WELCOME</span><h3>We're not like<br>other websites.</h3><p>Other websites put the next section below this one. We saw an opportunity to disagree.</p><strong class="sideways-big-arrow" aria-hidden="true">${fixed ? "↓" : "→"}</strong></section><section class="sideways-panel"><span>02 / OUR WORK</span><h3>We moved<br>the goalposts.</h3><p>Then the page. Then the contact form. Our portfolio includes websites that could have been one normal page.</p><div class="sideways-project">SELECTED WORK<br><strong>A very long rectangle.</strong></div></section><section class="sideways-panel"><span>03 / OUR PROCESS</span><h3>Think outside<br>the viewport.</h3><p>Discover. Disorient. Deliver the next section somewhere unexpected.</p><p>The contact form is ${fixed ? "below" : "one more panel to the right"}.</p></section><section class="sideways-panel"><span>04 / CONTACT</span><h3>You found us.</h3><form id="sideways-form"><label for="sideways-project">What would you like us to make?</label><select id="sideways-project" required><option value="">Choose a fictional project</option><option value="normal">A normal website, please</option><option value="sideways">An even wider website</option></select><button class="demo-button">Request demo quote</button><p id="sideways-result" role="status"></p></form></section></div></div>${fixed ? "" : `<div class="sideways-controls"><button class="plain-button" id="sideways-back">← Previous</button><span id="sideways-position">Panel 1 / 4</span><button class="plain-button" id="sideways-next">Next →</button></div>`}`);
-  const track = stage.querySelector("#sideways-track");
-  const panels = [...track.querySelectorAll(".sideways-panel")];
-  const motion = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-  const navigate = index => {
-    if (fixed) panels[index].scrollIntoView({ block: "start", behavior: motion() });
-    else track.scrollTo({ left: panels[index].offsetLeft - panels[0].offsetLeft, behavior: motion() });
-  };
-  stage.querySelectorAll("[data-side-panel]").forEach(button => button.addEventListener("click", () => {
-    const index = Number(button.dataset.sidePanel);
-    navigate(index);
-    panels[index].setAttribute("tabindex", "-1");
-    panels[index].focus({ preventScroll: true });
-  }));
-  if (!fixed) {
-    const index = () => Math.max(0, Math.min(3, Math.round(track.scrollLeft / track.clientWidth)));
-    const update = () => {
-      const current = index();
-      stage.querySelector("#sideways-position").textContent = `Panel ${current + 1} / 4`;
-      stage.querySelector("#sideways-back").disabled = worse ? current === 3 : current === 0;
-      stage.querySelector("#sideways-next").disabled = worse ? current === 0 : current === 3;
-    };
-    stage.querySelector("#sideways-back").addEventListener("click", () => navigate(Math.max(0, Math.min(3, index() + (worse ? 1 : -1)))));
-    stage.querySelector("#sideways-next").addEventListener("click", () => navigate(Math.max(0, Math.min(3, index() + (worse ? -1 : 1)))));
-    track.addEventListener("scroll", update);
-    track.addEventListener("wheel", event => {
-      if (event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
-      const scale = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? track.clientWidth : 1;
-      const delta = event.deltaY * scale * (worse ? -1 : 1);
-      const canMove = delta > 0 ? track.scrollLeft < track.scrollWidth - track.clientWidth - 1 : track.scrollLeft > 1;
-      if (canMove) {
-        event.preventDefault();
-        track.scrollLeft += delta;
-      }
-    }, { passive: false });
-    track.addEventListener("keydown", event => {
-      if (event.target !== track || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-      event.preventDefault();
-      navigate(Math.max(0, Math.min(3, index() + (event.key === "ArrowRight" ? 1 : -1))));
-    });
-    update();
-  }
-  stage.querySelector("#sideways-form").addEventListener("submit", event => {
-    event.preventDefault();
-    stage.querySelector("#sideways-result").textContent = "Demo quote requested. No message was sent. We recommend the normal website.";
-    say("You reached the contact form. A considerable journey for one dropdown.");
-    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
-  });
   return () => {};
 }
 

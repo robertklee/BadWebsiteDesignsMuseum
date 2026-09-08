@@ -403,9 +403,42 @@
 
 .hover-menu-stage{background:#e9cbd6}
 .hover-shop{min-height:580px;background:linear-gradient(110deg,#f9edef,#fff 65%);--web-accent:#94485d}
-.hover-navigation{position:relative;z-index:2;max-width:360px}
+.hover-navigation{position:absolute;z-index:2;width:calc(100% - 48px);max-width:360px}
+.hover-shop-header{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 16px;border-bottom:1px solid #b9c9bd;padding-bottom:18px;margin-bottom:16px;color:#264735}
+.hover-shop-header strong{font:600 30px/1 Georgia,serif}
+.hover-shop-header span{font:9px/1.5 monospace}
+.hover-shop-header span:last-child{margin-left:auto;color:#755269}
+.hover-catalog{padding-top:92px}
+.hover-catalog-heading>span{font:9px/1.5 monospace;color:#755269}
+.web-demo .hover-catalog-heading h3{font:500 28px/1.15 Georgia,serif;color:#264735;margin:12px 0}
+.web-demo .hover-catalog-heading p{font-size:12px;color:#617069}
+.hover-arrivals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 18px;margin:24px 0}
+.hover-arrivals article{min-width:0}
+.web-demo .hover-arrival{display:block;border:0;background:none;padding:0;text-align:left;width:100%;color:#264735;cursor:pointer}
+.hover-object-scene{display:grid;place-items:center;height:160px;background:#e0ebe2;overflow:hidden;margin-bottom:12px}
+.hover-arrivals article:nth-child(2) .hover-object-scene{background:#f1dfe5}
+.hover-arrivals article:nth-child(3) .hover-object-scene{background:#e2e9ed}
+.hover-arrivals article:nth-child(4) .hover-object-scene{background:#f0edce}
+.hover-object{position:relative;display:block}
+.hover-object-mug{width:66px;height:70px;border-radius:3px 3px 23px 23px;background:#628975;box-shadow:inset 0 7px #355d4c}
+.hover-object-mug:after{content:"";position:absolute;left:60px;top:12px;width:26px;height:36px;border:7px solid #628975;border-radius:50%}
+.hover-object-vase{width:64px;height:95px;background:#a35470;clip-path:polygon(34% 0,66% 0,66% 30%,100% 60%,88% 100%,12% 100%,0 60%,34% 30%)}
+.hover-object-clock{width:94px;height:94px;border-radius:50%;border:7px solid #466477;background:#fffdf4}
+.hover-object-clock:before{content:"";position:absolute;width:3px;height:27px;background:#466477;left:38px;top:14px}
+.hover-object-clock:after{content:"";position:absolute;width:23px;height:3px;background:#a35470;left:38px;top:38px;transform:rotate(25deg);transform-origin:left}
+.hover-object-throw{width:96px;height:84px;background:repeating-linear-gradient(90deg,#658d83 0 13px,#f8f6df 13px 17px);transform:rotate(-8deg);border-bottom:6px dashed #658d83;box-shadow:5px 6px 0 #26473518}
+.hover-arrival-department{display:block;font:9px/1.5 monospace;color:#755269;margin-bottom:6px}
+.hover-arrival-name{display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px;font:600 15px/1.4 var(--heading)}
+.hover-arrival-name b{font:400 13px/1.5 var(--body)}
+.web-demo .hover-arrivals article>p{font:12px/1.5 var(--body);border-top:1px solid #b9c9bd;padding-top:12px}
+.hover-catalog-footer{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;padding:18px 0 0;border-top:1px solid #b9c9bd;font:10px/1.5 monospace;color:#755269}
+@media(max-width:600px){.hover-navigation{width:calc(100% - 24px)}.hover-shop-header span:last-child{margin-left:0}.hover-object-scene{height:130px}.hover-object{transform:scale(.78)}.hover-object-mug{margin-left:-14px}.hover-object-throw{transform:scale(.78) rotate(-8deg)}.hover-arrivals{gap:20px 12px}.hover-arrival-name{display:block}.hover-arrival-name b{display:block;margin-top:4px}.web-demo .hover-catalog-heading h3{font-size:24px}}
 .hover-level{position:relative;display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid #d6bdc5;padding:12px;margin-top:56px}
 .hover-level:first-child{margin-top:0}
+.hover-shop .hover-filter-button{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:48px;padding:12px 18px;background:#264735;color:#fff;border:2px solid #264735;font:700 16px/1.3 var(--heading);cursor:pointer;box-shadow:0 3px 0 #152b20}
+.hover-shop .hover-filter-button:hover,.hover-shop .hover-filter-button[aria-expanded=true]{background:#3c6251;border-color:#3c6251}
+.hover-filter-button>span{font-size:20px;line-height:1}
+.hover-filter-button[aria-expanded=true]>span{transform:rotate(180deg)}
 .hover-hostile .hover-level:not(:first-child){margin-top:64px}
 .hover-bridge{position:absolute;left:-1px;right:-1px;top:-57px;height:56px;pointer-events:none}
 .hover-bridge>span{position:absolute;left:calc(50% - 3px);top:0;width:6px;height:100%;background:#94485d;pointer-events:auto}

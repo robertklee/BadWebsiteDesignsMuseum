@@ -14,6 +14,9 @@ try {
   for (const mode of ["bad", "hard"]) {
     await page.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
     assert.equal(await page.locator("#menu-hold").isVisible(), false, "Help starts hidden");
+    assert.equal(await page.getByRole("button", { name: "Filter", exact: true }).isVisible(), true);
+    assert.equal(await page.locator('[data-depth="0"]').getAttribute("aria-expanded"), "false");
+    await page.locator(".hover-navigation").evaluate(element => element.scrollIntoView({ block: "center" }));
     await page.locator('[data-depth="0"]').hover();
     const bridge = page.locator('[data-level="1"] .hover-bridge');
     assert.equal(await bridge.locator("span").count(), mode === "hard" ? 5 : 1);
@@ -59,22 +62,34 @@ try {
         window.hoverCompletions = 0;
         document.querySelector("#stage").addEventListener("exhibit-complete", () => { window.hoverCompletions++; });
       });
-      assert.equal(await touch.locator("#hover-product").isVisible(), true, "Product is visible before playing");
+      assert.equal(await touch.locator("#hover-product").isVisible(), false, "The lamp is a destination, not the storefront");
       assert.equal(await touch.locator(".hover-merch").count(), 0, "Old teaser is removed");
-      assert.match(await touch.locator("#hover-product-attempts").textContent(), /menu has other plans/);
-      await touch.locator("#hover-lamp-switch").uncheck();
-      await touch.locator("#hover-lamp-switch").check();
-      assert.equal(await touch.evaluate(() => window.hoverCompletions), 0, "Product interaction must not complete the challenge");
+      assert.equal(await touch.locator(".hover-catalog").isVisible(), true);
+      assert.equal(await touch.locator("[data-arrival]").count(), 4);
+      await touch.locator('[data-arrival="0"]').tap();
+      assert.equal(await touch.locator("#hover-arrival-0").isVisible(), true);
+      await touch.locator('[data-arrival="0"]').tap();
+      assert.equal(await touch.locator("#hover-arrival-0").isVisible(), false);
+      assert.equal(await touch.evaluate(() => window.hoverCompletions), 0, "Browsing arrivals must not complete the challenge");
       assert.equal(await touch.locator(".hover-navigation").isVisible(), true);
       assert.equal(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-      if (mode === "easy") await touch.locator(".hover-shop").screenshot({ path: `${screenshots}/initial-product-${width}.png` });
+      if (mode === "easy") {
+        await touch.locator(".hover-shop").evaluate(element => {
+          element.style.scrollMarginTop = `${document.querySelector(".exhibit-toolbar").getBoundingClientRect().height + 16}px`;
+          element.scrollIntoView({ block: "start" });
+        });
+        await touch.screenshot({ path: `${screenshots}/initial-product-${width}.png` });
+      }
       const duration = mode === "hard" ? 420 : 650;
       await touch.locator('[data-depth="0"]').tap();
+      const catalogTop = await touch.locator(".hover-catalog").evaluate(element => element.getBoundingClientRect().top + scrollY);
+      assert.equal(await touch.getByRole("button", { name: "Filter", exact: true }).getAttribute("aria-expanded"), "true");
       await touch.clock.runFor(duration - 50);
       assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, `${mode} touch deadline must allow time to advance`);
       await touch.locator('[data-depth="1"]').dispatchEvent("pointerdown", { pointerType: "touch" });
       await touch.clock.runFor(60);
       assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} touch must expire, even with a finger held down`);
+      assert.equal(await touch.locator(".hover-catalog").evaluate(element => element.getBoundingClientRect().top + scrollY), catalogTop, "Dropdown must overlay the catalog without shifting it");
       assert.equal(await touch.locator("#menu-hold").isVisible(), false, "One touch failure must not reveal help");
       await touch.locator('[data-depth="0"]').tap();
       await touch.locator('[data-other="1"]').tap();
@@ -98,7 +113,7 @@ try {
       assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} deeper menus must expire sooner`);
     }
     await touch.goto(`${origin}/exhibit/hover-menu?mode=fixed`);
-    assert.equal(await touch.locator("#hover-product").isVisible(), true, "Fixed mode also shows the product immediately");
+    assert.equal(await touch.locator(".hover-catalog").isVisible(), true, "Fixed mode begins at the same catalog");
     await touch.locator('[data-depth="0"]').tap();
     await touch.clock.runFor(6000);
     assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, "Fixed touch must not expire");
@@ -122,6 +137,7 @@ try {
     await touch.locator('[data-depth="4"]').tap();
     assert.equal(await touch.locator("#hover-product").isVisible(), true);
     assert.equal(await touch.locator(".hover-navigation").isVisible(), false);
+    assert.equal(await touch.locator(".hover-catalog").isVisible(), false);
     assert.equal(await touch.locator("#hover-product-attempts").textContent(), "2 menu meltdowns.");
     assert.equal(await touch.locator("#hover-product").evaluate(element => element.contains(document.activeElement)), true);
     assert.equal(await touch.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Product page fits at ${width}`);

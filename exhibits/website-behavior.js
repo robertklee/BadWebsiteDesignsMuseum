@@ -184,16 +184,36 @@ function renderHoverDependency({ stage, mode }) {
   const worse = mode === "worse";
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
   const { shell, say } = createStageShell(stage);
-  const path = ["Shop", "Home", "Lighting", ...(worse ? ["Desk lamps"] : []), "Pivot desk lamp"];
-  shell("ATELIER / OBJECTS FOR EVERYDAY", "A lamp, several menus away.", "Find the Pivot desk lamp through the Shop menu.",
+  const path = ["Filter", "Home", "Lighting", ...(worse ? ["Desk lamps"] : []), "Pivot desk lamp"];
+  shell("ATELIER / OBJECTS FOR EVERYDAY", "A lamp, several menus away.", "Find the Pivot desk lamp and check whether its arm is adjustable.",
     `<div class="web-demo hover-shop ${worse ? "hover-hostile" : ""}"><div class="web-tools"><label><input type="checkbox" id="menu-hold" ${reduced.matches ? "checked" : ""}> Hold menu open</label><button class="plain-button" id="menu-close" aria-label="Close product menus" title="Close product menus">&#215;</button></div><nav class="hover-navigation" aria-label="Product categories">${path.map((name, index) => `<div class="hover-level" data-level="${index}" ${index ? "hidden" : ""}><button class="${index === path.length - 1 ? "demo-button" : "plain-button"}" data-depth="${index}" ${index < path.length - 1 ? `aria-expanded="false" aria-controls="hover-level-${index + 1}"` : ""}>${name}${index < path.length - 1 ? " +" : ""}</button>${index ? `<button class="plain-button" data-other="${index}">${["", "Outdoor", "Textiles", "Ceiling lights", "Studio lamp"][index]}</button>` : ""}</div>`).join("")}</nav><div class="hover-merch"><span>THE EVERYDAY COLLECTION</span><div class="web-lamp" role="img" aria-label="Pivot desk lamp"><i></i><b></b></div><h3>Light. Within reach, allegedly.</h3></div><section id="hover-product" tabindex="-1" hidden><h3>Pivot desk lamp</h3><p>Adjustable arm. Warm light. $48. No purchase required.</p></section></div>`);
+  const filterButton = stage.querySelector('[data-depth="0"]');
+  filterButton.classList.add("hover-filter-button");
+  filterButton.innerHTML = `Filter <span aria-hidden="true">&#9662;</span>`;
   const product = stage.querySelector("#hover-product");
   product.setAttribute("aria-label", "Pivot desk lamp product details");
   product.innerHTML = `<header class="hover-product-header"><span>ATELIER / YOU MADE IT</span><span>OBJECT NO. 048</span></header><div class="hover-product-layout"><figure class="hover-product-photo"><div class="web-lamp" role="img" aria-label="Forest-green Pivot desk lamp, switched on"><i></i><b></b></div><figcaption>SMALL LAMP. LONG JOURNEY.</figcaption></figure><div class="hover-product-copy"><span class="hover-product-stock">IN STOCK. UNLIKE YOUR PATIENCE.</span><h3>Pivot desk lamp</h3><p class="hover-product-tagline">Finally. Something on this website that stays put.</p><div class="hover-product-price"><strong>$48</strong><span>Emotional handling fee: waived.</span></div><dl class="hover-product-specs"><div><dt>Finish</dt><dd>Forest green</dd></div><div><dt>Arm</dt><dd>Adjustable. Unlike the menu.</dd></div><div><dt>Light</dt><dd>Warm. Unlike this welcome.</dd></div></dl><label class="hover-product-switch"><input type="checkbox" id="hover-lamp-switch" checked> Lamp on</label><p class="hover-product-disclaimer">Not for sale. You've paid enough in effort.</p></div></div><footer class="hover-product-footer"><blockquote>&ldquo;The lamp is lovely. I aged three years finding it.&rdquo;<cite>A fictional verified survivor</cite></blockquote><div class="hover-product-receipt"><span>YOUR JOURNEY</span><strong id="hover-product-attempts"></strong><small>One very ordinary lamp.</small></div></footer>`;
-  stage.querySelector(".hover-merch").remove();
-  product.hidden = false;
-  product.querySelector(".hover-product-header span").textContent = "ATELIER / THE EVERYDAY COLLECTION";
-  product.querySelector("#hover-product-attempts").textContent = "The lamp is here. The menu has other plans.";
+  const catalog = stage.querySelector(".hover-merch");
+  catalog.className = "hover-catalog";
+  const arrivals = [
+    { name: "Loop mug", price: 18, shape: "mug", department: "Kitchen", detail: "Holds coffee. Cannot hold this website accountable." },
+    { name: "Stem vase", price: 32, shape: "vase", department: "Decor", detail: "A quiet statement. Unlike the words you said at the menu." },
+    { name: "Pause clock", price: 40, shape: "clock", department: "Decor", detail: "Keeps time. The navigation spends it." },
+    { name: "Sunday throw", price: 54, shape: "throw", department: "Textiles", detail: "For when browsing leaves you emotionally cold." },
+  ];
+  catalog.innerHTML = `<header class="hover-catalog-heading"><span>THE EVERYDAY COLLECTION / NEW ARRIVALS</span><h3>Good things for ordinary days.</h3><p>Kitchen, lighting, textiles &amp; the occasional unnecessary vase.</p></header><div class="hover-arrivals">${arrivals.map((item, index) => `<article><button class="hover-arrival" data-arrival="${index}" aria-expanded="false" aria-controls="hover-arrival-${index}"><span class="hover-object-scene"><i class="hover-object hover-object-${item.shape}" aria-hidden="true"></i></span><span class="hover-arrival-department">${item.department}</span><span class="hover-arrival-name">${item.name}<b>${item.price}</b></span></button><p id="hover-arrival-${index}" hidden>${item.detail}</p></article>`).join("")}</div><footer class="hover-catalog-footer"><span>DESIGNED FOR EVERYDAY LIVING.</span><span>Finding it may take longer.</span></footer>`;
+  catalog.addEventListener("click", event => {
+    const button = event.target.closest("[data-arrival]");
+    if (!button) return;
+    const details = catalog.querySelector(`#hover-arrival-${button.dataset.arrival}`);
+    details.hidden = !details.hidden;
+    button.setAttribute("aria-expanded", String(!details.hidden));
+  });
+  const shopHeader = document.createElement("header");
+  shopHeader.className = "hover-shop-header";
+  shopHeader.innerHTML = `<strong>ATELIER</strong><span>OBJECTS FOR EVERYDAY</span><span>FICTIONAL STORE / REAL PATIENCE</span>`;
+  stage.querySelector(".hover-shop").prepend(shopHeader);
+  product.hidden = true;
   product.querySelector("#hover-lamp-switch").addEventListener("change", event => {
     const lit = event.target.checked;
     product.classList.toggle("hover-lamp-off", !lit);
@@ -248,6 +268,7 @@ function renderHoverDependency({ stage, mode }) {
     if (depth === path.length - 1) {
       complete = true;
       clear();
+      catalog.hidden = true;
       navigation.hidden = true;
       stage.querySelector(".hover-shop > .web-tools").hidden = true;
       product.querySelector(".hover-product-header span").textContent = "ATELIER / YOU MADE IT";

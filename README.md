@@ -32,6 +32,8 @@ The generator renders and validates one numberless 1200×630 PNG per exhibit. It
 
 Use `npm run generate:share -- --older` to regenerate only exhibits without the **New** badge, or `npm run generate:share -- --ids runaway,phone` for specific exhibits. Both selections verify that the excluded images and `museum.png` remain byte-for-byte unchanged. All 32 older previews use responsive compositions with larger artwork for social images.
 
+Use `npm run generate:share -- --check` to run the same export and validation into a temporary directory without modifying committed images. This also supports `--url`, `--older`, and `--ids`; the output directory is printed for inspection. Export waits for fonts and embedded images, disables animations and transitions, and rejects active animations or mobile scroll-activation state. Share PNGs use the static composition, not a hover or scroll-animation frame. Check-only mode validates exportability, not whether committed PNGs match the latest exhibit copy.
+
 Thumbnail tone: show the absurd task and its consequence, with the joke aimed at the interface, not the visitor. Keep the exhibit recognizable, the punchline brief, and fictional money or subscriptions clearly fictional. Strong existing visual jokes do not need replacing just to make the collection uniform.
 
 ### Check thumbnails

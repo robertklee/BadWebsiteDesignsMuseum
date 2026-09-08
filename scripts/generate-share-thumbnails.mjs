@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
-import { mkdir, readFile, readdir } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, readdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -7,7 +8,8 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outputDirectory = path.join(repositoryRoot, "share");
+const shareDirectory = path.join(repositoryRoot, "share");
+const checkOnly = process.argv.includes("--check");
 const urlArgument = process.argv.indexOf("--url");
 const museumUrl = urlArgument === -1 ? "http://127.0.0.1:3000" : process.argv[urlArgument + 1];
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
@@ -16,8 +18,11 @@ const idsArgument = process.argv.indexOf("--ids");
 const requestedIds = idsArgument === -1 ? null : process.argv[idsArgument + 1]?.split(",");
 
 if (!museumUrl || (urlArgument !== -1 && museumUrl.startsWith("--")) || (idsArgument !== -1 && (!requestedIds || requestedIds.some(id => !/^[a-z0-9-]+$/.test(id))))) {
-  throw new Error("Usage: npm run generate:share -- [--url http://127.0.0.1:3000] [--older] [--ids runaway,phone]");
+  throw new Error("Usage: npm run generate:share -- [--url http://127.0.0.1:3000] [--older] [--ids runaway,phone] [--check]");
 }
+
+const outputDirectory = checkOnly ? await mkdtemp(path.join(tmpdir(), "museum-share-check-")) : shareDirectory;
+if (checkOnly) await cp(shareDirectory, outputDirectory, { recursive: true });
 
 const shareStyles = `
   html, body { width:1200px; height:630px; overflow:hidden; }
@@ -113,6 +118,10 @@ async function renderShareSheet(page, id, reverse = false) {
     brand.textContent = "REALLY BAD DESIGN MUSEUM";
     document.body.append(sheet, brand);
     await document.fonts.ready;
+    await Promise.all([...art.querySelectorAll("img")].map(image => image.decode()));
+    if (document.getAnimations().length || document.querySelector(".thumb-scroll-active")) {
+      throw new Error(`Share artwork must be static: ${exhibitId}`);
+    }
     if (exhibitId === "runaway") {
       const caption = art.querySelector(".thumb-chase>small").getBoundingClientRect();
       for (const obstacle of art.querySelectorAll(".thumb-fleeing-button,.thumb-chase-pointer")) {
@@ -200,6 +209,7 @@ try {
   }
 
   console.log(`Rendered and validated ${selectedIds.length} numberless 1200x630 share thumbnails. Preserved ${untouchedHashes.size} unselected thumbnails and museum.png.`);
+  if (checkOnly) console.log(`Check-only output: ${outputDirectory}. Committed share images were not modified.`);
 } finally {
   await browser.close();
 }

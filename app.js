@@ -75,7 +75,7 @@ function renderExhibit(id, focus = false) {
   const modeNote = mode === "fixed"
     ? "SENSIBLE MODE — a little consideration goes a long way."
     : mode === "worse"
-      ? `EXTRA TERRIBLE — we regret to inform you that this was approved.<strong class="worse-added"><span>ADDED IN WORSE MODE</span>${exhibit.worseChange}</strong>`
+      ? `HARD MODE — the exhibit has stopped playing fair.<strong class="worse-added"><span>EXPECT TROUBLE</span>${exhibit.worseChange}</strong>`
       : "ORIGINAL DISASTER — interact below. You can escape at any time.";
   main.innerHTML = `<section class="exhibit-page section-wrap">
     <a class="escape" href="/#collection">← Escape exhibit</a>

@@ -337,47 +337,50 @@ button{border-radius:0}
 @keyframes thumb-spoon-scan{0%{translate:0 0;opacity:0}15%{opacity:1}85%{translate:0 8.5em;opacity:1}100%{translate:0 8.5em;opacity:0}}
 .thumb-shuffled>:nth-child(1){--thumb-shuffle-start:300%}.thumb-shuffled>:nth-child(2){--thumb-shuffle-start:100%}.thumb-shuffled>:nth-child(3){--thumb-shuffle-start:200%}.thumb-shuffled>:nth-child(4){--thumb-shuffle-start:-200%}.thumb-shuffled>:nth-child(5){--thumb-shuffle-start:-400%}
 @media(prefers-reduced-motion:no-preference){
-	.exhibit-card:is(:hover,:focus-visible) .thumb-fleeing-button{animation:thumb-dodge .65s cubic-bezier(.2,.7,.2,1) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-reel-strip>b{animation:thumb-reel-turn .8s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-switch-off:after{animation:thumb-switch-to-off .65s ease both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-switch-on:after{animation:thumb-switch-to-on .65s ease both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-letter-rubble>b{animation:thumb-tumble .65s cubic-bezier(.5,0,.8,.5) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-shuffled>*{animation:thumb-shuffle-replay .75s ease both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-wind-track{animation:thumb-wind-gust 1s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-beam{animation:thumb-balance-settle 1.1s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-claw{animation:thumb-claw-travel 1.1s ease-in-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-rolling-cart{animation:thumb-cart-roll .9s ease-in both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-alert-back{animation:thumb-alert-arrive .55s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-alert-front{animation:thumb-alert-arrive 1s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-backward-bar>i{animation:thumb-progress-retreat 1.1s ease-in-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-health>i{animation:thumb-preference-wilt 1.2s ease-in both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-exit-tiny{animation:thumb-exit-shrink .9s ease-out both;transform-origin:bottom right}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-block-falling{animation:thumb-block-drop .7s steps(3,end) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-search-field>strong:before{animation:thumb-query-correct 1.2s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-correction-stamp{animation:thumb-stamp-land 1.2s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-name-field>b:before{animation:thumb-name-type 1.2s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-distant-field{animation:thumb-form-stretch 1.2s steps(1,end) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-form-gap{animation:thumb-gap-grow 1.2s steps(4,end) both;transform-origin:top}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-onboarding-checks{animation:thumb-checks-complete 1.4s steps(4,end) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-onboarding>strong{animation:thumb-setup-success 1.4s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-next-setup{animation:thumb-more-setup 1.4s ease-out both;transform-origin:top}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-gym-passed{animation:thumb-checks-complete 1.2s steps(2,end) both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-gym-error{animation:thumb-rule-arrive 1.2s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-lift-display:before{animation:thumb-lift-count 1.3s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-auction-lot>div>b:before{animation:thumb-bid-rise 1.3s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-auction-lot>strong:after{animation:thumb-lot-sold 1.3s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-open-letter>div{animation:thumb-menu-open 1.2s ease-out both;transform-origin:top}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-open-letter>div>b{animation:thumb-letter-choose 1.2s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-open-letter>span{animation:thumb-final-letter 1.2s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-terms-check:before{animation:thumb-terms-tick 1.3s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-exam{animation:thumb-exam-arrive 1.3s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-type-poster b{animation:thumb-font-one 1.2s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-type-poster i{animation:thumb-font-more 1.2s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-type-poster>strong{animation:thumb-font-last 1.2s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-retro-input>b:before{animation:thumb-nickname-reverse 1.1s linear both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-address-piece:not(.thumb-postcode){animation:thumb-piece-hesitate 1.3s ease-in-out both}
-	.exhibit-card:is(:hover,:focus-visible) .thumb-silver-spoon:after{animation:thumb-spoon-scan 1.3s ease-in-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-fleeing-button{animation:thumb-dodge .65s cubic-bezier(.2,.7,.2,1) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-reel-strip>b{animation:thumb-reel-turn .8s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-switch-off:after{animation:thumb-switch-to-off .65s ease both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-switch-on:after{animation:thumb-switch-to-on .65s ease both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-letter-rubble>b{animation:thumb-tumble .65s cubic-bezier(.5,0,.8,.5) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-shuffled>*{animation:thumb-shuffle-replay .75s ease both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-wind-track{animation:thumb-wind-gust 1s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-beam{animation:thumb-balance-settle 1.1s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-claw{animation:thumb-claw-travel 1.1s ease-in-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-rolling-cart{animation:thumb-cart-roll .9s ease-in both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-alert-back{animation:thumb-alert-arrive .55s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-alert-front{animation:thumb-alert-arrive 1s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-backward-bar>i{animation:thumb-progress-retreat 1.1s ease-in-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-health>i{animation:thumb-preference-wilt 1.2s ease-in both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-exit-tiny{animation:thumb-exit-shrink .9s ease-out both;transform-origin:bottom right}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-block-falling{animation:thumb-block-drop .7s steps(3,end) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-search-field>strong:before{animation:thumb-query-correct 1.2s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-correction-stamp{animation:thumb-stamp-land 1.2s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-name-field>b:before{animation:thumb-name-type 1.2s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-distant-field{animation:thumb-form-stretch 1.2s steps(1,end) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-form-gap{animation:thumb-gap-grow 1.2s steps(4,end) both;transform-origin:top}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-onboarding-checks{animation:thumb-checks-complete 1.4s steps(4,end) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-onboarding>strong{animation:thumb-setup-success 1.4s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-next-setup{animation:thumb-more-setup 1.4s ease-out both;transform-origin:top}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-gym-passed{animation:thumb-checks-complete 1.2s steps(2,end) both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-gym-error{animation:thumb-rule-arrive 1.2s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-lift-display:before{animation:thumb-lift-count 1.3s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-auction-lot>div>b:before{animation:thumb-bid-rise 1.3s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-auction-lot>strong:after{animation:thumb-lot-sold 1.3s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-open-letter>div{animation:thumb-menu-open 1.2s ease-out both;transform-origin:top}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-open-letter>div>b{animation:thumb-letter-choose 1.2s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-open-letter>span{animation:thumb-final-letter 1.2s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-terms-check:before{animation:thumb-terms-tick 1.3s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-exam{animation:thumb-exam-arrive 1.3s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-type-poster b{animation:thumb-font-one 1.2s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-type-poster i{animation:thumb-font-more 1.2s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-type-poster>strong{animation:thumb-font-last 1.2s ease-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-retro-input>b:before{animation:thumb-nickname-reverse 1.1s linear both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-address-piece:not(.thumb-postcode){animation:thumb-piece-hesitate 1.3s ease-in-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-silver-spoon:after{animation:thumb-spoon-scan 1.3s ease-in-out both}
 }
+[data-thumb-input="touch"] .exhibit-card:not(.thumb-scroll-active):not(:focus-visible) .thumb-scene *,
+[data-thumb-input="touch"] .exhibit-card:not(.thumb-scroll-active):not(:focus-visible) .thumb-scene *:before,
+[data-thumb-input="touch"] .exhibit-card:not(.thumb-scroll-active):not(:focus-visible) .thumb-scene *:after{animation:none!important}
 @container thumbnail (max-width:260px){.thumb-terms,.thumb-auction{font-size:11px}.thumb-email-slot{font-size:1em}.thumb-phone,.thumb-cookie,.thumb-birthday,.thumb-word,.thumb-cancel,.thumb-retro{font-size:10px}.thumb-gym,.thumb-alphabet,.thumb-jigsaw,.thumb-ai,.thumb-fonts{font-size:11px}}
 @container thumbnail (min-width:480px){.thumb-scene{inset:78px 40px 36px;font-size:20px}}
 .exhibit-card:hover .card-art{transform:translateY(-5px)}

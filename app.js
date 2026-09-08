@@ -32,6 +32,101 @@ function card(exhibit) {
   </a>`;
 }
 
+function setupScrollPreviews(grid) {
+  const touch = matchMedia("(hover: none) and (pointer: coarse)");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const listeners = new AbortController();
+  const played = new Set();
+  let timer = null;
+  let active = null;
+  let touching = false;
+  let disposed = false;
+  grid.dataset.thumbInput = touch.matches ? "touch" : "mouse";
+
+  const stop = () => {
+    clearTimeout(timer);
+    timer = null;
+    const previous = active;
+    active = null;
+    previous?.classList.remove("thumb-scroll-active");
+  };
+  const enabled = () => !disposed && grid.dataset.thumbInput === "touch" && !reducedMotion.matches && !document.hidden && !touching && grid.isConnected && !grid.querySelector(":focus-visible");
+  const activate = () => {
+    timer = null;
+    if (!enabled() || active) return;
+    const viewport = window.visualViewport;
+    const height = viewport?.height || innerHeight;
+    const top = viewport?.offsetTop || 0;
+    const candidates = [...grid.querySelectorAll(".exhibit-card")].map(element => {
+      const bounds = element.querySelector(".card-art").getBoundingClientRect();
+      return { element, center: bounds.top + bounds.height / 2 - top };
+    }).filter(({ element, center }) => !played.has(element.getAttribute("href")) && center >= height * .3 && center <= height * .45)
+      .sort((first, second) => Math.abs(first.center - height / 3) - Math.abs(second.center - height / 3));
+    for (const { element } of candidates) {
+      element.classList.add("thumb-scroll-active");
+      const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"));
+      played.add(element.getAttribute("href"));
+      if (!animations.length) {
+        element.classList.remove("thumb-scroll-active");
+        continue;
+      }
+      active = element;
+      Promise.all(animations.map(animation => animation.finished)).then(() => {
+        if (active !== element) return;
+        active = null;
+        element.classList.remove("thumb-scroll-active");
+        schedule();
+      }).catch(() => {});
+      break;
+    }
+  };
+  const schedule = () => {
+    stop();
+    if (enabled()) timer = setTimeout(activate, 180);
+  };
+  const selectInput = input => {
+    if (grid.dataset.thumbInput === input) return;
+    grid.dataset.thumbInput = input;
+    schedule();
+  };
+  const options = { passive: true, signal: listeners.signal };
+  window.addEventListener("scroll", schedule, options);
+  window.addEventListener("resize", schedule, options);
+  window.visualViewport?.addEventListener("resize", schedule, options);
+  window.visualViewport?.addEventListener("scroll", schedule, options);
+  document.addEventListener("visibilitychange", () => {
+    touching = false;
+    schedule();
+  }, options);
+  document.addEventListener("pointerdown", event => {
+    touching = true;
+    selectInput(event.pointerType === "mouse" ? "mouse" : "touch");
+    stop();
+  }, options);
+  document.addEventListener("pointermove", event => {
+    if (!touching && event.pointerType === "mouse") selectInput("mouse");
+  }, options);
+  window.addEventListener("wheel", () => selectInput("mouse"), options);
+  grid.addEventListener("focusin", schedule, options);
+  grid.addEventListener("focusout", () => queueMicrotask(() => { if (!disposed) schedule(); }), options);
+  const release = () => { touching = false; schedule(); };
+  document.addEventListener("pointerup", release, options);
+  document.addEventListener("pointercancel", release, options);
+  touch.addEventListener("change", () => selectInput(touch.matches ? "touch" : "mouse"), options);
+  reducedMotion.addEventListener("change", schedule, options);
+  document.fonts.ready.then(() => { if (!disposed) schedule(); });
+  schedule();
+  return {
+    refresh: schedule,
+    dispose() {
+      disposed = true;
+      stop();
+      listeners.abort();
+      delete grid.dataset.thumbInput;
+    },
+  };
+}
+
 function renderHome(anchor) {
   currentId = null;
   main.innerHTML = `
@@ -50,10 +145,13 @@ function renderHome(anchor) {
     <p class="collection-footnote"><span>↳</span> Every exhibit is interactive. Every bad decision is on purpose.</p></section>
     <section id="about" class="about section-wrap"><div class="about-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">OUR QUESTIONABLE MISSION</div><h2>Sometimes the best lesson<br>is a really bad example.</h2><p>We're a little museum of big design mistakes. A place to play with the patterns that make the internet frustrating, confusing, and occasionally hilarious.</p><p>Turn up the chaos. Find the flaw. Then hit <strong>“Fix it”</strong> to see what a little consideration can do. No real purchases, no collected data, no inescapable popups. Just educationally questionable fun.</p><span class="about-signoff">CURATED WITH LOVE. AND SOME CONCERN. ↗</span></div></section>`;
   document.title = "Really Bad Design Museum — Good taste. Bad examples.";
+  const scrollPreviews = setupScrollPreviews(main.querySelector("#exhibit-grid"));
+  cleanup = scrollPreviews.dispose;
   main.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
     activeFilter = button.dataset.filter;
     main.querySelectorAll("[data-filter]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
     document.querySelector("#exhibit-grid").innerHTML = exhibits.filter(e => activeFilter === "All exhibits" || e.category === activeFilter).map(card).join("");
+    scrollPreviews.refresh();
   }));
   if (anchor) requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView());
 }

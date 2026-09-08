@@ -26,7 +26,7 @@ export { exhibits, preview };
 
 function card(exhibit) {
   return `<a class="exhibit-card" href="/exhibit/${exhibit.id}">
-    <div class="card-art ${exhibit.color}" aria-hidden="true"><span class="exhibit-number">EXHIBIT ${exhibit.number}</span>${preview(exhibit.id)}<span class="card-enter">↗</span></div>
+    <div class="card-art ${exhibit.color}" aria-hidden="true"><span class="exhibit-number">EXHIBIT ${exhibit.number}</span>${exhibit.new ? '<span class="new-banner">NEW</span>' : ""}${preview(exhibit.id)}<span class="card-enter">↗</span></div>
     <div class="card-meta"><span>${exhibit.category}</span><span>INTERACTIVE ↗</span></div>
     <h3>${exhibit.name}</h3><p>${exhibit.description}</p>
   </a>`;
@@ -82,7 +82,7 @@ function renderExhibit(id, focus = false) {
     <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">PLEASE TOUCH<br>THE ARTWORK. ↙</span></div>
     <div class="exhibit-toolbar"><div class="mode-controls game-difficulty" role="group" aria-label="Exhibit difficulty"><span class="difficulty-label">CHOOSE YOUR DIFFICULTY</span><button data-mode="bad" aria-pressed="${mode === "bad"}">Easy</button><button data-mode="worse" aria-pressed="${mode === "worse"}">Hard ↗</button><button data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button class="reset-button">↻ Reset</button><a class="toolbar-exit" href="/#collection" aria-label="Escape exhibit">Exit ↗</a></div></div>
     <p class="mode-note" role="status">${modeNote}</p>
-    <div class="difficulty-progress" id="difficulty-progress" hidden><div class="difficulty-transition-content"><span class="difficulty-transition-title" aria-hidden="true">EASY CLEARED.</span><p role="status"></p><div class="difficulty-countdown" aria-hidden="true"></div><button type="button" class="plain-button">Stay here</button></div></div>
+    <div class="difficulty-progress" id="difficulty-progress" hidden><div class="difficulty-transition-content"><span class="difficulty-transition-title" aria-hidden="true">EASY CLEARED.</span><p role="status"></p><div class="difficulty-countdown" aria-hidden="true"></div><div class="difficulty-transition-actions"><button type="button" class="plain-button" data-difficulty-action="stay">Stay here</button><button type="button" class="plain-button" data-difficulty-action="advance">That was too easy, bring it on ↗</button></div></div></div>
     <div class="exhibit-stage ${id}-stage ${mode}" id="stage"></div>
     <aside class="curator-note"><span class="note-icon" aria-hidden="true">↳</span><div><div class="eyebrow">${mode === "fixed" ? "AFTER THE INTERVENTION" : "THE CURATOR'S NOTE"}</div><h2>${mode === "fixed" ? "That was almost too easy." : "The curators have questions."}</h2><p>${mode === "fixed" ? exhibit.fix : exhibit.lesson}</p></div></aside>
     <div class="exhibit-bottom"><a href="/#collection">← All exhibits</a><a href="/exhibit/${exhibits[(exhibits.indexOf(exhibit) + 1) % exhibits.length].id}">Next questionable idea →</a></div>
@@ -114,6 +114,14 @@ function setupDifficultyProgression(id) {
   let advanceTimer = null;
   let countdownTimer = null;
   let previousFocus = null;
+  const startHardMode = () => {
+    if (disposed) return;
+    cleanup();
+    mode = "worse";
+    renderExhibit(id);
+    main.querySelector(".mode-note").prepend("Hard mode started. Easy was the warm-up. ");
+    main.querySelector("[data-mode='worse']").focus({ preventScroll: true });
+  };
   const complete = () => {
     if (disposed || completed || initialMode !== "bad") return;
     completed = true;
@@ -126,19 +134,12 @@ function setupDifficultyProgression(id) {
       notice.querySelector("p").textContent = `Easy mode cleared! Hard mode starts in ${seconds} second${seconds === 1 ? "" : "s"}.`;
     }, 1000);
     queueMicrotask(() => {
-      if (!disposed && !notice.hidden) notice.querySelector("button").focus({ preventScroll: true });
+      if (!disposed && !notice.hidden) notice.querySelector("[data-difficulty-action='stay']").focus({ preventScroll: true });
     });
-    advanceTimer = setTimeout(() => {
-      if (disposed) return;
-      cleanup();
-      mode = "worse";
-      renderExhibit(id);
-      main.querySelector(".mode-note").prepend("Hard mode started. Easy was the warm-up. ");
-      main.querySelector("[data-mode='worse']").focus({ preventScroll: true });
-    }, 3000);
+    advanceTimer = setTimeout(startHardMode, 3000);
   };
   stage.addEventListener("exhibit-complete", complete);
-  notice.querySelector("button").addEventListener("click", () => {
+  notice.querySelector("[data-difficulty-action='stay']").addEventListener("click", () => {
     clearTimeout(advanceTimer);
     clearInterval(countdownTimer);
     notice.hidden = true;
@@ -146,6 +147,7 @@ function setupDifficultyProgression(id) {
     const focusTarget = previousFocus?.isConnected && !previousFocus.matches(":disabled") ? previousFocus : main;
     focusTarget.focus({ preventScroll: true });
   });
+  notice.querySelector("[data-difficulty-action='advance']").addEventListener("click", startHardMode);
   cleanup = () => {
     disposed = true;
     clearTimeout(advanceTimer);

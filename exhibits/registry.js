@@ -46,6 +46,13 @@ const exhibitOrder = [
   "loading",
 ];
 
+const newExhibitIds = new Set([
+  "layout-earthquake",
+  "scroll-modal",
+  "validation-afterthought",
+  "hover-menu",
+]);
+
 const allExhibits = [...formsExhibits, ...interactionExhibits, ...contentExhibits, ...commerceExhibits, ...websiteExhibits];
 
 const exhibitsById = new Map(allExhibits.map(exhibit => [exhibit.id, exhibit]));
@@ -68,7 +75,11 @@ for (const exhibit of allExhibits) {
   if (typeof exhibit.render !== "function") throw new Error(`Exhibit ${exhibit.id} needs a render function.`);
 }
 
-const catalog = exhibitOrder.map((id, index) => ({ ...exhibitsById.get(id), number: String(index + 1).padStart(2, "0") }));
+const catalog = exhibitOrder.map((id, index) => ({
+  ...exhibitsById.get(id),
+  number: String(index + 1).padStart(2, "0"),
+  new: newExhibitIds.has(id),
+}));
 const catalogById = new Map(catalog.map(exhibit => [exhibit.id, exhibit]));
 
 export function getCatalog() {

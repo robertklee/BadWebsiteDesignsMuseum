@@ -199,12 +199,15 @@ function renderHoverDependency({ stage, mode }) {
     }
   });
   const hold = stage.querySelector("#menu-hold");
+  const holdControl = hold.closest("label");
+  holdControl.hidden = true;
+  let failedTries = 0;
   const navigation = stage.querySelector(".hover-navigation");
   let deadline;
   let gap;
   let complete = false;
   let open = false;
-  let pointerNavigation = true;
+  let navigationInput = "mouse";
   const clear = () => { clearTimeout(deadline); clearTimeout(gap); };
   const close = () => {
     clear();
@@ -214,9 +217,17 @@ function renderHoverDependency({ stage, mode }) {
     navigation.querySelectorAll("[aria-expanded]").forEach(button => button.setAttribute("aria-expanded", "false"));
     if (restoreFocus) levels[0].querySelector("button").focus({ preventScroll: true });
   };
+  const fail = message => {
+    if (!open || complete) return;
+    close();
+    failedTries++;
+    holdControl.hidden = fixed || failedTries < 2;
+    say(message);
+  };
   const arm = () => {
     clearTimeout(deadline);
-    if (pointerNavigation && !fixed && !hold.checked && !complete && open && !document.hidden) deadline = setTimeout(() => { close(); say("Navigation expired. The shop is still at the top."); }, worse ? 2200 : 4000);
+    const duration = navigationInput === "touch" ? (worse ? 650 : 1100) : (worse ? 2200 : 2800);
+    if (navigationInput !== "keyboard" && !fixed && !hold.checked && !complete && open && !document.hidden) deadline = setTimeout(() => { fail("Navigation expired. The shop is still at the top."); }, duration);
   };
   const expand = depth => {
     if (complete) return;
@@ -236,31 +247,32 @@ function renderHoverDependency({ stage, mode }) {
     arm();
   };
   navigation.addEventListener("pointerdown", event => {
-    pointerNavigation = event.pointerType === "mouse";
-    clear();
+    navigationInput = event.pointerType === "mouse" ? "mouse" : "touch";
   });
   navigation.addEventListener("click", event => {
     const button = event.target.closest("button");
     if (button?.hasAttribute("data-depth")) expand(Number(button.dataset.depth));
-    else if (button) { close(); say("That department doesn't contain the Pivot desk lamp."); }
+    else if (button) fail("That department doesn't contain the Pivot desk lamp.");
   });
   levels.forEach(level => {
     level.addEventListener("pointerenter", () => { clearTimeout(gap); });
     level.addEventListener("pointerleave", event => {
-      if (event.pointerType !== "mouse" || !pointerNavigation || fixed || hold.checked || complete || !open) return;
-      gap = setTimeout(() => { close(); say("You left the menu. So did the menu."); }, worse ? 45 : 130);
+      if (event.pointerType !== "mouse" || navigationInput !== "mouse" || fixed || hold.checked || complete || !open) return;
+      gap = setTimeout(() => { fail("You left the menu. So did the menu."); }, worse ? 45 : 55);
     });
   });
   navigation.addEventListener("pointerover", event => {
     const button = event.target.closest("[data-depth]");
     if (!fixed && event.pointerType === "mouse" && button && Number(button.dataset.depth) < path.length - 1) {
-      pointerNavigation = true;
+      navigationInput = "mouse";
       expand(Number(button.dataset.depth));
     }
   });
-  navigation.addEventListener("focusin", arm);
+  navigation.addEventListener("focusin", event => {
+    if (event.target.matches(":focus-visible")) { navigationInput = "keyboard"; clear(); }
+  });
   navigation.addEventListener("keydown", event => {
-    pointerNavigation = false;
+    navigationInput = "keyboard";
     clear();
     if (event.key === "Escape" && open) { event.stopPropagation(); close(); }
   });

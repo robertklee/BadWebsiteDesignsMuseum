@@ -402,11 +402,11 @@
 .hover-menu-stage{background:#e9cbd6}
 .hover-shop{min-height:580px;background:linear-gradient(110deg,#f9edef,#fff 65%);--web-accent:#94485d}
 .hover-navigation{position:relative;z-index:2;max-width:360px}
-.hover-level{position:relative;display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid #d6bdc5;padding:12px;margin-top:32px}
+.hover-level{position:relative;display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid #d6bdc5;padding:12px;margin-top:56px}
 .hover-level:first-child{margin-top:0}
 .hover-hostile .hover-level:not(:first-child){margin-top:64px}
-.hover-bridge{position:absolute;left:-1px;right:-1px;top:-33px;height:32px;pointer-events:none}
-.hover-bridge>span{position:absolute;left:calc(50% - 5px);top:0;width:10px;height:100%;background:#94485d;pointer-events:auto}
+.hover-bridge{position:absolute;left:-1px;right:-1px;top:-57px;height:56px;pointer-events:none}
+.hover-bridge>span{position:absolute;left:calc(50% - 3px);top:0;width:6px;height:100%;background:#94485d;pointer-events:auto}
 .hover-hostile .hover-bridge{top:-65px;height:64px}
 .hover-hostile .hover-bridge>span{left:calc(50% - 3px);width:6px;height:22px}
 .hover-hostile .hover-bridge>span:nth-child(2){top:16px;width:45px;height:6px}

@@ -69,11 +69,13 @@ try {
       }
     }
   }
-  const animatedIds = ["runaway", "phone", "cookies", "seismic-editor", "alphabet"];
+  const animatedIds = ["runaway", "phone", "cookies", "seismic-editor", "alphabet", "wind-volume", "volume-seesaw", "password-crane", "physics-cart", "notification-swatter", "loading", "checkbox-ecosystem", "shrinking-unsubscribe", "tetris-volume", "correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store"];
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  for (const trigger of ["hover", "focus"]) {
+  for (const { width, trigger } of [1440, 768, 320].flatMap(width => ["hover", "focus"].map(trigger => ({ width, trigger })))) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto(museumUrl, { waitUntil: "networkidle" });
     for (const id of animatedIds) {
       await page.mouse.move(0, 0);
       await page.evaluate(() => document.activeElement?.blur());
@@ -84,8 +86,15 @@ try {
         const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"));
         if (!animations.length) return { error: "No preview animation" };
         const finite = animations.every(animation => animation.effect.getTiming().iterations === 1);
+        const textSequence = {
+          "correcting-search": [".thumb-search-field>strong", "quiet cafes", "quiet cafes"],
+          "expanding-form": [".thumb-name-field>b", "A", "Ale"],
+          "elevator-date": [".thumb-lift-display", "↓ 1994", "↓ 1993"],
+          "email-auction": [".thumb-auction-lot>div>b", "8 coins", "10 coins"],
+          "retro": [".thumb-retro-input>b", "Alex|", "Alex|"],
+        }[element.getAttribute("href").split("/").pop()];
         const sample = [];
-        for (const progress of [0, .5, 1]) {
+        for (const progress of [0, .25, .5, .6, .75, 1]) {
           for (const animation of animations) {
             animation.pause();
             animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
@@ -97,16 +106,27 @@ try {
               return { error: `Animation leaves artwork: ${child.className}` };
             }
           }
+          if (textSequence && (progress === 0 || progress === .5 || progress === 1)) {
+            const style = getComputedStyle(element.querySelector(textSequence[0]), "::before");
+            if (progress === 0 && (style.content !== JSON.stringify(textSequence[1]) || style.opacity !== "1")) return { error: "Missing setup text" };
+            if (progress === .5 && style.content !== JSON.stringify(textSequence[2])) return { error: "Wrong intermediate text" };
+            if (progress === 1 && style.opacity !== "0") return { error: "Setup text obscures final artwork" };
+          }
           sample.push(animations.map(animation => {
             const style = getComputedStyle(animation.effect.target, animation.effect.pseudoElement);
-            return [style.translate, style.scale, style.rotate].join(";");
+            return [style.translate, style.scale, style.rotate, style.width, style.opacity, style.clipPath, style.content, style.fontFamily, style.color, style.backgroundColor, style.transform].join(";");
           }).join("|"));
         }
-        return { finite, moves: sample[0] !== sample[2] };
+        return { finite, moves: sample.some(state => state !== sample[0]) };
       });
-      assert.equal(result.error, undefined, `${id} ${trigger}: ${result.error}`);
-      assert.ok(result.finite && result.moves, `${id} ${trigger} must visibly animate once`);
-      await card.screenshot({ path: `${outputDirectory}/${trigger}-${id}.png` });
+      assert.equal(result.error, undefined, `${id} ${trigger} at ${width}px: ${result.error}`);
+      assert.ok(result.finite && result.moves, `${id} ${trigger} at ${width}px must visibly animate once`);
+      await card.evaluate(element => {
+        for (const animation of element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"))) {
+          animation.currentTime = Number(animation.effect.getTiming().duration) * .5;
+        }
+      });
+      await card.screenshot({ path: `${outputDirectory}/${trigger}-${id}-${width}-midpoint.png` });
     }
   }
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -163,7 +183,7 @@ try {
     }));
   });
   await page.screenshot({ path: `${outputDirectory}/share-contact-sheet.png`, fullPage: true });
-  console.log(`Thumbnail fit passed at desktop, tablet, and two mobile widths. Screenshots: ${outputDirectory}`);
+  console.log(`Thumbnail fit passed at four widths; ${animatedIds.length} hover/focus replays passed at three widths with reduced-motion checks. Screenshots: ${outputDirectory}`);
 } finally {
   await browser.close();
 }

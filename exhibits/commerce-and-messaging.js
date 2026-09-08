@@ -6,7 +6,7 @@ export const exhibits = [
   { id: "shrinking-unsubscribe", name: "The Shrinking Unsubscribe Button", category: "Commerce", color: "pink", tagline: "Your subscription grows. Your exit shrinks.", description: "A fictional subscription with a cancel button that shrinks and relocates as you approach.", lesson: "The cancellation button is shy and needs space. Unfortunately, it interprets the pointer as direct eye contact.", fix: "The button completed a confidence workshop and can now be approached safely.", worseChange: "The exit gets smaller, faster, and increasingly committed to not being found.", preview: `<div class="new-preview preview-shrinking"><span>THANKS FOR ACCIDENTALLY JOINING</span><strong>$49 / month*</strong><div>Unsubscribe</div><small>*Imaginary money. Real frustration.</small></div>`, render: renderShrinkingUnsubscribe },
   { id: "physics-cart", category: "Commerce", color: "orange", name: "The Physics Shopping Cart", tagline: "Your basket has checkout momentum.", description: "Every product makes a wheeled cart roll faster toward an entirely imaginary purchase.", lesson: "Every purchase has momentum, especially downhill. Adding a second item is considered informed acceleration.", fix: "The basket has been fitted with brakes and a separate checkout button.", worseChange: "The hill gets steeper. Something inconvenient has appeared halfway down.", preview: '<div class="new-preview arcade-preview-cart"><span>CHECKOUT IS A DOWNHILL SPORT</span><strong>▱ → →</strong><div>○ &nbsp; ○ &nbsp; BUY NOW*</div><small>*Imaginary purchases. Actual momentum.</small></div>', render: renderPhysicsCart },
   { id: "corporate", name: "The Corporate Fog Machine", category: "Copywriting", color: "blue", tagline: "Onboarding without the onboarded part.", description: "Every completed step unlocks more mandatory steps.", lesson: "Each completed step creates exciting opportunities for additional steps. Progress is strongest when nobody can quite locate it.", fix: "The product now says what it is and asks one question. Several committees are resting.", worseChange: "Every answer opens more doors, all leading to more onboarding.", preview: `<div class="preview-corporate"><span class="tiny-logo">◈ SYNERGIA</span><strong>Tomorrow.<br>But more.</strong><span class="tiny-copy">Empowering the next next.</span><span class="orb"></span><span class="tiny-cta">Unlock potential ↗</span></div>`, render: renderCorporate },
-  { id: "cancel", name: "The Cancellation Labyrinth", category: "Copywriting", color: "lilac", tagline: "Don't not stop uncancelling your subscription.", description: "Escape a fictional subscription through a maze of double negatives.", lesson: "You may already have cancelled, unless you declined not to remain. Legal is checking the grammar and will return shortly.", fix: "Cancel now means cancel. The double negatives have been released back into the wild.", worseChange: "The maze gets longer, less predictable, and much less forgiving.", preview: `<div class="new-preview preview-cancel"><span>BEFORE YOU GO...</span><strong>Don't not<br>stay subscribed.</strong><small>Yes, don't &nbsp; / &nbsp; No, do</small></div>`, render: renderCancel },
+  { id: "cancel", name: "The Cancellation Labyrinth", category: "Copywriting", color: "lilac", tagline: "Don't not stop not uncancelling your subscription.", description: "Escape a fictional subscription through a maze of weaponized double negatives.", lesson: "You may already have not failed to cancel, unless you declined not to remain unrenewed. Legal approved this sentence and the cancellation rate has disappeared overnight.", fix: "Cancel now means cancel. Seven negatives have been removed.", worseChange: "The maze adds triple negatives, shuffled answers, and a full reset for understanding anything incorrectly.", preview: `<div class="new-preview preview-cancel"><span>BEFORE YOU DON'T GO...</span><strong>Don't not stop<br>not staying.</strong><small>Yes, don't &nbsp; / &nbsp; No, also don't</small></div>`, render: renderCancel },
   { id: "fonts", name: "The Font Buffet", category: "Typography", color: "pink", tagline: "Every word has a different art director.", description: "Type a sentence. Watch its fonts, sizes, and styles disagree.", lesson: "Every word arrived with a vision and none of them shared a mood board. The sentence is currently pursuing several directions.", fix: "One typeface was chosen. The others have promising solo careers.", worseChange: "The creative disagreement reaches every single character.", preview: `<div class="new-preview preview-fonts"><span>CONSISTENCY IS OVERRATED</span><strong><b>One</b> <i>more</i><br><em>FONT.</em></strong><small>Legibility left the chat.</small></div>`, render: renderFonts },
 ];
 
@@ -535,11 +535,12 @@ function renderCancel({ stage, mode, shuffle }) {
     { question: "Should we disable renewal prevention?", yes: "No, keep renewal prevention", no: "Yes, disable renewal prevention" },
     { question: "Would you decline the option to remain?", yes: "Yes, decline remaining", no: "No, do not decline remaining" },
     { question: "Do not undo your cancellation?", yes: "Correct, do not undo it", no: "Incorrect, undo the cancellation" },
-    { question: "Refuse to reject your request to leave?", yes: "Yes, refuse to reject it", no: "No, reject my request to leave" },
-    { question: "Confirm that retaining me is not what I want.", yes: "Confirmed: I do not want retention", no: "Not confirmed: keep retaining me" },
+    { question: "Must we not avoid declining your refusal to reject cancellation?", yes: "Don't avoid declining the refusal to reject it", no: "Avoid not declining my unrefusal" },
+    { question: "Final provisional confirmation: do not fail to prevent us from not ceasing to discontinue renewal?", yes: "Confirmed: don't fail to prevent not discontinuing it", no: "Unconfirmed: cease preventing the failure not to continue" },
   ];
   let step = 0;
   let mistakes = 0;
+  const visits = [];
   const total = fixed ? 1 : worse ? 6 : 4;
   const render = () => {
     if (step === total) {
@@ -549,18 +550,19 @@ function renderCancel({ stage, mode, shuffle }) {
       return;
     }
     const question = questions[step];
+    visits[step] = (visits[step] || 0) + 1;
     const options = fixed ? [{ text: "Cancel my fictional subscription", correct: true }] : [
       { text: question.yes, correct: true }, { text: question.no, correct: false },
     ];
-    maze.innerHTML = `${fixed ? "" : `<span class="demo-kicker">RETENTION CHECKPOINT ${step + 1} / ${total}</span><h3>${question.question}</h3>`}<div class="cancel-options">${(worse ? shuffle(options) : options).map(option => `<button class="demo-button" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div>`;
+    maze.innerHTML = `${fixed ? "" : `<span class="demo-kicker">RETENTION CHECKPOINT ${step + 1} / ${total}</span><h3>${question.question}</h3>`}<div class="cancel-options">${(worse ? shuffle(options) : options).map(option => `<button class="demo-button${!fixed && visits[step] > 1 && option.correct ? " cancel-answer-hint" : ""}" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div>`;
     maze.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
       if (button.dataset.cancelCorrect === "true") {
         step++;
-        say("Your intention to leave requires further clarification.");
+        say(worse ? "Your non-intention not to remain has been provisionally misunderstood. Continue." : "Your intention to leave remains insufficiently overconfirmed.");
       } else {
         mistakes++;
         step = worse ? 0 : Math.max(0, step - 1);
-        say(worse ? "We interpreted that as staying. All cancellation progress reset." : "Wrong turn. Back to the previous checkpoint.");
+        say(worse ? "We couldn't fail to interpret that as not leaving. All non-retention progress has been retained at zero." : "Wrong turn. You have successfully remained subscribed to nothing. Back one checkpoint.");
       }
       render();
       if (step < total) maze.querySelector("button").focus();

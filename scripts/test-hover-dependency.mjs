@@ -55,7 +55,7 @@ try {
     await touch.clock.pauseAt(await touch.evaluate(() => Date.now() + 1000));
     for (const mode of ["easy", "hard"]) {
       await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
-      const duration = mode === "hard" ? 650 : 1100;
+      const duration = mode === "hard" ? 420 : 650;
       await touch.locator('[data-depth="0"]').tap();
       await touch.clock.runFor(duration - 50);
       assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, `${mode} touch deadline must allow time to advance`);
@@ -72,6 +72,16 @@ try {
         await touch.clock.runFor(200);
       }
       assert.equal(await touch.locator("#hover-product").isVisible(), true, `${mode} touch must be completable`);
+      await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
+      const lastMenu = mode === "hard" ? 3 : 2;
+      for (let depth = 0; depth <= lastMenu; depth++) {
+        await touch.locator(`[data-depth="${depth}"]`).tap();
+        const window = duration - depth * (mode === "hard" ? 70 : 100);
+        await touch.clock.runFor(window - 20);
+        assert.equal(await touch.locator(`[data-depth="${depth + 1}"]`).isVisible(), true, `${mode} depth ${depth} remains reachable before deadline`);
+      }
+      await touch.clock.runFor(30);
+      assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} deeper menus must expire sooner`);
     }
     await touch.goto(`${origin}/exhibit/hover-menu?mode=fixed`);
     await touch.locator('[data-depth="0"]').tap();

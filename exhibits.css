@@ -398,3 +398,51 @@
   .web-demo #delivery-notice-scroll{margin:24px 3px}
   .web-demo #delivery-scroll{margin:24px 3px}
 }
+
+.hover-menu-stage{background:#e9cbd6}
+.hover-shop{min-height:580px;background:linear-gradient(110deg,#f9edef,#fff 65%);--web-accent:#94485d}
+.hover-navigation{position:relative;z-index:2;max-width:360px}
+.hover-level{position:relative;display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid #d6bdc5;padding:12px;margin-top:32px}
+.hover-level:first-child{margin-top:0}
+.hover-hostile .hover-level:not(:first-child){margin-top:64px}
+.hover-bridge{position:absolute;left:-1px;right:-1px;top:-33px;height:32px;pointer-events:none}
+.hover-bridge>span{position:absolute;left:calc(50% - 5px);top:0;width:10px;height:100%;background:#94485d;pointer-events:auto}
+.hover-hostile .hover-bridge{top:-65px;height:64px}
+.hover-hostile .hover-bridge>span{left:calc(50% - 3px);width:6px;height:22px}
+.hover-hostile .hover-bridge>span:nth-child(2){top:16px;width:45px;height:6px}
+.hover-hostile .hover-bridge>span:nth-child(3){top:16px;left:calc(50% + 36px);height:32px}
+.hover-hostile .hover-bridge>span:nth-child(4){top:42px;width:45px;height:6px}
+.hover-hostile .hover-bridge>span:nth-child(5){top:42px}
+.hover-level button{flex:1 1 100px}
+.hover-merch{padding:30px 0;border-bottom:1px solid #d6bdc5}
+.hover-merch>span{font:10px monospace;color:#84596b}
+.web-lamp{height:130px;width:145px;position:relative;margin:16px 0}
+.web-lamp:before{content:"";position:absolute;width:90px;height:14px;bottom:0;left:0;border-radius:50%;background:#32433d}
+.web-lamp:after{content:"";position:absolute;width:9px;height:94px;bottom:7px;left:41px;background:#566e63;transform:rotate(22deg);transform-origin:bottom}
+.web-lamp i{position:absolute;top:8px;left:59px;width:65px;height:45px;border-radius:50% 50% 4px 4px;background:#466052;transform:rotate(-20deg);z-index:1}
+.web-lamp b{position:absolute;top:30px;left:67px;width:58px;height:60px;background:#f4d875;clip-path:polygon(20% 0,70% 0,100% 100%,0 100%);opacity:.3}
+.new-preview.preview-hover-tightrope{inset:38px 18px 14px;display:flex;flex-direction:column;justify-content:center;gap:6px;text-align:left;color:#452738;letter-spacing:0}
+.preview-hover-tightrope>.hover-preview-kicker{font:7px/1.4 monospace;letter-spacing:0}
+.preview-hover-tightrope>strong{font:800 24px/.98 var(--heading);letter-spacing:0;text-align:left}
+.preview-hover-tightrope>.hover-preview-course{position:relative;height:65px;flex:none;border:0;padding:0;background:transparent}
+.hover-preview-course>span{position:absolute;font:700 11px/1.2 var(--body);letter-spacing:0}
+.hover-preview-shop,.hover-preview-destination{padding:9px 12px;border:1px solid #94485d;background:#fff;z-index:1}
+.hover-preview-shop{left:0;top:0}
+.hover-preview-destination{right:0;bottom:0;opacity:.55;border-style:dashed}
+.hover-preview-wire{position:absolute;left:28px;right:32px;top:18px;height:32px;border:3px solid #94485d;border-left:0;border-bottom:0;clip-path:polygon(0 0,100% 0,100% 100%,calc(100% - 3px) 100%,calc(100% - 3px) 3px,0 3px)}
+.hover-preview-course>.hover-preview-cursor{position:absolute;right:32px;top:12px;font:700 32px/1 Georgia,serif;color:#293f36;text-shadow:2px 2px #fff;z-index:2}
+.hover-preview-course>.hover-preview-fall{left:0;bottom:10px;font:italic 10px/1.3 Georgia,serif}
+.preview-hover-tightrope>.hover-preview-verdict{display:flex;flex-direction:column;gap:3px;border:0;border-top:2px solid #94485d;background:transparent;padding:8px 0 0}
+.hover-preview-verdict>b{font:800 18px/1 var(--heading);color:#aa253f}
+.hover-preview-verdict>span{font:italic 13px/1.2 Georgia,serif}
+.share-sheet .preview-hover-tightrope{inset:62px 30px 30px;gap:20px}
+.share-sheet .hover-preview-kicker{font-size:12px}
+.share-sheet .preview-hover-tightrope>strong{font-size:52px}
+.share-sheet .preview-hover-tightrope>.hover-preview-course{height:135px}
+.share-sheet .hover-preview-course>span{font-size:18px}
+.share-sheet .hover-preview-wire{left:50px;right:58px;top:25px;height:90px}
+.share-sheet .hover-preview-course>.hover-preview-cursor{right:55px;top:56px;font-size:58px}
+.share-sheet .hover-preview-course>.hover-preview-fall{font-size:18px}
+.share-sheet .hover-preview-verdict>b{font-size:34px}
+.share-sheet .hover-preview-verdict>span{font-size:23px}
+@media(max-width:600px){.hover-shop{min-height:650px}}

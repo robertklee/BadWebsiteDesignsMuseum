@@ -15,6 +15,7 @@ const exhibitOrder = [
   "layout-earthquake",
   "scroll-modal",
   "validation-afterthought",
+  "hover-menu",
   "notification-swatter",
   "tetris-volume",
   "phone",

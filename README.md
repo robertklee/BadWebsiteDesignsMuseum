@@ -1,8 +1,8 @@
 # Really Bad Design Museum
 
-A playful, interactive museum of thirty-four terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
+A playful, interactive museum of thirty-six terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
 
-The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 34 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). `website-behavior.js` contains the destructive registration-validation exhibit. Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
+The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 36 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). `website-behavior.js` contains the destructive registration-validation exhibit. Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
 
 ## Deployed online
 
@@ -18,7 +18,7 @@ npm start
 
 Open **http://localhost:3000**. Set `PORT` to use a different port.
 
-The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 34 per-exhibit share pages, and 35 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
+The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 36 per-exhibit share pages, and 37 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
 ### Generate share thumbnails
 
@@ -35,6 +35,8 @@ The generator renders and validates one numberless 1200×630 PNG per exhibit. It
 Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for example `/exhibit/runaway?mode=hard`. Use `?mode=fixed` for Fix it; omitted, `easy`, or unrecognized modes open easy mode. Switching difficulty—including automatic progression—updates the current URL without adding browser-history entries, so copying or refreshing the address preserves the selected mode. The toolbar Reset returns to easy and removes the mode parameter. Next exhibit links still start the next exhibit in easy mode.
 
 ## The collection
+
+- The Hover Dependency (`/exhibit/hover-menu`): find the Pivot desk lamp through nested shop menus connected by thin safe pointer corridors. Leaving the corridor with the mouse closes the menu after 130 milliseconds; mouse-opened menus expire after four seconds. Worse mode adds a submenu and narrower twisting paths, with 45-millisecond departure and 2.2-second expiration delays. Touch and keyboard selections stay open without a deadline or path tracing. Hold menu open bypasses the timing and starts enabled for reduced motion. Fixed mode uses persistent click-open menus. Timers stop on cleanup and pause while the tab is hidden.
 
 - The CAT-PCHA (`/exhibit/cat-captcha`): prove you are human by being a mouse. Collect four cheeses and reach the mouse hole while a cat follows the shortest route toward you after every move. Worse mode starts with six cheeses, gives the cat two steps every eighth turn, and rejects your first completed exit attempt. A seventh cheese appears at the top left as a processing fee, and the exit relocates to the top right. Cheese pickups distract the Worse-mode cat for one turn, including sprint turns; both modes remain winnable. Getting caught means restarting verification, not the whole museum. Arrow keys, WASD, direction buttons, and tapping adjacent squares all work. The chase is turn-based, and reduced motion removes movement transitions. Fixed mode replaces the game with a demo checkbox and confirmation. Neither mode performs a real security check.
 - The Runaway Button (`/exhibit/runaway`): flees to randomized, distant positions across an arena. Touch cannot hover, so the button relocates on its own timer, dodges near-miss taps, and evades a dragged finger. Each round draws a hidden direct-hit requirement: 6–12 hits in easy mode (median 8), or 18–24 in worse mode (median 20). Offsets from the median have weights `2, 2, 4, 2, 2, 1, 1` for `-2` through `+4`; near misses and timed moves do not count. Earlier direct hits trigger a flinch; the final required hit immediately turns the page green, stops the game, and reports the difficulty, direct hits, and total escapes. Worse mode also detects approaching cursors, shrinks the target, leaves clickable decoys, and relocates faster on touch. Reset draws a fresh requirement. Keyboard, reduced motion, and Fix it bypass the hit requirement and report the corresponding catch method.
@@ -86,3 +88,7 @@ Renderers signal success with an explicit `exhibit-complete` event on their stag
 ```sh
 npm run check
 ```
+
+## Hover Dependency tests
+
+With Chromium installed and the museum running, run `MUSEUM_URL=http://127.0.0.1:3000 node scripts/test-hover-dependency.mjs`. The default origin is port 3002. Tests cover straight and twisting mouse corridors, off-path closure, persistent touch and keyboard navigation, and thumbnail fit at desktop and mobile widths. Screenshots go to `/tmp/museum-hover-dependency`.

@@ -1,6 +1,7 @@
 import { createStageShell } from "./shared.js";
 
 export const exhibits = [
+  { id: "hover-menu", name: "The Hover Dependency", category: "Navigation", color: "pink", tagline: "I wanted a lamp. Not a mouse exam.", description: "One desk lamp. Several menus. Apparently you need the hands of a surgeon.", lesson: "The designer drew the menu open. Nobody asked how a person would get there.", fix: "Click-open menus stay open across gaps, touch gestures, and moments of hesitation.", worseChange: "The bridges now take a tiny twisting detour. So does your shopping trip.", preview: `<div class="new-preview preview-hover-tightrope"><span class="hover-preview-kicker">ONLINE SHOPPING / MOTOR SKILLS EXAM</span><strong>I JUST WANTED<br>A LAMP.</strong><div class="hover-preview-course" aria-hidden="true"><span class="hover-preview-shop">Shop +</span><i class="hover-preview-wire"></i><span class="hover-preview-destination">Desk lamps</span><b class="hover-preview-cursor">&#8598;</b><span class="hover-preview-fall">1 pixel later...</span></div><div class="hover-preview-verdict"><b>Menu closed.</b><span>Try being a surgeon.</span></div></div>`, render: renderHoverDependency },
   { id: "layout-earthquake", name: "The Layout Earthquake", category: "Content", color: "green", tagline: "The link was right there a second ago.", description: "Read the news while oversized ads push the story and its bookmark out of reach.", lesson: "Nobody reserved space for the content. Unfortunately, your click already had a reservation.", fix: "The ads have their own space. Your story stays where you left it.", worseChange: "The library story is further down, the ads are harder to shake, and even the columns won't sit still.", preview: `<div class="new-preview preview-earthquake-paper"><span class="earthquake-preview-masthead">THE DAILY DISPLACEMENT</span><strong>Just one quick article.</strong><img src="/assets/library.jpg" alt="" width="1200" height="800"><div class="earthquake-preview-ad"><span>BREAKING: SPONSORED CONTENT</span><b>THIS AD HAS<br>RIGHT OF WAY.</b><small>Your article can take the stairs.</small></div><span class="earthquake-preview-link">Read arti&hellip; <i aria-hidden="true">&#8595;</i></span><span class="earthquake-preview-pointer" aria-hidden="true">&#8598;</span><small class="earthquake-preview-punchline">You clicked here.<br>The article didn't.</small></div>`, render: renderLayoutEarthquake },
   { id: "validation-afterthought", name: "The Validation Afterthought", category: "Forms", color: "blue", tagline: "Four fields. One error. Start over.", description: "Hidden registration rules arrive one rejection at a time, taking the rest with them.", lesson: "The form knew the requirements all along. Apparently that information was on a need-to-fail basis.", fix: "Requirements are visible, errors belong to their fields, and your other answers stay put.", worseChange: "Useful guidance has been replaced by one cryptic complaint.", preview: `<div class="new-preview preview-validation-rejection"><span class="validation-preview-kicker">APPLICATION / NOT EVEN CLOSE</span><strong class="validation-preview-verdict">INVALID.</strong><div class="validation-preview-question"><b>Which field?</b><span>That's a secret.</span></div><div class="validation-preview-answers"><span>NAME <s>Alex Example</s></span><span>EMAIL <s>alex@example.test</s></span><b>ANSWERS DELETED</b></div><small class="validation-preview-footer">Start over. Guess better.</small></div>`, render: renderValidationAfterthought },
   { id: "scroll-modal", name: "The Scroll-Through Modal", category: "Interaction", color: "lilac", tagline: "You're scrolling. Just not the dialog.", description: "Save one day for $5,000. Free delivery? Keep scrolling. Wrong window.", lesson: "Two scroll containers entered. The one you couldn't use got every gesture.", fix: "The active dialog owns its scrolling, and the background stays still.", worseChange: "Shipping speed requires a third dialog, opened from the bottom of the second. Each gesture randomly scrolls one, two, or all three layers, sometimes in opposite directions.", preview: `<div class="new-preview preview-scroll-checkout"><div class="scroll-preview-back"><span>YOUR ORDER</span><span>Delivery: still deciding</span></div><div class="scroll-preview-front"><span class="scroll-preview-title">DELIVERY OPTIONS <b aria-hidden="true">&times;</b></span><span class="scroll-preview-offer">SAVE ONE DAY.</span><strong>$5,000</strong><small>One day. Five grand.</small><span class="scroll-preview-free">Free? Further down.</span><i class="scroll-preview-rail" aria-hidden="true"></i></div><span class="scroll-preview-punchline">YOU SCROLLED THE WRONG WINDOW.</span></div>`, render: renderScrollModal },
@@ -176,6 +177,98 @@ function renderLayoutEarthquake({ stage, mode }) {
     reduced.removeEventListener("change", schedule);
     startEvents.forEach(type => viewport.removeEventListener(type, start));
   };
+}
+
+function renderHoverDependency({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const { shell, say } = createStageShell(stage);
+  const path = ["Shop", "Home", "Lighting", ...(worse ? ["Desk lamps"] : []), "Pivot desk lamp"];
+  shell("ATELIER / OBJECTS FOR EVERYDAY", "A lamp, several menus away.", "Open the Pivot desk lamp product page.",
+    `<div class="web-demo hover-shop ${worse ? "hover-hostile" : ""}"><div class="web-tools"><label><input type="checkbox" id="menu-hold" ${reduced.matches ? "checked" : ""}> Hold menu open</label><button class="plain-button" id="menu-close" aria-label="Close product menus" title="Close product menus">&#215;</button></div><nav class="hover-navigation" aria-label="Product categories">${path.map((name, index) => `<div class="hover-level" data-level="${index}" ${index ? "hidden" : ""}><button class="${index === path.length - 1 ? "demo-button" : "plain-button"}" data-depth="${index}" ${index < path.length - 1 ? `aria-expanded="false" aria-controls="hover-level-${index + 1}"` : ""}>${name}${index < path.length - 1 ? " +" : ""}</button>${index ? `<button class="plain-button" data-other="${index}">${["", "Outdoor", "Textiles", "Ceiling lights", "Studio lamp"][index]}</button>` : ""}</div>`).join("")}</nav><div class="hover-merch"><span>THE EVERYDAY COLLECTION</span><div class="web-lamp" role="img" aria-label="Pivot desk lamp"><i></i><b></b></div><h3>Light. Within reach, allegedly.</h3></div><section id="hover-product" tabindex="-1" hidden><h3>Pivot desk lamp</h3><p>Adjustable arm. Warm light. $48. No purchase required.</p></section></div>`);
+  const levels = [...stage.querySelectorAll("[data-level]")];
+  levels.forEach((level, index) => {
+    level.id = `hover-level-${index}`;
+    if (index) {
+      const bridge = document.createElement("div");
+      bridge.className = "hover-bridge";
+      bridge.setAttribute("aria-hidden", "true");
+      bridge.innerHTML = "<span></span>".repeat(worse ? 5 : 1);
+      level.prepend(bridge);
+    }
+  });
+  const hold = stage.querySelector("#menu-hold");
+  const navigation = stage.querySelector(".hover-navigation");
+  let deadline;
+  let gap;
+  let complete = false;
+  let open = false;
+  let pointerNavigation = true;
+  const clear = () => { clearTimeout(deadline); clearTimeout(gap); };
+  const close = () => {
+    clear();
+    open = false;
+    const restoreFocus = levels.slice(1).some(level => level.contains(document.activeElement));
+    levels.slice(1).forEach(level => { level.hidden = true; });
+    navigation.querySelectorAll("[aria-expanded]").forEach(button => button.setAttribute("aria-expanded", "false"));
+    if (restoreFocus) levels[0].querySelector("button").focus({ preventScroll: true });
+  };
+  const arm = () => {
+    clearTimeout(deadline);
+    if (pointerNavigation && !fixed && !hold.checked && !complete && open && !document.hidden) deadline = setTimeout(() => { close(); say("Navigation expired. The shop is still at the top."); }, worse ? 2200 : 4000);
+  };
+  const expand = depth => {
+    if (complete) return;
+    if (depth === path.length - 1) {
+      complete = true;
+      clear();
+      stage.querySelector(".hover-merch").hidden = true;
+      stage.querySelector("#hover-product").hidden = false;
+      stage.querySelector("#hover-product").focus();
+      say("Pivot desk lamp found. No purchase made.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      return;
+    }
+    open = true;
+    levels.forEach((level, index) => { if (index <= depth + 1) level.hidden = false; });
+    navigation.querySelectorAll("[aria-expanded]").forEach(button => button.setAttribute("aria-expanded", String(!levels[Number(button.dataset.depth) + 1].hidden)));
+    arm();
+  };
+  navigation.addEventListener("pointerdown", event => {
+    pointerNavigation = event.pointerType === "mouse";
+    clear();
+  });
+  navigation.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if (button?.hasAttribute("data-depth")) expand(Number(button.dataset.depth));
+    else if (button) { close(); say("That department doesn't contain the Pivot desk lamp."); }
+  });
+  levels.forEach(level => {
+    level.addEventListener("pointerenter", () => { clearTimeout(gap); });
+    level.addEventListener("pointerleave", event => {
+      if (event.pointerType !== "mouse" || !pointerNavigation || fixed || hold.checked || complete || !open) return;
+      gap = setTimeout(() => { close(); say("You left the menu. So did the menu."); }, worse ? 45 : 130);
+    });
+  });
+  navigation.addEventListener("pointerover", event => {
+    const button = event.target.closest("[data-depth]");
+    if (!fixed && event.pointerType === "mouse" && button && Number(button.dataset.depth) < path.length - 1) {
+      pointerNavigation = true;
+      expand(Number(button.dataset.depth));
+    }
+  });
+  navigation.addEventListener("focusin", arm);
+  navigation.addEventListener("keydown", event => {
+    pointerNavigation = false;
+    clear();
+    if (event.key === "Escape" && open) { event.stopPropagation(); close(); }
+  });
+  hold.addEventListener("change", () => { clear(); arm(); });
+  stage.querySelector("#menu-close").addEventListener("click", close);
+  const visibility = () => { clear(); if (!document.hidden) arm(); };
+  document.addEventListener("visibilitychange", visibility);
+  return () => { clear(); document.removeEventListener("visibilitychange", visibility); };
 }
 
 function renderValidationAfterthought({ stage, mode }) {

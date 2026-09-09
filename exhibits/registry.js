@@ -46,6 +46,7 @@ const exhibitOrder = [
   "corporate",
   "loading",
   "newsletter",
+  "session-timeout",
 ];
 
 const newExhibitIds = new Set([

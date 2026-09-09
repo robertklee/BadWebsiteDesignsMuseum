@@ -51,28 +51,32 @@ function setupScrollPreviews(grid) {
     previous?.classList.remove("thumb-scroll-active");
   };
   const enabled = () => !disposed && grid.dataset.thumbInput === "touch" && !reducedMotion.matches && !document.hidden && !touching && grid.isConnected && !grid.querySelector(":focus-visible");
-  const activate = () => {
-    timer = null;
-    if (!enabled() || active) return;
+  const placement = element => {
     const viewport = window.visualViewport;
     const height = viewport?.height || innerHeight;
     const top = viewport?.offsetTop || 0;
-    const candidates = [...grid.querySelectorAll(".exhibit-card")].map(element => {
-      const bounds = element.querySelector(".card-art").getBoundingClientRect();
-      return { element, center: bounds.top + bounds.height / 2 - top };
-    }).filter(({ element, center }) => !played.has(element.getAttribute("href")) && center >= height * .3 && center <= height * .45)
-      .sort((first, second) => Math.abs(first.center - height / 3) - Math.abs(second.center - height / 3));
+    const bounds = element.querySelector(".card-art").getBoundingClientRect();
+    const visible = Math.max(0, Math.min(bounds.bottom, top + height * .9) - Math.max(bounds.top, top + height * .1));
+    return { element, distance: Math.abs(bounds.top + bounds.height / 2 - top - height / 2), visibility: visible / Math.min(bounds.height, height * .8) };
+  };
+  const activate = () => {
+    timer = null;
+    if (!enabled() || active) return;
+    const candidates = [...grid.querySelectorAll(".exhibit-card")].map(placement)
+      .filter(candidate => candidate.visibility >= .65 && !played.has(candidate.element.getAttribute("href")))
+      .sort((first, second) => first.distance - second.distance);
     for (const { element } of candidates) {
       element.classList.add("thumb-scroll-active");
       const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"));
-      played.add(element.getAttribute("href"));
       if (!animations.length) {
+        played.add(element.getAttribute("href"));
         element.classList.remove("thumb-scroll-active");
         continue;
       }
       active = element;
       Promise.all(animations.map(animation => animation.finished)).then(() => {
         if (active !== element) return;
+        played.add(element.getAttribute("href"));
         active = null;
         element.classList.remove("thumb-scroll-active");
         schedule();
@@ -81,6 +85,7 @@ function setupScrollPreviews(grid) {
     }
   };
   const schedule = () => {
+    if (active?.isConnected && enabled() && placement(active).visibility >= .35) return;
     stop();
     if (enabled()) timer = setTimeout(activate, 180);
   };

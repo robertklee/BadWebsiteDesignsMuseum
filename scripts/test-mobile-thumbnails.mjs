@@ -19,10 +19,12 @@ try {
     }, fraction);
     await advance(32);
   };
-  await position("runaway", .65);
+  await position("runaway", 1.15);
   await advance(250);
-  assert.equal(await activeCount(), 0, "Outside the activation band stays still");
-  await position("runaway");
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 0, "Offscreen artwork stays still");
+  await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+  await advance(32);
+  await position("runaway", .65);
   await advance(100);
   assert.equal(await activeCount(), 0, "Wait for scrolling to settle");
   await advance(120);
@@ -30,13 +32,29 @@ try {
   assert.equal(await page.locator('.exhibit-card[href="/exhibit/runaway"]').evaluate(element => element.classList.contains("thumb-scroll-active")), true);
   assert.equal(await page.evaluate(() => document.activeElement === document.body), true, "Scroll activation must not move focus");
   assert.ok(await page.locator(".thumb-scroll-active").evaluate(element => element.getAnimations({ subtree: true }).some(animation => animation.animationName === "thumb-dodge")), "Real CSS animation must start");
+  const playback = await page.locator(".thumb-scroll-active").evaluate(element => {
+    const animation = element.getAnimations({ subtree: true }).find(item => item.animationName === "thumb-dodge");
+    window.thumbnailPlayback = animation;
+    return animation.currentTime;
+  });
+  await position("runaway", .58);
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 1, "Small scroll adjustments keep the visible preview playing");
+  assert.ok(await page.evaluate(previousTime => {
+    const animation = document.querySelector(".thumb-scroll-active").getAnimations({ subtree: true }).find(item => item.animationName === "thumb-dodge");
+    return animation === window.thumbnailPlayback && animation.currentTime >= previousTime;
+  }, playback), "Scrolling preserves the animation instance and progress");
   await position("phone");
   assert.equal(await activeCount(), 0, "Scrolling cancels the previous replay");
   await advance(220);
   assert.equal(await activeCount(), 1, "Only the newly positioned card plays");
   await position("runaway");
   await advance(250);
-  assert.equal(await activeCount(), 0, "Previously played cards do not replay");
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 1, "Interrupted previews get another chance to finish");
+  await page.locator(".thumb-scroll-active").evaluate(element => {
+    for (const animation of element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"))) animation.finish();
+  });
+  await advance(250);
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 0, "Completed previews do not repeat in the same visit");
   await page.emulateMedia({ reducedMotion: "reduce" });
   await position("cookies");
   await advance(250);
@@ -58,7 +76,7 @@ try {
     for (const animation of element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"))) animation.finish();
   });
   await advance(250);
-  assert.equal(await activeCount(), 0, "A finished replay returns to the static artwork");
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/physics-cart"]').count(), 0, "A finished replay returns to the static artwork");
 
   await page.evaluate(() => document.dispatchEvent(new PointerEvent("pointerdown", { pointerType: "touch" })));
   await position("tetris-volume");
@@ -71,7 +89,7 @@ try {
   await page.locator('[data-filter="Interaction"]').evaluate(element => element.click());
   await position("runaway");
   await advance(250);
-  assert.equal(await activeCount(), 0, "Filtering must retain played IDs");
+  assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 0, "Filtering must retain played IDs");
   await position("wind-volume");
   await advance(220);
   assert.equal(await activeCount(), 1, "A card skipped during a swipe remains eligible after filtering");
@@ -120,7 +138,7 @@ try {
   }
   assert.equal(rowIds.size, 3, "Eligible neighboring cards take distinct turns");
   await advance(250);
-  assert.equal(await activeCount(), 0, "The row stops after each card has played once");
+  assert.equal(await page.locator(".thumb-scroll-active").evaluateAll(elements => elements.map(element => element.getAttribute("href"))).then(ids => ids.some(id => rowIds.has(id))), false, "A completed row does not repeat while other visible rows take their turns");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   for (const id of ["correcting-search", "expanding-form", "corporate", "password-gym", "elevator-date", "email-auction", "word-editor", "terms-game", "fonts", "retro", "address-jigsaw", "ai-store", "dropdown", "cat-captcha", "mystery-menu", "recipe", "layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal", "unix-birthday"]) {
@@ -131,7 +149,7 @@ try {
       for (const animation of element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"))) animation.finish();
     });
     await advance(220);
-    assert.equal(await activeCount(), 0, `${id} must settle after its complete sequence`);
+    assert.equal(await page.locator(`.thumb-scroll-active[href="/exhibit/${id}"]`).count(), 0, `${id} must settle after its complete sequence`);
   }
   await position("notification-swatter");
   await page.evaluate(() => {
@@ -195,7 +213,25 @@ try {
   });
   await advance(250);
   assert.equal(await desktop.locator(".thumb-scroll-active").count(), 0, "Desktop scrolling must not auto-play previews");
-  console.log("Mobile scroll previews passed: band, debounce, touch gestures, one-at-a-time tablet rows, hybrid tablet input switching, once-per-visit, filtering, focus, reduced motion, visibility, routing, and desktop exclusion.");
+  for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 568 }]) {
+    await page.setViewportSize(viewport);
+    for (const fraction of [.25, .5, .75]) {
+      await page.goto(museumUrl, { waitUntil: "networkidle" });
+      await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+      await advance(32);
+      await position("runaway", fraction);
+      await advance(220);
+      for (let turn = 0; turn < 2 && !await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(); turn++) {
+        assert.equal(await activeCount(), 1, "A visible neighboring preview may take the first turn");
+        await page.locator(".thumb-scroll-active").evaluate(element => {
+          for (const animation of element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-"))) animation.finish();
+        });
+        await advance(220);
+      }
+      assert.equal(await page.locator('.thumb-scroll-active[href="/exhibit/runaway"]').count(), 1, `Visible artwork at ${fraction * 100}% on ${viewport.width}px mobile must play without precise positioning`);
+    }
+  }
+  console.log("Mobile scroll previews passed: generous visibility, scroll continuity, interrupted replay recovery, debounce, touch gestures, tablet rows, hybrid input switching, once-per-visit completion, filtering, reduced motion, visibility, routing, and desktop exclusion.");
 } finally {
   await browser.close();
 }

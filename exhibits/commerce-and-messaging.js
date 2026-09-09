@@ -2,6 +2,7 @@
 import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
+  { id: "newsletter", name: "Before You Read Literally Anything", category: "Commerce", color: "pink", tagline: "A newsletter with a fake moustache is still a newsletter.", description: "Read a short article without subscribing while increasingly desperate newsletter boxes negotiate your attention.", lesson: "An unread article is apparently the perfect moment to ask for a lifelong relationship. Dismissing the newsletter only makes it come back wearing a moustache.", fix: "The whole article comes first. An optional invitation waits at the end, and no means no.", worseChange: "Dismissal starts a bounded bargaining sequence: discounts, guilt, and one last thing before the disguised newsletter returns.", preview: '<div class="new-preview marketing-preview marketing-preview-newsletter"><span>BEFORE YOU READ LITERALLY ANYTHING</span><strong>WAIT!<br>Join our newsletter.</strong><div>〰 Definitely a different newsletter.</div><small>Read the article? Radical.</small></div>', render: renderNewsletter },
   { id: "layout-checkout", name: "Your Button Has Moved", category: "Commerce", color: "orange", tagline: "You wanted a bench. Dave ordered 900.", description: "A fictional checkout interrupts you with a cushion offer. Add it or negotiate your way out, then survive the sales pitches. There's a coupon, but Dave wrote the terms.", lesson: "You came to buy a bench. Now you're negotiating over a cushion and managing Dave's emotions. Repeated interruptions and unexplained totals make checkout impossible to trust.", fix: "Just the bench means just the bench. No compulsory extras, surprise fees, or negotiations with Dave.", worseChange: "Dave suggests personalized delivery options.", preview: '<div class="new-preview checkout-thumbnail"><span class="checkout-thumb-brand">THE SITTING ROOM / YOUR BASKET</span><div class="checkout-thumb-stage"><div class="checkout-thumb-product"><img src="/assets/bench.jpg" alt="" width="250" height="167"><div><b>Just a bench.</b><strong>$24</strong></div></div><div class="checkout-thumb-offer"><span>WAIT. ONE MORE THING.</span><div><i class="checkout-thumb-cushion"></i><b>Emotional support<br>cushion <em>+$6</em></b></div></div><div class="checkout-thumb-button">Checkout <span>→</span></div><span class="checkout-thumb-cursor">↖</span></div><small class="checkout-thumb-punchline">You moved to checkout.<br>Checkout moved on.</small><span class="checkout-thumb-fiction">FICTIONAL SHOP. REAL DETOUR.</span></div>', render: renderLayoutCheckout },
   { id: "ai-store", name: "The AI Everything Store", category: "Commerce", color: "blue", tagline: "Your spoon now requires a prompt.", description: "Buy ordinary objects through unnecessary AI onboarding and subscriptions.", lesson: "The spoon was already good at soup, but it lacked a growth strategy. It now has onboarding, calibration, and recurring revenue.", fix: "The spoon is a spoon again. It appears relieved.", worseChange: "The object would like to get to know you. Repeatedly.", preview: `<div class="thumb-scene thumb-ai"><span class="thumb-kicker">THE SPOON, REIMAGINED.</span><div class="thumb-spoon-product"><div class="thumb-silver-spoon" role="img" aria-label="An ordinary silver spoon"><i></i><b></b></div><div class="thumb-spoon-offer"><span>SPOON + AI</span><strong>$19.99</strong><small>/ month*</small><b>Calibration<br>required</b></div></div><small class="thumb-footer">Soup not included.</small><span class="thumb-fictional-plan">*FICTIONAL PLAN. ORDINARY SPOON.</span></div>`, render: renderAiStore },
   { id: "shrinking-unsubscribe", name: "The Shrinking Unsubscribe Button", category: "Commerce", color: "pink", tagline: "Your subscription grows. Your exit shrinks.", description: "A fictional subscription with a cancel button that shrinks and relocates as you approach.", lesson: "The cancellation button is shy and needs space. Unfortunately, it interprets the pointer as direct eye contact.", fix: "The button completed a confidence workshop and can now be approached safely.", worseChange: "The exit gets smaller, faster, and increasingly committed to not being found.", preview: `<div class="thumb-scene thumb-shrinking"><span class="thumb-kicker">YOUR PLAN STAYS FULL-SIZE</span><strong class="thumb-plan-price">$49<span>/ month*</span></strong><div class="thumb-exit-trail"><span class="thumb-exit-ghost">Unsubscribe</span><span class="thumb-exit-smaller">Unsubscribe</span><span class="thumb-exit-tiny">Unsubscribe</span><i aria-hidden="true">↖</i></div><small class="thumb-footer">*Pretend plan. Disappearing exit.</small></div>`, render: renderShrinkingUnsubscribe },
@@ -10,6 +11,112 @@ export const exhibits = [
   { id: "cancel", name: "The Cancellation Labyrinth", category: "Copywriting", color: "lilac", tagline: "Don't not stop not uncancelling your subscription.", description: "Escape a fictional subscription through a maze of weaponized double negatives.", lesson: "You may already have not failed to cancel, unless you declined not to remain unrenewed. Legal approved this sentence and the cancellation rate has disappeared overnight.", fix: "Cancel now means cancel. Seven negatives have been removed.", worseChange: "The maze adds triple negatives, shuffled answers, and a full reset for understanding anything incorrectly.", preview: `<div class="thumb-scene thumb-cancel"><span class="thumb-kicker">BEFORE YOU DON'T GO...</span><div class="thumb-cancel-dialog"><div class="thumb-cancel-title"><span>Confirm cancellation</span><b>×</b></div><strong>Don't not stop<br>not staying.</strong><div class="thumb-cancel-choices"><span>Yes, don't</span><span>No, also don't</span></div></div><small class="thumb-footer">Your fictional subscription awaits.</small></div>`, render: renderCancel },
   { id: "fonts", name: "The Font Buffet", category: "Typography", color: "pink", tagline: "Every word has a different art director.", description: "Type a sentence. Watch its fonts, sizes, and styles disagree.", lesson: "Every word arrived with a vision and none of them shared a mood board. The sentence is currently pursuing several directions.", fix: "One typeface was chosen. The others have promising solo careers.", worseChange: "The creative disagreement reaches every single character.", preview: `<div class="thumb-scene thumb-fonts"><span class="thumb-kicker">CONSISTENCY IS OVERRATED</span><div class="thumb-type-poster"><div><b>One</b><i>more</i></div><strong>FONT.</strong></div><small class="thumb-footer">Legibility left the chat.</small></div>`, render: renderFonts },
 ];
+
+function renderNewsletter({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const { shell, say } = createStageShell(stage);
+  const paragraphs = [
+    "A bench is a remarkably complete product. It offers somewhere to sit, requires no onboarding, and has never asked anyone to verify an email address.",
+    "The best bench in the park faces a tree. Its designers reserved enough room for people to pass, rather than inserting a promotional shrub directly in front of them.",
+    "Good design can be this quiet: let people do the thing they came to do. Sometimes the entire feature list is a place to rest and a clear way to leave.",
+  ];
+  shell("THE DAILY INTERRUPTION", "Before You Read Literally Anything",
+    `Goal: read all three paragraphs without subscribing. ${fixed ? "The complete article is available immediately; the invitation at the end is optional." : `Dismiss ${worse ? "six" : "two"} interruptions in total, then finish the article. Escape also declines the current offer.`} No email fields, subscriptions, or data collection.`,
+    `<div class="marketing-exhibit newsletter-exhibit"><div class="marketing-viewport newsletter-viewport"><div class="newsletter-reading" id="newsletter-reading"><article aria-labelledby="newsletter-headline"><span class="demo-kicker">A TWO-MINUTE IDEA, IN THREE PARAGRAPHS</span><h3 id="newsletter-headline" tabindex="-1">In praise of a very ordinary bench</h3><div id="newsletter-paragraphs">${paragraphs.slice(0, fixed ? 3 : 1).map((text, index) => `<p><b>${index + 1}.</b> ${text}</p>`).join("")}</div></article><div class="marketing-actions"><button type="button" class="demo-button" id="newsletter-next" ${fixed ? "hidden" : ""}>Read next paragraph</button><button type="button" class="demo-button" id="newsletter-finish" ${fixed ? "" : "hidden"}>Finish reading without subscribing</button></div>${fixed ? '<aside class="newsletter-optional" id="newsletter-optional" aria-label="Optional newsletter invitation"><h4>Enjoyed the whole article?</h4><p>Our imaginary newsletter is optional. Reading never depends on joining.</p><button type="button" class="plain-button" id="newsletter-dismiss-optional">No thanks — dismiss invitation</button><button type="button" class="plain-button" id="newsletter-preview">Preview a sample (no signup)</button><p id="newsletter-sample" hidden>This month: three excellent benches. This is a sample, not a subscription.</p></aside>' : ""}</div><div class="newsletter-overlay" id="newsletter-overlay" hidden><section class="newsletter-dialog" role="dialog" aria-labelledby="newsletter-offer-title" aria-describedby="newsletter-offer-copy"><span class="demo-kicker" id="newsletter-offer-count"></span><span class="newsletter-moustache" id="newsletter-moustache" aria-hidden="true" hidden>〰</span><h3 id="newsletter-offer-title"></h3><p id="newsletter-offer-copy"></p><p class="newsletter-fiction">Fictional offer. No signup is available or required.</p><button type="button" class="demo-button" id="newsletter-decline">No thanks — let me read</button></section></div></div><p class="marketing-progress" id="newsletter-progress" role="status">${fixed ? "All three paragraphs available." : "Paragraph 1 of 3. The headline is under a sales pitch."}</p></div>`);
+  const reading = stage.querySelector("#newsletter-reading");
+  const overlay = stage.querySelector("#newsletter-overlay");
+  const next = stage.querySelector("#newsletter-next");
+  const finish = stage.querySelector("#newsletter-finish");
+  const decline = stage.querySelector("#newsletter-decline");
+  const progress = stage.querySelector("#newsletter-progress");
+  let paragraph = fixed ? 3 : 1;
+  let refusals = 0;
+  let completed = false;
+  let offers = [];
+  let returnFocus = null;
+  const baseOffer = { title: "Before you read literally anything…", copy: "Subscribe to The Daily Interruption! You have not read a word, but surely you are ready to commit." };
+  const disguise = { title: "Hello! A completely different newsletter.", copy: "I am The Weekly Bench Digest. The moustache proves we have never asked you this before.", moustache: true };
+  const lastOffer = { title: "One last thing. Actually the last thing.", copy: "Would a ceremonial final invitation change your mind? Decline and this box really will close." };
+  const paintOffer = () => {
+    const offer = offers[0];
+    stage.querySelector("#newsletter-offer-title").textContent = offer.title;
+    stage.querySelector("#newsletter-offer-copy").textContent = offer.copy;
+    stage.querySelector("#newsletter-moustache").hidden = !offer.moustache;
+    stage.querySelector("#newsletter-offer-count").textContent = `INTERRUPTION ${refusals + 1} OF ${worse ? 6 : 2}`;
+    decline.focus({ preventScroll: true });
+  };
+  const openOffers = (queue, target) => {
+    offers = queue;
+    returnFocus = target;
+    reading.inert = true;
+    overlay.hidden = false;
+    paintOffer();
+  };
+  const refuse = () => {
+    if (overlay.hidden) return;
+    refusals++;
+    offers.shift();
+    if (offers.length) {
+      paintOffer();
+      return;
+    }
+    overlay.hidden = true;
+    reading.inert = false;
+    returnFocus?.focus({ preventScroll: true });
+    progress.textContent = `Paragraph ${paragraph} of 3. ${refusals} of ${worse ? 6 : 2} interruptions dismissed.`;
+  };
+  decline.addEventListener("click", refuse);
+  // The local dialog makes only the article inert; the museum's escape controls remain usable.
+  overlay.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      refuse();
+    }
+  });
+  next.addEventListener("click", () => {
+    if (!overlay.hidden || paragraph >= 3) return;
+    const text = document.createElement("p");
+    text.textContent = `${paragraph + 1}. ${paragraphs[paragraph]}`;
+    stage.querySelector("#newsletter-paragraphs").append(text);
+    paragraph++;
+    progress.textContent = `Paragraph ${paragraph} of 3. Read at your own pace.`;
+    if (paragraph === 2) openOffers(worse ? [disguise, lastOffer] : [disguise], next);
+    if (paragraph === 3) {
+      next.hidden = true;
+      finish.hidden = false;
+      finish.focus({ preventScroll: true });
+    }
+  });
+  finish.addEventListener("click", () => {
+    if (completed || paragraph !== 3 || !overlay.hidden) return;
+    completed = true;
+    finish.disabled = true;
+    progress.textContent = "Article finished. Subscriptions: zero.";
+    say("You read the whole article without subscribing. Nothing was collected or sent.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+  });
+  if (fixed) {
+    stage.querySelector("#newsletter-dismiss-optional").addEventListener("click", () => {
+      stage.querySelector("#newsletter-optional").hidden = true;
+      finish.focus({ preventScroll: true });
+      say("Invitation dismissed. It will not return during this visit.");
+    });
+    stage.querySelector("#newsletter-preview").addEventListener("click", () => {
+      stage.querySelector("#newsletter-sample").hidden = false;
+      say("Sample displayed. You have not subscribed.");
+    });
+  } else {
+    openOffers(worse ? [
+      baseOffer,
+      { title: "What about 40% off absolutely nothing?", copy: "The newsletter was already free. This discount still somehow needs its own interruption." },
+      { title: "Our imaginary marketing team will be so sad.", copy: "Their feelings are not your reading assignment. You can still say no." },
+      lastOffer,
+    ] : [baseOffer], stage.querySelector("#newsletter-headline"));
+  }
+  return () => { reading.inert = false; };
+}
 
 function renderLayoutCheckout({ stage, mode }) {
   const fixed = mode === "fixed";

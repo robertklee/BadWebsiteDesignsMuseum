@@ -99,6 +99,7 @@ Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for exampl
 - The Alphabet Shuffle (`/exhibit/alphabet`): a separate character-entry slider with a randomly ordered alphabet that reshuffles after every appended character. Worse mode also reshuffles on committed slider adjustments. The visible preview always shows the character that will be appended.
 - The Corporate Fog Machine (`/exhibit/corporate`): mandatory onboarding adds more steps every time you complete one. Going back discards your progress.
 - The Loading Experience (`/exhibit/loading`): ten fake progress stages, including a backwards jump from 99%, reveal one sentence. Worse mode pauses for three approvals. Loading can be cancelled, and timers stop on reset or navigation. Fixed mode reveals the sentence immediately.
+- Before You Read Literally Anything (`/exhibit/newsletter`): read a short article without subscribing. A newsletter interrupts the headline and returns at the next paragraph wearing a fake moustache. Hard mode adds a bounded sequence of discounts, guilt trips, and last chances. Fixed mode puts a dismissible, optional invitation after the full article. No email is collected and no subscription is created.
 
 Every exhibit has original, worse, and fixed modes, a reset button, a curator's note, and a persistent mode toolbar. Worse mode displays a highlighted summary of exactly what it adds to the original version. Use **Escape** to return to the collection. Filter the collection by category or navigate directly to an exhibit, such as `/exhibit/runaway`.
 

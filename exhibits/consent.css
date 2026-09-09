@@ -1,0 +1,332 @@
+.consent-demo {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  height: 640px;
+  overflow: hidden;
+  border: 2px solid #332b24;
+  border-radius: 12px;
+  color: #302a24;
+  background: #fffaf0;
+  text-align: left;
+}
+
+.consent-demo *,
+.consent-preview * {
+  box-sizing: border-box;
+}
+
+.consent-demo [hidden] {
+  display: none !important;
+}
+
+.consent-demo .consent-site {
+  height: 100%;
+  overflow: auto;
+}
+
+.consent-demo .consent-site header,
+.consent-demo .consent-site footer {
+  padding: 18px 24px;
+  border-bottom: 1px solid #d8cbb6;
+}
+
+.consent-demo .consent-site header {
+  display: grid;
+  gap: 5px;
+  background: #f6edda;
+  font-size: 12px;
+}
+
+.consent-demo .consent-masthead {
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: -.04em;
+}
+
+.consent-demo .consent-article {
+  padding: 24px;
+}
+
+.consent-demo .consent-article h3 {
+  font-family: Georgia, serif;
+  font-size: clamp(24px, 4vw, 38px);
+  line-height: 1.08;
+}
+
+.consent-demo .consent-illustration {
+  padding: 12px;
+  background: #f1dfbd;
+  text-align: center;
+  font-size: 45px;
+}
+
+.consent-demo p {
+  line-height: 1.5;
+}
+
+.consent-demo .consent-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: 18px;
+  background: #302a24b3;
+}
+
+.consent-demo .consent-panel,
+.consent-demo .consent-layer {
+  grid-area: 1 / 1;
+  align-self: center;
+  width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 22px;
+  border: 2px solid #302a24;
+  border-radius: 10px;
+  background: #fffaf0;
+  box-shadow: 5px 5px 0 #211b1859;
+}
+
+.consent-demo .consent-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.consent-demo .consent-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .07em;
+}
+
+.consent-demo .consent-panel h3,
+.consent-demo .consent-layer h3 {
+  margin: 16px 0 10px;
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.1;
+}
+
+.consent-demo .consent-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 2px solid #302a24;
+  border-radius: 5px;
+  background: #ffde79;
+  color: #302a24;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.consent-demo .consent-button:hover {
+  background: #ffe8a3;
+}
+
+.consent-demo :focus-visible {
+  outline: 3px solid #175bbb;
+  outline-offset: 3px;
+}
+
+.consent-demo .consent-close {
+  flex-shrink: 0;
+  background: #fffaf0;
+}
+
+.consent-demo .consent-welcome-actions,
+.consent-demo .consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.consent-demo .consent-welcome-actions {
+  flex-direction: column;
+}
+
+.consent-demo .consent-accept {
+  min-height: 138px;
+  width: 100%;
+  font-size: clamp(30px, 5vw, 52px);
+  text-transform: uppercase;
+  box-shadow: 4px 4px 0 #302a24;
+}
+
+.consent-demo .consent-minor {
+  align-self: flex-start;
+  background: transparent;
+  border-color: transparent;
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.consent-demo.consent-fixed .consent-welcome-actions {
+  flex-direction: row;
+}
+
+.consent-demo.consent-fixed .consent-welcome-actions .consent-button {
+  flex: 1 1 120px;
+  min-height: 60px;
+}
+
+.consent-demo .consent-options {
+  min-width: 0;
+  margin: 18px 0;
+  padding: 0;
+  border: 0;
+}
+
+.consent-demo .consent-options legend {
+  padding: 0 0 8px;
+  font-weight: 800;
+}
+
+.consent-demo .consent-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 10px;
+  border-top: 1px solid #d8cbb6;
+  cursor: pointer;
+}
+
+.consent-demo .consent-options label > span:first-child {
+  flex: 1;
+}
+
+.consent-demo .consent-options small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.consent-demo .consent-options input {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  accent-color: #302a24;
+}
+
+.consent-demo .consent-option-state {
+  width: 24px;
+  font-size: 12px;
+}
+
+.consent-demo .consent-review {
+  padding: 0;
+  list-style: none;
+}
+
+.consent-demo .consent-review li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #d8cbb6;
+  font-size: 13px;
+}
+
+.consent-demo .consent-footnote,
+.consent-demo .consent-essential,
+.consent-demo .consent-saved {
+  font-size: 12px;
+}
+
+.consent-demo .consent-layer {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 440px);
+  justify-self: center;
+  border: 3px solid #8a3b41;
+  background: #fff0ee;
+  box-shadow: 0 0 0 100vmax #302a2499;
+}
+
+.consent-preview {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  color: #302a24;
+}
+
+.consent-preview .consent-preview-paper {
+  padding: 12px;
+  font-family: Georgia, serif;
+  opacity: .55;
+}
+
+.consent-preview .consent-preview-banner {
+  position: relative;
+  margin-top: -22px;
+  padding: 12px;
+  border: 2px solid #302a24;
+  background: #fffaf0;
+  transform: rotate(-2deg);
+  box-shadow: 4px 4px 0 #302a2440;
+}
+
+.consent-preview .consent-preview-banner b {
+  font-size: 9px;
+}
+
+.consent-preview .consent-preview-banner strong {
+  display: block;
+  margin: 8px 0;
+  padding: 12px;
+  background: #ffde79;
+  border: 2px solid #302a24;
+  font-size: 25px;
+}
+
+.consent-preview .consent-preview-banner small {
+  font-size: 9px;
+}
+
+@media (max-width: 540px) {
+  .consent-demo {
+    height: 650px;
+  }
+
+  .consent-demo .consent-overlay {
+    padding: 8px;
+  }
+
+  .consent-demo .consent-panel,
+  .consent-demo .consent-layer {
+    padding: 14px;
+  }
+
+  .consent-demo .consent-actions,
+  .consent-demo.consent-fixed .consent-welcome-actions {
+    flex-direction: column;
+  }
+
+  .consent-demo.consent-fixed .consent-welcome-actions .consent-button {
+    flex: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consent-demo *,
+  .consent-preview * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

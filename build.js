@@ -7,6 +7,7 @@ const publicFiles = [
   "styles.css",
   "exhibits.css",
   "app.js",
+  "exhibits/consent.css",
   "exhibits/marketing.css",
 ];
 const exhibitModules = [

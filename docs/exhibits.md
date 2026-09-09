@@ -310,6 +310,14 @@ Read a short article without subscribing. A newsletter interrupts the headline, 
 
 Hard adds a bounded sequence of discounts, guilt trips, and last chances. Fix it puts a dismissible, optional invitation after the full article. No email is collected and no subscription is created.
 
+## The Session Timeout Sprint
+
+**Route:** `/exhibit/session-timeout`
+
+Enter the displayed fictional reservation details before a 30-second session erases them. Start explicitly, pause at any time, or use manual one-second steps with reduced motion.
+
+Hard gives 20 seconds and requires three extension confirmations while the clock keeps running. Fix it gives 90 seconds, warns with 30 remaining, preserves expired drafts, and renews in one click. Hidden tabs pause countdowns; completing, resetting, changing modes, or leaving stops the clock. No reservation is sent or stored.
+
 ## Shared behavior
 
 Every exhibit includes a reset control, curator's note, and persistent mode toolbar. Completing Easy starts a short countdown to Hard; **Stay here** keeps the current result. Hard and Fix it do not advance automatically.

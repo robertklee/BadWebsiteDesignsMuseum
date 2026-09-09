@@ -1,6 +1,6 @@
 # Really Bad Design Museum
 
-A playful, interactive museum of 37 terrible website ideas, built with plain HTML, CSS, and JavaScript and no runtime dependencies.
+A playful, interactive museum of 39 terrible website ideas, built with plain HTML, CSS, and JavaScript and no runtime dependencies.
 
 **Live site:** https://badwebsitedesignsmuseum.robert-k-lee.workers.dev
 

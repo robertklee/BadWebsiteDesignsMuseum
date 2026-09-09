@@ -2,10 +2,125 @@ import { createStageShell } from "./shared.js";
 
 export const exhibits = [
   { id: "hover-menu", name: "The Hover Dependency", category: "Navigation", color: "pink", tagline: "I wanted a lamp. Not a mouse exam.", description: "One desk lamp. Several menus. Apparently you need the hands of a surgeon.", lesson: "The designer drew the menu open. Nobody asked how a person would get there.", fix: "Click-open menus stay open across gaps, touch gestures, and moments of hesitation.", worseChange: "The bridges now take a tiny twisting detour. So does your shopping trip.", preview: `<div class="new-preview preview-hover-tightrope"><span class="hover-preview-kicker">ONLINE SHOPPING / MOTOR SKILLS EXAM</span><strong>I JUST WANTED<br>A LAMP.</strong><div class="hover-preview-course" aria-hidden="true"><span class="hover-preview-shop">Shop +</span><i class="hover-preview-wire"></i><span class="hover-preview-destination">Desk lamps</span><b class="hover-preview-cursor">&#8598;</b><span class="hover-preview-fall">1 pixel later...</span></div><div class="hover-preview-verdict"><b>Menu closed.</b><span>Try being a surgeon.</span></div></div>`, render: renderHoverDependency },
+  { id: "session-timeout", name: "The Session Timeout Sprint", category: "Forms", color: "orange", tagline: "For your inconvenience.", description: "Finish a fictional form before a very impatient session erases your work.", lesson: "Security-related interruptions should support recovery, not destroy work. This timer protects absolutely nothing except the form's free time.", fix: "Your draft survives expiry, the warning arrives early, and extending takes one click.", worseChange: "Twenty seconds. Three extension confirmations. The clock keeps running while you negotiate.", preview: `<div class="new-preview preview-session"><span>FOR YOUR INCONVENIENCE</span><strong>00:03</strong><div>Your draft is about to become history.</div><small>Extend? Please confirm your confirmation.</small></div>`, render: renderSessionTimeout },
   { id: "layout-earthquake", name: "The Layout Earthquake", category: "Content", color: "green", tagline: "The link was right there a second ago.", description: "Read the news while oversized ads push the story and its bookmark out of reach.", lesson: "Nobody reserved space for the content. Unfortunately, your click already had a reservation.", fix: "The ads have their own space. Your story stays where you left it.", worseChange: "The library story is further down, the ads are harder to shake, and even the columns won't sit still.", preview: `<div class="new-preview preview-earthquake-paper"><span class="earthquake-preview-masthead">THE DAILY DISPLACEMENT</span><strong>Just one quick article.</strong><img src="/assets/library.jpg" alt="" width="1200" height="800"><div class="earthquake-preview-ad"><span>BREAKING: SPONSORED CONTENT</span><b>THIS AD HAS<br>RIGHT OF WAY.</b><small>Your article can take the stairs.</small></div><span class="earthquake-preview-link">Read arti&hellip; <i aria-hidden="true">&#8595;</i></span><span class="earthquake-preview-pointer" aria-hidden="true">&#8598;</span><small class="earthquake-preview-punchline">You clicked here.<br>The article didn't.</small></div>`, render: renderLayoutEarthquake },
   { id: "validation-afterthought", name: "The Validation Afterthought", category: "Forms", color: "blue", tagline: "Four fields. One error. Start over.", description: "One answer was wrong. The form cleared the others for their involvement.", lesson: "The form knew the requirements all along. Apparently that information was on a need-to-fail basis.", fix: "Requirements are visible, errors belong to their fields, and your other answers stay put.", worseChange: "Useful guidance has been replaced by one cryptic complaint.", preview: `<div class="new-preview preview-validation-rejection"><span class="validation-preview-kicker">APPLICATION / NOT EVEN CLOSE</span><strong class="validation-preview-verdict">INVALID.</strong><div class="validation-preview-question"><b>Which field?</b><span>That's a secret.</span></div><div class="validation-preview-answers"><span>NAME <s>Alex Example</s></span><span>EMAIL <s>alex@example.test</s></span><b>ANSWERS DELETED</b></div><small class="validation-preview-footer">Start over. Guess better.</small></div>`, render: renderValidationAfterthought },
   { id: "scroll-modal", name: "The Scroll-Through Modal", category: "Interaction", color: "lilac", tagline: "You're scrolling. Just not the dialog.", description: "Save one day for $5,000. Free delivery? Keep scrolling. Wrong window.", lesson: "Two scroll containers entered. The one you couldn't use got every gesture.", fix: "The active dialog owns its scrolling, and the background stays still.", worseChange: "Shipping speed requires a third dialog, opened from the bottom of the second. Each gesture randomly scrolls one, two, or all three layers, sometimes in opposite directions.", preview: `<div class="new-preview preview-scroll-checkout"><div class="scroll-preview-back"><span>YOUR ORDER</span><span>Delivery: still deciding</span></div><div class="scroll-preview-front"><span class="scroll-preview-title">DELIVERY OPTIONS <b aria-hidden="true">&times;</b></span><span class="scroll-preview-offer">SAVE ONE DAY.</span><strong>$5,000</strong><small>One day. Five grand.</small><span class="scroll-preview-free">Free? Further down.</span><i class="scroll-preview-rail" aria-hidden="true"></i></div><span class="scroll-preview-punchline">YOU SCROLLED THE WRONG WINDOW.</span></div>`, render: renderScrollModal },
 ];
+
+function renderSessionTimeout({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const { shell, say } = createStageShell(stage);
+  const duration = fixed ? 90 : worse ? 20 : 30;
+  shell("DEPARTMENT OF PREMATURE GOODBYES", "The Session Timeout Sprint",
+    "Reserve an imaginary reading room: enter Gallery, 2 guests, and the code QUIET. Use only these invented details. Start when ready; Pause always works.",
+    `<div class="journey-demo"><div class="journey-controls"><button class="demo-button" id="session-start">Start session</button><button class="plain-button" id="session-pause" disabled>Pause clock</button><button class="plain-button" id="session-tick" hidden disabled>Advance one second</button><output id="session-clock" aria-label="Session time remaining">${duration} seconds</output></div><div class="journey-viewport"><form id="session-form" autocomplete="off"><fieldset disabled><legend>Fictional reading-room reservation</legend><label for="session-room">Room: Gallery</label><input id="session-room" maxlength="30" required><label for="session-guests">Guests: 2</label><input id="session-guests" inputmode="numeric" maxlength="2" required><label for="session-code">Booking code: QUIET</label><input id="session-code" maxlength="20" required><button class="demo-button">Reserve fictional room</button></fieldset></form><section class="journey-overlay" id="session-warning" role="dialog" aria-labelledby="session-warning-title" hidden><div class="journey-panel"><h3 id="session-warning-title">Your session is packing its bags.</h3><p id="session-warning-copy"></p><button class="demo-button" id="session-extend">Extend session</button></div></section></div></div>`);
+  const form = stage.querySelector("#session-form");
+  const fields = form.querySelector("fieldset");
+  const warning = stage.querySelector("#session-warning");
+  const copy = stage.querySelector("#session-warning-copy");
+  const extend = stage.querySelector("#session-extend");
+  const pause = stage.querySelector("#session-pause");
+  const step = stage.querySelector("#session-tick");
+  const start = stage.querySelector("#session-start");
+  let remaining = duration;
+  let running = false;
+  let paused = false;
+  let finished = false;
+  let expired = false;
+  let confirmations = 0;
+  let timer;
+  let previousFocus;
+  const stop = () => { clearInterval(timer); timer = undefined; };
+  const paint = () => {
+    stage.querySelector("#session-clock").textContent = `${remaining} seconds${paused ? " — paused" : ""}`;
+    pause.textContent = paused ? "Resume clock" : "Pause clock";
+    step.hidden = !reduced.matches;
+    step.disabled = !running || paused || finished;
+  };
+  const showWarning = () => {
+    if (!warning.hidden) return;
+    previousFocus = form.contains(document.activeElement) ? document.activeElement : form.querySelector("input");
+    form.inert = true;
+    warning.hidden = false;
+    copy.textContent = fixed ? "Thirty seconds left. Your draft is safe; extend now with one click." : "Ten seconds left. Please negotiate quickly.";
+    extend.textContent = "Extend session";
+    extend.focus({ preventScroll: true });
+    say(fixed ? "Session warning: 30 seconds remain. Your draft will be preserved." : "Session warning: 10 seconds remain.");
+  };
+  const tick = () => {
+    if (!running || paused || finished || document.hidden) return;
+    remaining = Math.max(0, remaining - 1);
+    if (remaining <= (fixed ? 30 : 10)) showWarning();
+    if (!remaining) {
+      expired = true;
+      running = false;
+      stop();
+      if (!fixed) form.reset();
+      copy.textContent = fixed ? "Session expired. Your draft is still here. Renew to continue." : "Session expired. Your answers were shredded for absolutely no reason. Start again.";
+      extend.textContent = "Renew session";
+      pause.disabled = true;
+      say(fixed ? "Session expired; draft preserved." : "Session expired; answers cleared.");
+    }
+    paint();
+  };
+  const schedule = () => {
+    stop();
+    if (running && !paused && !reduced.matches) timer = setInterval(tick, 1000);
+    paint();
+  };
+  start.addEventListener("click", () => {
+    running = true;
+    start.disabled = true;
+    fields.disabled = false;
+    pause.disabled = false;
+    schedule();
+    form.querySelector("input").focus();
+  });
+  pause.addEventListener("click", () => { paused = !paused; schedule(); });
+  step.addEventListener("click", tick);
+  extend.addEventListener("click", () => {
+    if (worse && !expired && ++confirmations < 3) {
+      copy.textContent = confirmations === 1 ? "Are you sure you need more time? The clock is still running." : "Please confirm your confirmation. We value your remaining seconds.";
+      extend.textContent = confirmations === 1 ? "Confirm extension" : "Confirm the confirmation";
+      return;
+    }
+    remaining = duration;
+    confirmations = 0;
+    expired = false;
+    running = true;
+    warning.hidden = true;
+    form.inert = false;
+    pause.disabled = false;
+    schedule();
+    previousFocus?.focus({ preventScroll: true });
+    say("Session renewed. The clock has reluctantly agreed.");
+  });
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    if (!running || finished || expired || !warning.hidden) return;
+    if (stage.querySelector("#session-room").value.trim().toLowerCase() !== "gallery" ||
+        stage.querySelector("#session-guests").value.trim() !== "2" ||
+        stage.querySelector("#session-code").value.trim().toUpperCase() !== "QUIET") {
+      say("Use the displayed fictional details: Gallery, 2, QUIET. Your answers are still here.");
+      return;
+    }
+    finished = true;
+    running = false;
+    stop();
+    fields.disabled = true;
+    pause.disabled = true;
+    paint();
+    say("Fictional room reserved. Clock stopped. Nothing was sent or booked.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+  });
+  reduced.addEventListener("change", schedule);
+  paint();
+  return () => { stop(); reduced.removeEventListener("change", schedule); };
+}
+
 
 function renderLayoutEarthquake({ stage, mode }) {
   const fixed = mode === "fixed";

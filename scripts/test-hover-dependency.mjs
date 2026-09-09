@@ -45,7 +45,7 @@ try {
     assert.equal(await page.locator("#menu-hold").isVisible(), false, "Escape must not count as a failure");
     await page.mouse.move(0, 0);
     await page.locator('[data-depth="0"]').hover();
-    await page.clock.runFor(mode === "hard" ? 2250 : 2850);
+    await page.clock.runFor(mode === "hard" ? 2350 : 3000);
     assert.equal(await page.locator('[data-depth="1"]').isVisible(), false, `${mode} idle mouse menu must expire`);
     assert.equal(await page.locator("#menu-hold").isVisible(), true, "Two mouse failures reveal help");
   }
@@ -57,6 +57,26 @@ try {
     await touch.clock.install();
     await touch.clock.pauseAt(await touch.evaluate(() => Date.now() + 1000));
     for (const mode of ["easy", "hard"]) {
+      await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
+      const baseDuration = mode === "hard" ? 420 : 650;
+      const failureGrace = mode === "hard" ? 50 : 150;
+      const graceCap = mode === "hard" ? 200 : 750;
+      await touch.locator('[data-depth="0"]').tap();
+      await touch.locator('[data-other="1"]').tap();
+      await touch.locator('[data-depth="0"]').tap();
+      await touch.clock.runFor(baseDuration + failureGrace - 10);
+      assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, `${mode} first failure must add grace`);
+      await touch.clock.runFor(20);
+      assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} first failure grace must expire`);
+      for (let failure = 0; failure < 10; failure++) {
+        await touch.locator('[data-depth="0"]').tap();
+        await touch.locator('[data-other="1"]').tap();
+      }
+      await touch.locator('[data-depth="0"]').tap();
+      await touch.clock.runFor(baseDuration + graceCap - 10);
+      assert.equal(await touch.locator('[data-depth="1"]').isVisible(), true, `${mode} failure grace must reach its cap`);
+      await touch.clock.runFor(20);
+      assert.equal(await touch.locator('[data-depth="1"]').isVisible(), false, `${mode} failure grace must not exceed its cap`);
       await touch.goto(`${origin}/exhibit/hover-menu?mode=${mode}`);
       await touch.evaluate(() => {
         window.hoverCompletions = 0;
@@ -80,7 +100,7 @@ try {
         });
         await touch.screenshot({ path: `${screenshots}/initial-product-${width}.png` });
       }
-      const duration = mode === "hard" ? 420 : 650;
+      const duration = baseDuration;
       await touch.locator('[data-depth="0"]').tap();
       const catalogTop = await touch.locator(".hover-catalog").evaluate(element => element.getBoundingClientRect().top + scrollY);
       assert.equal(await touch.getByRole("button", { name: "Filter", exact: true }).getAttribute("aria-expanded"), "true");

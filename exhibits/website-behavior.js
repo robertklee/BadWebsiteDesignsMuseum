@@ -259,8 +259,9 @@ function renderHoverDependency({ stage, mode }) {
   const arm = () => {
     clearTimeout(deadline);
     const touchDepth = Math.max(0, levels.filter(level => !level.hidden).length - 2);
-    const touchDuration = Math.max(200, (worse ? 420 : 650) - touchDepth * (worse ? 70 : 100));
-    const duration = navigationInput === "touch" ? touchDuration : (worse ? 2200 : 2800);
+    const failureGrace = Math.min(failedTries * (worse ? 50 : 150), worse ? 200 : 750);
+    const touchDuration = Math.max(200, (worse ? 420 : 650) - touchDepth * (worse ? 70 : 100)) + failureGrace;
+    const duration = navigationInput === "touch" ? touchDuration : (worse ? 2200 : 2800) + failureGrace;
     if (navigationInput !== "keyboard" && !fixed && !hold.checked && !complete && open && !document.hidden) deadline = setTimeout(() => { fail("Navigation expired. The shop is still at the top."); }, duration);
   };
   const expand = depth => {

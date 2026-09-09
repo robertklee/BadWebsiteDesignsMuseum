@@ -318,6 +318,14 @@ Enter the displayed fictional reservation details before a 30-second session era
 
 Hard gives 20 seconds and requires three extension confirmations while the clock keeps running. Fix it gives 90 seconds, warns with 30 remaining, preserves expired drafts, and renews in one click. Hidden tabs pause countdowns; completing, resetting, changing modes, or leaving stops the clock. No reservation is sent or stored.
 
+## The Help Center Ouroboros
+
+**Route:** `/exhibit/help-center`
+
+Find a fictional ticket's seven-day refund window through three FAQ, chatbot, and contact handoffs. Both paths eventually reveal the answer.
+
+Hard requires six handoffs and a fresh explanation at each step. Fix it answers immediately and offers a simulated human escalation that retains the question and context. Nothing is sent to a chatbot or support service.
+
 ## Shared behavior
 
 Every exhibit includes a reset control, curator's note, and persistent mode toolbar. Completing Easy starts a short countdown to Hard; **Stay here** keeps the current result. Hard and Fix it do not advance automatically.

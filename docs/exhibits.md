@@ -302,6 +302,14 @@ Wait through ten fake progress stages—including backward progress near complet
 
 Hard interrupts the wait with approval prompts. Fix it reveals the sentence immediately.
 
+## Before You Read Literally Anything
+
+**Route:** `/exhibit/newsletter`
+
+Read a short article without subscribing. A newsletter interrupts the headline, then returns at the next paragraph wearing a fake moustache.
+
+Hard adds a bounded sequence of discounts, guilt trips, and last chances. Fix it puts a dismissible, optional invitation after the full article. No email is collected and no subscription is created.
+
 ## Shared behavior
 
 Every exhibit includes a reset control, curator's note, and persistent mode toolbar. Completing Easy starts a short countdown to Hard; **Stay here** keeps the current result. Hard and Fix it do not advance automatically.

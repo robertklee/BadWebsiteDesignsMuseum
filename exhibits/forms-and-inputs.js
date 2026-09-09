@@ -6,7 +6,7 @@ export const exhibits = [
   { id: "word-editor", name: "The Dropdown Word Processor", category: "Forms", color: "orange", tagline: "A whole document. One dropdown per character.", description: "Write, edit, and regret every letter you select from a menu.", lesson: "Typing was alarmingly efficient, so every character now gets its own tiny meeting. Minutes will be distributed one letter at a time.", fix: "The keyboard has been reinstated and is eager to put this behind it.", worseChange: "Every menu changes the moment you make a choice.", preview: `<div class="thumb-scene thumb-word"><span class="thumb-kicker">UNTITLED DOCUMENT</span><div class="thumb-word-page"><div class="thumb-word-chrome">File &nbsp; Edit &nbsp; Suffer</div><div class="thumb-letter-selects"><span>H⌄</span><span>e⌄</span><span>l⌄</span><span>l⌄</span><div class="thumb-open-letter"><span>o⌄</span><div><span>n</span><b>o ✓</b><span>p</span></div></div></div><div class="thumb-word-paper-lines"></div></div><small class="thumb-footer">5 letters. 5 dropdowns.</small></div>`, render: renderWordEditor },
   { id: "alphabet", name: "The Alphabet Shuffle", category: "Forms", color: "pink", tagline: "A slider with no alphabetic loyalties.", description: "Find a letter. Add it. The entire slider order changes.", lesson: "The alphabet has entered its experimental phase. Familiar order was rejected as creatively limiting.", fix: "The letters have returned to their assigned seats, and the keyboard handles introductions.", worseChange: "Even touching the slider sends the alphabet scrambling.", preview: `<div class="thumb-scene thumb-alphabet"><span class="thumb-kicker">THE ALPHABET, RECONSIDERED</span><div class="thumb-shuffle-step"><span>FOUND A.</span><div class="thumb-shuffle-letters"><span>Q</span><b>A</b><span>Z</span><span>M</span><span>B</span></div><div class="thumb-shuffle-track"><i></i></div></div><div class="thumb-shuffle-step"><span>ADDED A. NOW FIND IT AGAIN.</span><div class="thumb-shuffle-letters thumb-shuffled"><span>M</span><span>Z</span><span>B</span><b>A</b><span>Q</span></div><div class="thumb-shuffle-track"><i></i></div></div><small class="thumb-footer">Same slider. New alphabet.</small></div>`, render: renderAlphabet },
   { id: "phone", name: "The Phone Number Casino", category: "Forms", color: "orange", tagline: "Your number is somewhere in these odds.", description: "Roll each digit. Lock it. Hope the next roll respects it.", lesson: "Your phone number is in there somewhere. The house remains confident that persistence is statistically similar to typing.", fix: "The reels are closed. The whole number can now be entered without placing a bet.", worseChange: "Each roll may unsettle progress you thought was safe.", preview: `<div class="thumb-scene thumb-phone"><span class="thumb-kicker">PLEASE GAMBLE YOUR NUMBER</span><div class="thumb-phone-machine"><span>PHONE NUMBER</span><div class="thumb-phone-digits"><div><b>(202) 555-</b><div class="thumb-locked-digits"><span>0<small>✓</small></span><span>1<small>✓</small></span><span>0<small>✓</small></span></div></div><div class="thumb-last-reel"><div class="thumb-reel-strip"><span>6</span><b>7</b><span>8</span></div></div></div><div class="thumb-phone-state"><span>9 DIGITS LOCKED</span><b>↻</b></div></div><small class="thumb-footer">Your number is somewhere in these odds.</small></div>`, render: renderPhone },
-  { id: "cookies", name: "The Cookie Switchboard", category: "Forms", color: "yellow", tagline: "Your preferences. Our creative interpretation.", description: "Turn one cookie off. Watch another turn on. Try to reject them all.", lesson: "The switches are a close-knit community and refuse to make decisions alone. Your preferences have been noted as a group suggestion.", fix: "Each switch has agreed to mind its own business.", worseChange: "Each switch brings friends, and the labels cannot be trusted.", preview: `<div class="thumb-scene thumb-cookie"><span class="thumb-kicker">WE RESPECT YOUR CHOICES*</span><div class="thumb-cookie-panel"><div class="thumb-cookie-row"><b>Analytics</b><span>OFF ←</span><i class="thumb-switch thumb-switch-off"></i></div><div class="thumb-cookie-wire"><i></i><span>ONE CLICK LATER</span></div><div class="thumb-cookie-row"><b>Marketing</b><span>→ ON</span><i class="thumb-switch thumb-switch-on"></i></div></div><small class="thumb-footer">*Not independently.</small></div>`, render: renderCookies },
+  { id: "cookies", name: "The Cookie Consent Labyrinth", category: "Forms", color: "yellow", tagline: "One click for yes. A small expedition for no.", description: "Read a miniature website—once you escape its cookie overlay. Reject every optional category and vendor.", lesson: "Accept has a red carpet. Reject has three departments and a feelings committee. Unequal effort turns consent into exhaustion.", fix: "Accept, Reject, and Customize get equal billing. Your choices stay chosen when you reopen preferences.", worseChange: "Every rejection summons one more plea. These cookies have families, apparently.", preview: `<div class="new-preview consent-preview"><span>THE DAILY CRUMB</span><div class="consent-preview-paper">A perfectly readable article.<br>Somewhere underneath this.</div><div class="consent-preview-banner"><b>YOUR PRIVACY IS HUGE TO US</b><strong>ACCEPT ALL</strong><small>Reject? Please visit three departments.</small></div></div>`, render: renderCookies },
   { id: "unix-birthday", name: "The Unix Birthday Picker", category: "Forms", color: "green", tagline: "Happy 631152000000 to you.", description: "Slide through milliseconds since 1970. Snap your birthday to midnight.", lesson: "Birthdays are more festive when expressed as very large integers. Candles may be counted from the Unix epoch.", fix: "The computer keeps the milliseconds to itself and shows everyone else a date.", worseChange: "The calendar has vanished. Bring your best enormous number.", preview: `<div class="thumb-scene thumb-birthday"><span class="thumb-kicker">WHEN WERE YOU BORN?</span><div class="thumb-birthday-greeting"><strong>Happy<br>birthday!</strong><div class="thumb-birthday-calendar"><span>JAN</span><b>1</b><small>1990</small></div></div><div class="thumb-timestamp"><span>DATE OF BIRTH / MILLISECONDS</span><b>631152000000</b></div><small class="thumb-footer">January 1, 1990. In computer.</small></div>`, render: renderUnixBirthday },
   { id: "password-gym", name: "The Password Gym", category: "Forms", color: "orange", tagline: "Twenty rules. Hard mode brought a clipboard.", description: "Rules unlock as you type. Each one has fresh opinions about your password.", lesson: "Your password is almost strong enough to lift a car. It only needs a color, an apology, the moon, and several incompatible beliefs.", fix: "The password field now asks for length instead of a complete personality.", worseChange: "The rules keep coming until they stop agreeing with each other.", preview: `<div class="thumb-scene thumb-gym"><span class="thumb-kicker">RULE 8 OF ALMOST FINISHED</span><div class="thumb-gym-field">••••••••</div><div class="thumb-gym-passed">✓ Has a number &nbsp; ✓ Long enough</div><div class="thumb-gym-error"><span>✕</span><div><strong>Has not<br>apologized</strong><small>Try adding “sorry.”</small></div></div></div>`, render: renderPasswordGym },
   { id: "cat-captcha", name: "The CAT-PCHA", category: "Forms", color: "yellow", tagline: "Prove you're human. Be a mouse.", description: "Collect the cheese and escape a hunting cat to pass a pretend CAPTCHA.", lesson: "Humanity is best demonstrated by rodent strategy under feline pressure. The cheese is part of the standard verification process.", fix: "The cat has been reassigned. A checkbox now handles the investigation.", worseChange: "The cat is faster, the cheese is plentiful, and the exit has terms.", preview: `<div class="thumb-scene thumb-cat"><span class="thumb-kicker">PROVE YOU'RE HUMAN. BE A MOUSE.</span><div class="thumb-cat-board"><span class="thumb-cat-hunter">🐈</span><i class="thumb-maze-wall"></i><span class="thumb-cat-player">🐭</span><span class="thumb-cat-cheese">🧀</span><span class="thumb-cat-exit">EXIT</span><i class="thumb-maze-route"></i></div><small class="thumb-footer">The checkbox has a chase scene now.</small></div>`, render: renderCatCaptcha },
@@ -519,38 +519,163 @@ function renderCookies({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { shell, say } = createStageShell(stage);
-  const names = ["Analytics", "Marketing", "Personalization", "Partner sharing"];
-  // Generic IDs such as cookie-1 and cookie-2 are hidden by cookie-blocker lists.
-  // Use museum-specific IDs so content blockers do not hide the demo controls.
-  shell("WE TAKE YOUR PREFERENCES PERSONALLY", fixed ? "Your cookies. Your choice." : "Try to turn everything off.",
-    fixed ? "Essential cookies are not needed in this demo. Optional preferences are independent." : `Task: disable all four optional categories. Every switch also flips the next ${worse ? "TWO switches" : "switch"}, wrapping around to the top.${worse ? " The labels are negated: ON means “disabled.” All four switches must show ON to reject everything." : ""}`,
-    `<div class="cookie-machine">${names.map((name, index) => `<div class="cookie-row"><label for="rbm-switchboard-option-${index}">${worse ? "Disable " : ""}${name}</label><button type="button" class="preference-switch" role="switch" aria-checked="true" id="rbm-switchboard-option-${index}" data-cookie="${index}">ON</button></div>`).join("")}</div><div class="new-actions">${fixed ? `<button class="demo-button" id="reject-all">Reject all optional cookies</button>` : ""}<button class="${fixed ? "plain-button" : "demo-button"}" id="save-cookies">Save preferences</button></div><div id="cookie-summary"></div>`);
-  let enabled = [true, true, true, true];
-  const paint = () => {
-    stage.querySelectorAll("[data-cookie]").forEach((button, index) => {
-      const on = worse ? !enabled[index] : enabled[index];
-      button.setAttribute("aria-checked", String(on));
-      button.textContent = on ? "ON" : "OFF";
-    });
+  const groups = {
+    categories: ["Analytics", "Personalization", "Advertising"],
+    vendors: ["Crumb Metrics", "Biscuit Broadcast", "Dough & Partners"],
   };
-  stage.querySelectorAll("[data-cookie]").forEach(button => button.addEventListener("click", () => {
-    const index = Number(button.dataset.cookie);
-    for (let offset = 0; offset < (fixed ? 1 : worse ? 3 : 2); offset++) {
-      const target = (index + offset) % enabled.length;
-      enabled[target] = !enabled[target];
-    }
-    paint();
-    say(fixed ? "Only that preference changed." : `One click changed ${worse ? 3 : 2} preferences. Perfectly normal.`);
-  }));
+  let choices = Object.fromEntries(Object.entries(groups).map(([key, names]) => [key, names.map(() => !fixed)]));
+  let page = "welcome";
+  let pending = null;
+  let confirmationCount = 0;
+  let completed = false;
+  let returnFocus = null;
+  const optionalCount = () => Object.values(choices).flat().filter(Boolean).length;
+  const button = (action, text, extra = "") => `<button type="button" data-consent-action="${action}" class="consent-button ${extra}">${text}</button>`;
+  shell("A WEBSITE BEHIND A VERY IMPORTANT INTERRUPTION", fixed ? "Consent without the obstacle course." : "Please enjoy our privacy obstacle course.",
+    `Goal: reject all optional categories and vendors.${fixed ? " Accept, Reject, and Customize are equally easy to find." : " Accept is one click. Rejection goes through categories, vendors, and a final confirmation."}${worse ? " Each rejection adds a single, dismissible guilt-trip layer." : ""} All choices are pretend and last only in this exhibit. Escape closes a layer without granting consent.`,
+    `<div class="consent-demo ${fixed ? "consent-fixed" : worse ? "consent-hard" : "consent-easy"}">
+      <div class="consent-site">
+        <header><span class="consent-masthead">THE DAILY CRUMB</span><span>Independent biscuit journalism</span></header>
+        <div class="consent-article"><span class="consent-eyebrow">LIFESTYLE / 4 MINUTE READ</span><h3>Local biscuit enjoys a quiet afternoon</h3><p>Experts confirm that a cup of tea and absolutely no tracking make a perfectly acceptable combination.</p><div class="consent-illustration" aria-hidden="true">☕ &nbsp; 🍪</div><p>“I just wanted to read the article,” says every visitor we have ever interviewed.</p></div>
+        <footer><p class="consent-saved" role="status">No consent saved. Essential-only operation is simulated; no real cookies exist.</p>${button("reopen", "Cookie preferences")}</footer>
+      </div>
+      <div class="consent-overlay">
+        <section class="consent-panel" role="dialog" aria-labelledby="rbm-consent-title" aria-describedby="rbm-consent-description"></section>
+        <section class="consent-layer" role="dialog" aria-labelledby="rbm-consent-plea" aria-describedby="rbm-consent-plea-description" hidden></section>
+      </div>
+    </div>`);
+  const root = stage.querySelector(".consent-demo");
+  const site = root.querySelector(".consent-site");
+  const overlay = root.querySelector(".consent-overlay");
+  const panel = root.querySelector(".consent-panel");
+  const layer = root.querySelector(".consent-layer");
+  const reopen = root.querySelector('[data-consent-action="reopen"]');
+  const focus = element => element?.focus({ preventScroll: true });
+  const heading = () => focus(panel.querySelector("h3"));
+  const list = group => `<fieldset class="consent-options"><legend>${group === "categories" ? "Optional categories" : "Optional vendors"}</legend>${groups[group].map((name, index) => `<label><span>${name}<small>${group === "categories" ? "Optional purpose" : "Separate optional partner permission"}</small></span><input type="checkbox" data-consent-option="${group}-${index}" data-group="${group}" data-index="${index}" ${choices[group][index] ? "checked" : ""}><span class="consent-option-state">${choices[group][index] ? "On" : "Off"}</span></label>`).join("")}</fieldset>`;
+  const paint = (moveFocus = true) => {
+    const titles = { welcome: "We value your privacy*", categories: "Department 1: the categories", vendors: "Department 2: our dear partners", review: "Department 3: actually mean it", customize: "Your preferences" };
+    const descriptions = {
+      welcome: fixed ? "Choose freely. Optional permissions are off until you choose otherwise." : "*Enough to put the entire website behind this message. Accept everything now, or take the scenic route to no.",
+      categories: "Switch off optional purposes. The vendors have their own separate permissions, naturally.",
+      vendors: "A second list! Disable partner permissions too. Your category choices have not changed.",
+      review: `${optionalCount()} of 6 optional permissions enabled. Confirm to save exactly these choices.`,
+      customize: "Change any permission independently, then save. Essential operation is simulated and always on.",
+    };
+    panel.innerHTML = `<div class="consent-panel-top"><span class="consent-eyebrow">${fixed ? "CLEAR CHOICES" : "THE DAILY CRUMB / CONSENT DESK"}</span>${button("close", "Close", "consent-close")}</div><h3 id="rbm-consent-title" tabindex="-1">${titles[page]}</h3><p id="rbm-consent-description">${descriptions[page]}</p>
+      ${page === "welcome" ? `<div class="consent-welcome-actions">${button("accept", "Accept all", fixed ? "" : "consent-accept")}${fixed ? button("reject", "Reject all optional") : ""}${button("customize", fixed ? "Customize" : "Manage preferences / reject", fixed ? "" : "consent-minor")}</div>` : ""}
+      ${page === "categories" || page === "customize" ? list("categories") : ""}
+      ${page === "vendors" || page === "customize" ? list("vendors") : ""}
+      ${page === "review" ? `<ul class="consent-review">${Object.entries(groups).map(([group, names]) => names.map((name, index) => `<li><span>${name}</span><b>${choices[group][index] ? "Enabled" : "Rejected"}</b></li>`).join("")).join("")}</ul>` : ""}
+      ${page !== "welcome" ? `<p class="consent-essential">Essential: always on (simulation only). Optional permissions: ${optionalCount()}/6 on.</p><div class="consent-actions">${page === "categories" || page === "vendors" ? button("off-group", `Reject all ${page}`) : ""}${page === "categories" ? button("vendors", "Continue to vendors") : page === "vendors" ? button("review", "Review choices") : button("save", page === "review" ? "Confirm and save choices" : "Save preferences")}${button("back", "Back")}</div>` : ""}
+      <p class="consent-footnote">No real cookies, storage, or network requests. The museum toolbar stays available outside this miniature website.</p>`;
+    if (moveFocus) heading();
+  };
+  const close = () => {
+    overlay.hidden = true;
+    site.inert = false;
+    focus(reopen);
+  };
   const save = () => {
-    stage.querySelector("#cookie-summary").textContent = "Actual optional settings: " + names.map((name, index) => `${name}: ${enabled[index] ? "enabled" : "disabled"}`).join("; ") + ".";
-    say(enabled.every(value => !value) ? "All optional cookies rejected. Puzzle solved. No actual cookies were set." : fixed ? "Your selected preferences are shown below. No actual cookies were set." : "Some optional categories are still enabled. The goal is to reject all four.");
-    if (fixed || enabled.every(value => !value)) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    const count = optionalCount();
+    root.querySelector(".consent-saved").textContent = `Saved for this exhibit: ${count === 0 ? "all optional permissions rejected" : `${count} of 6 optional permissions enabled`}. Essential operation only is required.`;
+    close();
+    say(count === 0 ? "All optional cookies rejected. You reached the article without agreeing to tracking. Nothing was stored." : "Preferences saved in this exhibit only. Goal not complete: reopen Cookie preferences to reject all optional permissions.");
+    if (count === 0 && !completed) {
+      completed = true;
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    }
   };
-  stage.querySelector("#save-cookies").addEventListener("click", save);
-  stage.querySelector("#reject-all")?.addEventListener("click", () => { enabled = enabled.map(() => false); paint(); save(); });
-  paint();
-  return () => {};
+  const dismissLayer = () => {
+    layer.hidden = true;
+    panel.inert = false;
+    pending = null;
+    focus(returnFocus);
+  };
+  const reject = (apply, trigger) => {
+    if (!worse) { apply(); return; }
+    const pleas = [
+      ["These cookies have families", "Three tiny crumbs were counting on your analytics. Will you really continue without them?"],
+      ["Our partners packed a picnic", "They brought personalized sandwiches. You can still decline every single one."],
+      ["The biscuit board requests a moment", "Your no has been forwarded to the Department of Taking It Personally."],
+      ["One last emotional support cookie?", "It has a little suitcase. This does not make your permission any less optional."],
+    ];
+    const [title, text] = pleas[confirmationCount++ % pleas.length];
+    pending = apply;
+    returnFocus = trigger;
+    panel.inert = true;
+    layer.innerHTML = `<span class="consent-eyebrow">ADDITIONAL FEELINGS / ONE LAYER ONLY</span><h3 id="rbm-consent-plea" tabindex="-1">${title}</h3><p id="rbm-consent-plea-description">${text}</p><p>Your choice has not changed yet.</p><div class="consent-actions">${button("confirm-reject", "Reject anyway")}${button("cancel-reject", "Go back without changing")}</div>`;
+    layer.hidden = false;
+    focus(layer.querySelector("h3"));
+  };
+  const change = event => {
+    const input = event.target.closest("[data-consent-option]");
+    if (!input) return;
+    const { group, index } = input.dataset;
+    const value = input.checked;
+    const apply = () => {
+      choices[group][index] = value;
+      paint(false);
+      focus(panel.querySelector(`[data-consent-option="${group}-${index}"]`));
+    };
+    if (!value) {
+      input.checked = choices[group][index];
+      reject(apply, input);
+    } else apply();
+  };
+  const click = event => {
+    const target = event.target.closest("[data-consent-action]");
+    if (!target) return;
+    const action = target.dataset.consentAction;
+    if (action === "confirm-reject") {
+      const apply = pending;
+      dismissLayer();
+      apply?.();
+    } else if (action === "cancel-reject") dismissLayer();
+    else if (action === "close") { close(); say("Overlay closed without saving or granting consent. Reopen preferences to continue."); }
+    else if (action === "reopen") {
+      page = "welcome";
+      site.inert = true;
+      overlay.hidden = false;
+      paint();
+    } else if (action === "accept" || action === "reject") {
+      choices = Object.fromEntries(Object.entries(groups).map(([group, names]) => [group, names.map(() => action === "accept")]));
+      save();
+    } else if (action === "off-group") {
+      reject(() => {
+        choices[page].fill(false);
+        paint(false);
+        focus(panel.querySelector('[data-consent-action="off-group"]'));
+      }, target);
+    } else if (action === "save") {
+      if (optionalCount() < 6) reject(save, target);
+      else save();
+    } else {
+      page = action === "customize" ? (fixed ? "customize" : "categories") : action === "back" ? ({ categories: "welcome", vendors: "categories", review: "vendors", customize: "welcome" }[page]) : action;
+      paint();
+    }
+  };
+  const keydown = event => {
+    if (event.key !== "Escape" || overlay.hidden) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (!layer.hidden) dismissLayer();
+    else { close(); say("Overlay closed without saving or granting consent."); }
+  };
+  root.addEventListener("click", click);
+  root.addEventListener("change", change);
+  root.addEventListener("keydown", keydown);
+  // Only this miniature site's background is inert. Tab can still leave for the museum toolbar.
+  site.inert = true;
+  paint(false);
+  return () => {
+    root.removeEventListener("click", click);
+    root.removeEventListener("change", change);
+    root.removeEventListener("keydown", keydown);
+    site.inert = false;
+    panel.inert = false;
+    pending = null;
+  };
 }
 
 function renderUnixBirthday({ stage, mode }) {

@@ -238,13 +238,13 @@ Compose a document using a separate dropdown for every character, including spac
 
 Hard reshuffles each menu after every edit. Fix it restores ordinary text entry.
 
-## The Cookie Switchboard
+## The Cookie Preference Overlay
 
 **Route:** `/exhibit/cookies`
 
-Reject four optional cookie categories using coupled switches: changing one preference may change another. The puzzle remains solvable in every mode.
+A miniature website hides behind an enormous Accept all button. Rejecting optional cookies requires navigating categories, vendors, and a final confirmation.
 
-Hard changes several switches at once and uses negated labels. Fix it provides independent controls. The exhibit does not set real cookies.
+Hard adds absurd rejection-confirmation overlays. Fix it gives Accept, Reject, and Customize equal prominence and retains choices when preferences are reopened. This replaces the Cookie Switchboard at the existing route. The exhibit does not set real cookies.
 
 ## The Address Jigsaw
 

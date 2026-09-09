@@ -1,8 +1,8 @@
 # Really Bad Design Museum
 
-A playful, interactive museum of thirty-six terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no build step or runtime dependencies.
+A playful, interactive museum of thirty-seven terrible website ideas. Built with plain HTML, CSS, and JavaScript, with no runtime dependencies.
 
-The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 36 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). `website-behavior.js` contains the destructive registration-validation exhibit. Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share.
+The browser has one entry point, `app.js`, which handles routing, page chrome, and difficulty progression only. It calls into a single exhibit registry, `exhibits/registry.js`, which owns the validated, ordered catalog of all 37 exhibits and dispatches rendering. Exhibit implementations live in `exhibits/`, grouped by what they actually do rather than by when they were added: `forms-and-inputs.js` (text/dropdown/dial/puzzle-style controls), `interaction-and-simulation.js` (physical, timed, or game-like demos), `content-and-navigation.js` (reading and wayfinding exhibits), and `commerce-and-messaging.js` (marketing copy, checkout, and subscription flows). `website-behavior.js` contains the destructive registration-validation exhibit. Each module exports its own exhibit records (metadata, preview markup, and a render function); `exhibits/shared.js` holds the small rendering helpers those modules share. Checkout-specific styles live in `exhibits/marketing.css`, imported by `exhibits.css`.
 
 ## Deployed online
 
@@ -18,7 +18,7 @@ npm start
 
 Open **http://localhost:3000**. Set `PORT` to use a different port.
 
-The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 36 per-exhibit share pages, and 37 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
+The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 37 per-exhibit share pages, and 38 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
 
 ### Generate share thumbnails
 
@@ -92,6 +92,7 @@ Add `?mode=hard` to any exhibit URL to open it directly in hard mode, for exampl
 - The Alphabet Shuffle (`/exhibit/alphabet`): a separate character-entry slider with a randomly ordered alphabet that reshuffles after every appended character. Worse mode also reshuffles on committed slider adjustments. The visible preview always shows the character that will be appended.
 - The Corporate Fog Machine (`/exhibit/corporate`): mandatory onboarding adds more steps every time you complete one. Going back discards your progress.
 - The Loading Experience (`/exhibit/loading`): ten fake progress stages, including a backwards jump from 99%, reveal one sentence. Worse mode pauses for three approvals. Loading can be cancelled, and timers stop on reset or navigation. Fixed mode reveals the sentence immediately.
+- Your Button Has Moved (`/exhibit/layout-checkout`): complete a fictional checkout while promotional banners move the button. Hard mode repeatedly rearranges recommendations and the order summary before settling. Fixed mode reserves space and keeps checkout stable. Keyboard, touch, and reduced-motion alternatives remain available. No order or payment exists.
 
 Every exhibit has original, worse, and fixed modes, a reset button, a curator's note, and a persistent mode toolbar. Worse mode displays a highlighted summary of exactly what it adds to the original version. Use **Escape** to return to the collection. Filter the collection by category or navigate directly to an exhibit, such as `/exhibit/runaway`.
 

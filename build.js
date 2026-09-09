@@ -7,6 +7,7 @@ const publicFiles = [
   "styles.css",
   "exhibits.css",
   "app.js",
+  "exhibits/marketing.css",
 ];
 const exhibitModules = [
   "exhibits/shared.js",
@@ -71,6 +72,7 @@ async function main() {
   fs.cpSync(path.join(__dirname, "assets"), path.join(outputDirectory, "assets"), { recursive: true });
 
   for (const file of publicFiles) {
+    fs.mkdirSync(path.join(outputDirectory, path.dirname(file)), { recursive: true });
     fs.copyFileSync(path.join(__dirname, file), path.join(outputDirectory, file));
   }
   for (const file of exhibitModules) {

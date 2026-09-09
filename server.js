@@ -9,6 +9,7 @@ const publicFiles = new Map([
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
   ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ["/exhibits.css", ["exhibits.css", "text/css; charset=utf-8"]],
+  ["/exhibits/marketing.css", ["exhibits/marketing.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/assets/library.jpg", ["assets/library.jpg", "image/jpeg"]],
 ]);

@@ -44,6 +44,7 @@ const exhibitOrder = [
   "alphabet",
   "corporate",
   "loading",
+  "layout-checkout",
 ];
 
 const newExhibitIds = new Set([

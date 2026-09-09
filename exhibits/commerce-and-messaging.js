@@ -2,7 +2,7 @@
 import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
-  { id: "layout-checkout", name: "Your Button Has Moved", category: "Commerce", color: "orange", tagline: "Checkout is now a moving target.", description: "Complete an imaginary checkout while late banners and recommendations push its button away.", lesson: "Your pointer had a destination. Marketing had a last-minute banner. Unexpected layout shifts turn an ordinary action into target practice.", fix: "Late content gets reserved space, recommendations stay in their lane, and the checkout button stays put.", worseChange: "Four recommendation arrivals repeatedly rearrange the order summary before the checkout finally settles.", preview: '<div class="new-preview marketing-preview marketing-preview-checkout"><span>LATE-LOADING SPECIAL OFFER</span><strong>Checkout ↓<br>↓ actually, here</strong><div>One more recommendation!</div><small>Imaginary basket. Real layout shift.</small></div>', render: renderLayoutCheckout },
+  { id: "layout-checkout", name: "Your Button Has Moved", category: "Commerce", color: "orange", tagline: "You wanted a bench. Marketing wants a moment.", description: "Escape a fictional furniture checkout where the button changes jobs and last-minute offers rearrange your basket.", lesson: "Checkout quietly became Add to cart. Your bench now has a cushion and your pointer has trust issues. Moving targets and changing labels make a simple purchase impossible to predict.", fix: "Late content gets reserved space, the button keeps its promise, and nobody sneaks a cushion into your afternoon.", worseChange: "Four increasingly desperate offers rearrange the receipt. The marketing department has discovered furniture can move twice.", preview: '<div class="new-preview marketing-preview marketing-preview-checkout"><span>PLEASE BE SEATED.</span><strong>Checkout ↓<br>Add to cart</strong><div>Your bench needs accessories.</div><small>One seat. Several sales pitches.</small></div>', render: renderLayoutCheckout },
   { id: "ai-store", name: "The AI Everything Store", category: "Commerce", color: "blue", tagline: "Your spoon now requires a prompt.", description: "Buy ordinary objects through unnecessary AI onboarding and subscriptions.", lesson: "The spoon was already good at soup, but it lacked a growth strategy. It now has onboarding, calibration, and recurring revenue.", fix: "The spoon is a spoon again. It appears relieved.", worseChange: "The object would like to get to know you. Repeatedly.", preview: `<div class="thumb-scene thumb-ai"><span class="thumb-kicker">THE SPOON, REIMAGINED.</span><div class="thumb-spoon-product"><div class="thumb-silver-spoon" role="img" aria-label="An ordinary silver spoon"><i></i><b></b></div><div class="thumb-spoon-offer"><span>SPOON + AI</span><strong>$19.99</strong><small>/ month*</small><b>Calibration<br>required</b></div></div><small class="thumb-footer">Soup not included.</small><span class="thumb-fictional-plan">*FICTIONAL PLAN. ORDINARY SPOON.</span></div>`, render: renderAiStore },
   { id: "shrinking-unsubscribe", name: "The Shrinking Unsubscribe Button", category: "Commerce", color: "pink", tagline: "Your subscription grows. Your exit shrinks.", description: "A fictional subscription with a cancel button that shrinks and relocates as you approach.", lesson: "The cancellation button is shy and needs space. Unfortunately, it interprets the pointer as direct eye contact.", fix: "The button completed a confidence workshop and can now be approached safely.", worseChange: "The exit gets smaller, faster, and increasingly committed to not being found.", preview: `<div class="thumb-scene thumb-shrinking"><span class="thumb-kicker">YOUR PLAN STAYS FULL-SIZE</span><strong class="thumb-plan-price">$49<span>/ month*</span></strong><div class="thumb-exit-trail"><span class="thumb-exit-ghost">Unsubscribe</span><span class="thumb-exit-smaller">Unsubscribe</span><span class="thumb-exit-tiny">Unsubscribe</span><i aria-hidden="true">↖</i></div><small class="thumb-footer">*Pretend plan. Disappearing exit.</small></div>`, render: renderShrinkingUnsubscribe },
   { id: "physics-cart", category: "Commerce", color: "orange", name: "The Physics Shopping Cart", tagline: "Your basket has checkout momentum.", description: "Every product makes a wheeled cart roll faster toward an entirely imaginary purchase.", lesson: "Every purchase has momentum, especially downhill. Adding a second item is considered informed acceleration.", fix: "The basket has been fitted with brakes and a separate checkout button.", worseChange: "The hill gets steeper. Something inconvenient has appeared halfway down.", preview: '<div class="thumb-scene thumb-cart"><span class="thumb-kicker">YOUR CART IS CHECKING ITSELF OUT</span><div class="thumb-cart-hill"><div class="thumb-cart-slope"></div><div class="thumb-rolling-cart"><div class="thumb-cart-basket"><b></b><b></b></div><i></i><i></i></div><span class="thumb-cart-speed" aria-hidden="true">→ →</span><span class="thumb-checkout-zone">BUY<br>NOW*</span><span class="thumb-brake-label">BRAKE!</span></div><small class="thumb-footer">*Pretend checkout. Real downhill energy.</small></div>', render: renderPhysicsCart },
@@ -17,53 +17,82 @@ function renderLayoutCheckout({ stage, mode }) {
   const limit = worse ? 4 : 2;
   const { shell, say } = createStageShell(stage);
   shell("THE LATE-LOADING DEPARTMENT", "Your Button Has Moved",
-    `Goal: finish one imaginary checkout. ${fixed ? "Promotions have reserved space and the action stays still." : `${limit} late arrivals ${worse ? "rearrange the summary" : "push the button down"} before the page settles.`} Approach the action with a mouse, or use “Load next arrival” with keyboard or touch. No real order or payment is possible.`,
-    `<div class="marketing-exhibit checkout-exhibit ${fixed ? "checkout-fixed" : ""}"><div class="marketing-actions"><button type="button" class="plain-button" id="checkout-arrival">Load next arrival</button><span class="marketing-progress" id="checkout-progress" role="status">Arrivals: 0 / ${limit}. ${fixed ? "Action is stable." : "Checkout may move."}</span></div><div class="marketing-viewport checkout-viewport" id="checkout-viewport"><div class="checkout-document" id="checkout-document"><div class="checkout-promotions" id="checkout-promotions" aria-label="${fixed ? "Reserved promotion space" : "Late promotions"}">${fixed ? '<p class="checkout-placeholder">Reserved promotion space — checkout will not move.</p>' : ""}</div><section class="checkout-summary" id="checkout-summary" aria-labelledby="checkout-summary-title"><span class="demo-kicker">NOT A REAL STORE</span><h3 id="checkout-summary-title">Your imaginary basket</h3><div class="checkout-item"><span>One perfectly ordinary bench</span><strong>£24.00</strong></div><div class="checkout-item"><span>Imaginary delivery</span><strong>£0.00</strong></div><p class="checkout-total">Demo total <strong>£24.00</strong></p></section><div class="checkout-recommendations" id="checkout-recommendations" hidden></div><div class="checkout-action" id="checkout-action"><button type="button" class="demo-button" id="checkout-confirm">Place imaginary order — £24.00</button><small>Simulation only. No purchase, payment, or personal details.</small></div></div></div></div>`);
+    "One bench. One imaginary order. An entire marketing department between you and a nice sit down.",
+    `<div class="marketing-exhibit checkout-exhibit ${fixed ? "checkout-fixed" : ""}">
+      <div class="marketing-actions"><button type="button" class="plain-button" id="checkout-arrival">Load next arrival</button><span class="marketing-progress" id="checkout-progress" role="status">Arrivals: 0 / ${limit}.</span></div>
+      <div class="marketing-viewport checkout-viewport" id="checkout-viewport">
+        <div class="checkout-document" id="checkout-document">
+          <header class="checkout-masthead"><div><span class="demo-kicker">THE SITTING ROOM / EST. FIVE MINUTES AGO</span><h3>PLEASE BE SEATED.</h3><p>Furniture for people who have had enough standing.</p></div><span class="checkout-basket-count" id="checkout-basket-count">1 item</span></header>
+          <div class="checkout-promotions" id="checkout-promotions" aria-label="${fixed ? "Reserved promotion space" : "Late promotions"}">${fixed ? '<p class="checkout-placeholder">A word from marketing, when they find the words.</p>' : ""}</div>
+          <section class="checkout-summary" id="checkout-summary" aria-labelledby="checkout-summary-title">
+            <div class="checkout-receipt-heading"><h3 id="checkout-summary-title">Your almost-order</h3><span>No. 000024</span></div>
+            <div class="checkout-product"><img class="checkout-product-image" src="/assets/bench.jpg" alt="A wooden park bench" width="250" height="167"><div><strong>The Ordinary Bench</strong><small>Seats two. Impresses neither.</small><span class="checkout-product-tag">100% offline seating</span></div><strong>£24.00</strong></div>
+            <div class="checkout-item" id="checkout-cushion" hidden><span>Emotional Support Cushion<small>For everything this checkout put you through.</small></span><strong>£6.00</strong></div>
+            <div class="checkout-item"><span>Imaginary delivery<small>Arrives between Tuesday and eventually.</small></span><strong>£0.00</strong></div>
+            <div class="checkout-item"><span>Standing around fee</span><strong>Waived</strong></div>
+            <p class="checkout-total">Demo total <strong id="checkout-total">£24.00</strong></p>
+            <p class="checkout-receipt-note">${fixed ? "One bench. No surprise extras. How restful." : "You are our #1 priority. After these offers."}</p>
+          </section>
+          <div class="checkout-recommendations" id="checkout-recommendations" hidden></div>
+          <div class="checkout-action" id="checkout-action"><button type="button" class="demo-button" id="checkout-confirm">Checkout</button><small>Fictional shop. No payment, order, or personal details.</small></div>
+          <footer class="checkout-footer">THE SITTING ROOM<span>Thank you for your patience. We sell cushions for that.</span><small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Wooden_bench_in_G_Ross_Lord_Park_14.jpg" target="_blank" rel="noopener noreferrer">Fabian Roudra Baroi</a> / <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></small></footer>
+        </div>
+      </div>
+    </div>`);
   const viewport = stage.querySelector("#checkout-viewport");
   const documentArea = stage.querySelector("#checkout-document");
   const promotions = stage.querySelector("#checkout-promotions");
   const summary = stage.querySelector("#checkout-summary");
   const recommendations = stage.querySelector("#checkout-recommendations");
   const action = stage.querySelector("#checkout-action");
+  const footer = stage.querySelector(".checkout-footer");
   const confirm = stage.querySelector("#checkout-confirm");
   const arrival = stage.querySelector("#checkout-arrival");
   const progress = stage.querySelector("#checkout-progress");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   let arrivals = 0;
   let completed = false;
+  let buttonSwapped = false;
+  let cushionAdded = false;
   let lastApproach = 0;
   const messages = [
-    "Special offer: a cushion for your imaginary bench!",
-    "People who sat also considered: standing.",
-    "Recommended bundle: one bench, two more benches.",
-    "Last recommendation: a smaller recommendation.",
+    { title: "Your bench looks lonely.", copy: "People who bought one bench were shown another bench until they agreed." },
+    { title: "Protect your sitting investment.", copy: "Bench insurance covers doubts, second thoughts, and light buyer's remorse. Does not cover benches." },
+    { title: "Unlock Sitting Plus.", copy: "A monthly subscription to the other end of your bench. Standing tier remains free." },
+    { title: "Before you go: a bench for your bench?", copy: "Even furniture needs somewhere to sit after a checkout this long." },
   ];
   const loadArrival = () => {
     if (completed || arrivals >= limit) return false;
     const focused = document.activeElement;
     arrivals++;
+    const message = messages[arrivals - 1];
+    const heading = document.createElement("strong");
+    heading.textContent = message.title;
+    const copy = document.createElement("span");
+    copy.textContent = message.copy;
     if (fixed) {
-      promotions.textContent = messages[arrivals - 1];
+      promotions.replaceChildren(heading, copy);
     } else if (worse) {
       recommendations.hidden = false;
-      recommendations.textContent = messages[arrivals - 1];
+      recommendations.replaceChildren(heading, copy);
       recommendations.dataset.arrival = String(arrivals);
       if (arrivals % 2) {
         documentArea.insertBefore(recommendations, summary);
         documentArea.insertBefore(action, summary);
       } else {
-        documentArea.append(recommendations, action);
+        documentArea.insertBefore(recommendations, footer);
+        documentArea.insertBefore(action, footer);
       }
     } else {
-      const banner = document.createElement("p");
+      const banner = document.createElement("aside");
       banner.className = "checkout-banner";
-      banner.textContent = messages[arrivals - 1];
+      banner.append(heading, copy);
       promotions.append(banner);
     }
     // Reparenting a focused action can blur it; restore focus without scrolling the document.
     if (focused === confirm) confirm.focus({ preventScroll: true });
     arrival.disabled = arrivals >= limit;
-    progress.textContent = `Arrivals: ${arrivals} / ${limit}. ${fixed ? "Action stayed in its reserved position." : arrivals === limit ? "The page has settled. Checkout will stay here now." : "Your button has moved. Try again, or load the next arrival."}`;
+    progress.textContent = `Arrivals: ${arrivals} / ${limit}. ${fixed ? "Marketing stayed in its lane." : arrivals === limit ? "Marketing has gone to lunch." : "A word from our department of one more thing."}`;
     return true;
   };
   arrival.addEventListener("click", loadArrival);
@@ -79,15 +108,30 @@ function renderLayoutCheckout({ stage, mode }) {
   });
   confirm.addEventListener("click", () => {
     if (completed) return;
+    if (!fixed && !buttonSwapped) {
+      buttonSwapped = true;
+      confirm.textContent = "Add to cart";
+      return;
+    }
+    if (!fixed && !cushionAdded) {
+      cushionAdded = true;
+      stage.querySelector("#checkout-cushion").hidden = false;
+      stage.querySelector("#checkout-total").textContent = "£30.00";
+      stage.querySelector("#checkout-basket-count").textContent = "2 items";
+      confirm.textContent = "Checkout";
+      say("Emotional Support Cushion added. Demo total: £30.00. Your bench has never felt so supported.");
+      return;
+    }
     if (!fixed && loadArrival()) {
-      say("A late arrival interrupted the action; no order was placed. Try again after the page settles.");
+      say("Marketing would like a quick word. Your imaginary order is still waiting.");
       return;
     }
     completed = true;
+    confirm.textContent = "Order placed";
     confirm.disabled = true;
     arrival.disabled = true;
     progress.textContent = "Imaginary order complete. Real money spent: £0.00.";
-    say("Checkout complete in the simulation. No real order, charge, or data collection.");
+    say(`You may now sit down. ${cushionAdded ? "Your cushion will hear about this." : "Just the bench, as promised."} No real order, charge, or data collection.`);
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   return () => {};

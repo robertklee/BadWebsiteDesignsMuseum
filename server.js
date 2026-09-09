@@ -12,6 +12,7 @@ const publicFiles = new Map([
   ["/exhibits/marketing.css", ["exhibits/marketing.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/assets/library.jpg", ["assets/library.jpg", "image/jpeg"]],
+  ["/assets/bench.jpg", ["assets/bench.jpg", "image/jpeg"]],
 ]);
 
 http.createServer(async (request, response) => {

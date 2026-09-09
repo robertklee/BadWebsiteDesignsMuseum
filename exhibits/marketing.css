@@ -40,18 +40,43 @@
   line-height: 1.5;
 }
 
+.checkout-exhibit { --checkout-green: #174d39; --checkout-pink: #f8c7d5; }
+.checkout-exhibit .checkout-viewport { background: #f6f8f5; border-color: var(--checkout-green); border-radius: 8px; }
 .checkout-exhibit .checkout-document { padding: 20px; }
-.checkout-exhibit .checkout-summary { background: white; padding: 18px; border: 1px solid #c4b9aa; border-radius: 8px; }
-.checkout-exhibit .checkout-summary h3 { margin: 10px 0 20px; }
+.checkout-exhibit .checkout-masthead { display: flex; align-items: start; justify-content: space-between; gap: 14px; padding-bottom: 20px; border-bottom: 3px solid var(--checkout-green); color: var(--checkout-green); }
+.checkout-exhibit .checkout-masthead h3 { font-family: Georgia, serif; font-size: 1.9rem; line-height: 1.1; margin: 10px 0; }
+.checkout-exhibit .checkout-masthead p { font-size: 0.85rem; line-height: 1.5; margin: 0; }
+.checkout-exhibit .checkout-basket-count { flex: none; border-bottom: 2px solid currentColor; padding: 4px 0; font-size: 0.8rem; white-space: nowrap; }
+.checkout-exhibit .checkout-summary { padding: 18px 0 0; }
+.checkout-exhibit .checkout-receipt-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.checkout-exhibit .checkout-summary h3 { font-family: Georgia, serif; font-size: 1.35rem; margin: 0; }
+.checkout-exhibit .checkout-receipt-heading > span { font-family: monospace; font-size: 0.75rem; }
+.checkout-exhibit .checkout-product { display: grid; grid-template-columns: 100px minmax(0, 1fr) auto; align-items: center; gap: 12px; margin-block: 20px; }
+.checkout-exhibit .checkout-product-image { display: block; width: 100%; height: auto; aspect-ratio: 250 / 167; border-radius: 4px; }
+.checkout-exhibit .checkout-product small,
+.checkout-exhibit .checkout-item small { display: block; font-size: 0.75rem; line-height: 1.5; margin-top: 4px; }
+.checkout-exhibit .checkout-product-tag { display: inline-block; margin-top: 8px; font-family: monospace; font-size: 0.7rem; border-bottom: 1px solid var(--checkout-green); color: var(--checkout-green); }
 .checkout-exhibit .checkout-item,
 .checkout-exhibit .checkout-total { display: flex; justify-content: space-between; gap: 12px; line-height: 1.5; }
-.checkout-exhibit .checkout-item { margin: 10px 0; }
+.checkout-exhibit .checkout-item { margin: 14px 0; font-size: 0.85rem; }
 .checkout-exhibit .checkout-item strong { white-space: nowrap; }
-.checkout-exhibit .checkout-total { padding-top: 16px; border-top: 1px solid #c4b9aa; font-weight: 700; }
+.checkout-exhibit .checkout-total { padding-top: 16px; border-top: 2px dashed var(--checkout-green); font-weight: 700; }
+.checkout-exhibit .checkout-total strong { font-size: 1.4rem; }
+.checkout-exhibit .checkout-receipt-note { font-size: 0.75rem; line-height: 1.5; }
 .checkout-exhibit .checkout-action { display: grid; justify-items: start; gap: 10px; padding-block: 18px; }
+.checkout-exhibit #checkout-confirm { width: min(100%, 270px); min-height: 48px; background: var(--checkout-green); color: white; border-color: var(--checkout-green); }
 .checkout-exhibit .checkout-action small { line-height: 1.5; }
+.checkout-exhibit .checkout-footer { padding-block: 14px; border-top: 1px solid var(--checkout-green); font-family: monospace; font-size: 0.7rem; line-height: 1.6; }
+.checkout-exhibit .checkout-footer span { display: block; }
+.checkout-exhibit .checkout-footer small { display: block; margin-top: 8px; font-size: 0.65rem; }
+.checkout-exhibit .checkout-footer a { color: inherit; }
 .checkout-exhibit .checkout-banner,
-.checkout-exhibit .checkout-recommendations { padding: 18px; margin: 0 0 14px; border: 2px dashed #8d4220; border-radius: 8px; background: #ffe0a0; font-weight: 700; }
+.checkout-exhibit .checkout-recommendations { padding: 18px; margin: 14px 0; border-left: 5px solid #ae3055; background: var(--checkout-pink); }
+.checkout-exhibit .checkout-banner:nth-child(even) { background: #e2ed89; border-color: var(--checkout-green); }
+.checkout-exhibit .checkout-promotions strong,
+.checkout-exhibit .checkout-recommendations strong { display: block; font-family: Georgia, serif; font-size: 1.25rem; line-height: 1.2; }
+.checkout-exhibit .checkout-promotions span,
+.checkout-exhibit .checkout-recommendations span { display: block; margin-top: 8px; font-size: 0.85rem; line-height: 1.5; }
 .checkout-exhibit .checkout-recommendations[data-arrival="1"] { min-height: 80px; }
 .checkout-exhibit .checkout-recommendations[data-arrival="2"] { min-height: 125px; }
 .checkout-exhibit .checkout-recommendations[data-arrival="3"] { min-height: 60px; }
@@ -60,13 +85,20 @@
   height: 112px;
   box-sizing: border-box;
   overflow: auto;
-  margin-bottom: 14px;
+  margin-block: 14px;
   padding: 16px;
   background: #e4eddc;
   border: 1px dashed #466138;
   border-radius: 8px;
 }
 .checkout-exhibit .checkout-placeholder { margin: 0; }
+
+@media (max-width: 480px) {
+  .checkout-exhibit .checkout-masthead { flex-wrap: wrap; }
+  .checkout-exhibit .checkout-masthead h3 { font-size: 1.5rem; }
+  .checkout-exhibit .checkout-product { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .checkout-exhibit .checkout-product > strong { grid-column: 2; }
+}
 
 .marketing-preview { padding: 20px; box-sizing: border-box; }
 .marketing-preview-checkout { background: #ffe0a0; color: #282329; }

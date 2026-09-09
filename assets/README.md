@@ -1,3 +1,4 @@
 # Image Credits
 
 - `library.jpg`: library bookshelves photograph from Unsplash, photo ID `1507842217343-583bb7270b66`. Source: https://images.unsplash.com/photo-1507842217343-583bb7270b66 . Used under the Unsplash license: https://unsplash.com/license . Downloaded as a 1200-by-800 JPEG for local use; the exhibit makes no external image requests.
+- `bench.jpg`: "Wooden bench in G Ross Lord Park 14" by Fabian Roudra Baroi. Source: https://commons.wikimedia.org/wiki/File:Wooden_bench_in_G_Ross_Lord_Park_14.jpg . Licensed CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/ . Downloaded as an unmodified 250-by-167 Wikimedia thumbnail for local use. Attribution is also displayed in the checkout exhibit.

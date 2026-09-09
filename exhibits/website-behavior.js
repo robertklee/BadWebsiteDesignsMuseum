@@ -3,6 +3,7 @@ import { createStageShell } from "./shared.js";
 export const exhibits = [
   { id: "hover-menu", name: "The Hover Dependency", category: "Navigation", color: "pink", tagline: "I wanted a lamp. Not a mouse exam.", description: "One desk lamp. Several menus. Apparently you need the hands of a surgeon.", lesson: "The designer drew the menu open. Nobody asked how a person would get there.", fix: "Click-open menus stay open across gaps, touch gestures, and moments of hesitation.", worseChange: "The bridges now take a tiny twisting detour. So does your shopping trip.", preview: `<div class="new-preview preview-hover-tightrope"><span class="hover-preview-kicker">ONLINE SHOPPING / MOTOR SKILLS EXAM</span><strong>I JUST WANTED<br>A LAMP.</strong><div class="hover-preview-course" aria-hidden="true"><span class="hover-preview-shop">Shop +</span><i class="hover-preview-wire"></i><span class="hover-preview-destination">Desk lamps</span><b class="hover-preview-cursor">&#8598;</b><span class="hover-preview-fall">1 pixel later...</span></div><div class="hover-preview-verdict"><b>Menu closed.</b><span>Try being a surgeon.</span></div></div>`, render: renderHoverDependency },
   { id: "session-timeout", name: "The Session Timeout Sprint", category: "Forms", color: "orange", tagline: "For your inconvenience.", description: "Finish a fictional form before a very impatient session erases your work.", lesson: "Security-related interruptions should support recovery, not destroy work. This timer protects absolutely nothing except the form's free time.", fix: "Your draft survives expiry, the warning arrives early, and extending takes one click.", worseChange: "Twenty seconds. Three extension confirmations. The clock keeps running while you negotiate.", preview: `<div class="new-preview preview-session"><span>FOR YOUR INCONVENIENCE</span><strong>00:03</strong><div>Your draft is about to become history.</div><small>Extend? Please confirm your confirmation.</small></div>`, render: renderSessionTimeout },
+  { id: "help-center", name: "The Help Center Ouroboros", category: "Navigation", color: "lilac", tagline: "Have you tried our help center?", description: "Follow support handoffs that keep recommending the page you just left.", lesson: "Deflection is not support. The help center has achieved a perfect resolution rate by redefining resolution as another link.", fix: "A direct answer and a clear escalation path share the context you already supplied.", worseChange: "Six handoffs, each requiring you to explain the same problem again. The bot sends you backwards.", preview: `<div class="new-preview preview-help-loop"><span>YOUR TICKET IS IMPORTANT TO US</span><strong>FAQ → BOT<br>↑ &nbsp; &nbsp; ↓<br>CONTACT</strong><small>Have you tried starting over?</small></div>`, render: renderHelpCenter },
   { id: "layout-earthquake", name: "The Layout Earthquake", category: "Content", color: "green", tagline: "The link was right there a second ago.", description: "Read the news while oversized ads push the story and its bookmark out of reach.", lesson: "Nobody reserved space for the content. Unfortunately, your click already had a reservation.", fix: "The ads have their own space. Your story stays where you left it.", worseChange: "The library story is further down, the ads are harder to shake, and even the columns won't sit still.", preview: `<div class="new-preview preview-earthquake-paper"><span class="earthquake-preview-masthead">THE DAILY DISPLACEMENT</span><strong>Just one quick article.</strong><img src="/assets/library.jpg" alt="" width="1200" height="800"><div class="earthquake-preview-ad"><span>BREAKING: SPONSORED CONTENT</span><b>THIS AD HAS<br>RIGHT OF WAY.</b><small>Your article can take the stairs.</small></div><span class="earthquake-preview-link">Read arti&hellip; <i aria-hidden="true">&#8595;</i></span><span class="earthquake-preview-pointer" aria-hidden="true">&#8598;</span><small class="earthquake-preview-punchline">You clicked here.<br>The article didn't.</small></div>`, render: renderLayoutEarthquake },
   { id: "validation-afterthought", name: "The Validation Afterthought", category: "Forms", color: "blue", tagline: "Four fields. One error. Start over.", description: "One answer was wrong. The form cleared the others for their involvement.", lesson: "The form knew the requirements all along. Apparently that information was on a need-to-fail basis.", fix: "Requirements are visible, errors belong to their fields, and your other answers stay put.", worseChange: "Useful guidance has been replaced by one cryptic complaint.", preview: `<div class="new-preview preview-validation-rejection"><span class="validation-preview-kicker">APPLICATION / NOT EVEN CLOSE</span><strong class="validation-preview-verdict">INVALID.</strong><div class="validation-preview-question"><b>Which field?</b><span>That's a secret.</span></div><div class="validation-preview-answers"><span>NAME <s>Alex Example</s></span><span>EMAIL <s>alex@example.test</s></span><b>ANSWERS DELETED</b></div><small class="validation-preview-footer">Start over. Guess better.</small></div>`, render: renderValidationAfterthought },
   { id: "scroll-modal", name: "The Scroll-Through Modal", category: "Interaction", color: "lilac", tagline: "You're scrolling. Just not the dialog.", description: "Save one day for $5,000. Free delivery? Keep scrolling. Wrong window.", lesson: "Two scroll containers entered. The one you couldn't use got every gesture.", fix: "The active dialog owns its scrolling, and the background stays still.", worseChange: "Shipping speed requires a third dialog, opened from the bottom of the second. Each gesture randomly scrolls one, two, or all three layers, sometimes in opposite directions.", preview: `<div class="new-preview preview-scroll-checkout"><div class="scroll-preview-back"><span>YOUR ORDER</span><span>Delivery: still deciding</span></div><div class="scroll-preview-front"><span class="scroll-preview-title">DELIVERY OPTIONS <b aria-hidden="true">&times;</b></span><span class="scroll-preview-offer">SAVE ONE DAY.</span><strong>$5,000</strong><small>One day. Five grand.</small><span class="scroll-preview-free">Free? Further down.</span><i class="scroll-preview-rail" aria-hidden="true"></i></div><span class="scroll-preview-punchline">YOU SCROLLED THE WRONG WINDOW.</span></div>`, render: renderScrollModal },
@@ -121,6 +122,61 @@ function renderSessionTimeout({ stage, mode }) {
   return () => { stop(); reduced.removeEventListener("change", schedule); };
 }
 
+function renderHelpCenter({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const { shell, say } = createStageShell(stage);
+  shell("SUPPORT THAT COMES FULL CIRCLE", "The Help Center Ouroboros",
+    "Find the refund window for an imaginary museum ticket. Nothing is sent; use an invented explanation if asked.",
+    `<div class="journey-demo help-demo"><header><span class="demo-kicker">SUPPORT / MOSTLY REDIRECTION</span><p id="help-trail" role="status"></p></header><section id="help-page" tabindex="-1"></section></div>`);
+  const page = stage.querySelector("#help-page");
+  const trail = stage.querySelector("#help-trail");
+  const destinations = worse ? ["FAQ", "Chatbot", "FAQ", "Contact", "Chatbot", "Contact", "FAQ"] : ["FAQ", "Chatbot", "Contact", "FAQ"];
+  const limit = worse ? 6 : 3;
+  let handoffs = 0;
+  let context = "";
+  let completed = false;
+  const complete = () => {
+    if (completed) return;
+    completed = true;
+    say("Answer found: fictional tickets are refundable within 7 days. No ticket or refund was created.");
+    page.querySelector("#help-acknowledge").disabled = true;
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+  };
+  const showAnswer = (focus = true) => {
+    trail.textContent = fixed ? "Direct answer. No handoffs required." : `${handoffs} handoffs later: an actual answer.`;
+    page.innerHTML = `<h3>What is the refund window?</h3><p>Fictional museum tickets can be refunded within <strong>7 days</strong> of purchase.</p><button class="demo-button" id="help-acknowledge">Got it: 7 days</button>${fixed ? `<form id="help-escalate"><label for="help-context">Need a person? Add fictional context (optional)</label><textarea id="help-context" maxlength="200"></textarea><button class="plain-button">Contact a fictional human</button></form><div id="help-human" hidden><h4>Connected to the demo support desk</h4><p>Your question: What is the refund window?</p><p id="help-retained"></p><p>No real agent was contacted. Your context stayed with your question.</p></div>` : ""}`;
+    page.querySelector("#help-acknowledge").addEventListener("click", complete);
+    if (fixed) page.querySelector("#help-escalate").addEventListener("submit", event => {
+      event.preventDefault();
+      context = page.querySelector("#help-context").value;
+      page.querySelector("#help-retained").textContent = context ? `Your context: ${context}` : "No extra context supplied.";
+      page.querySelector("#help-human").hidden = false;
+      say("Demo escalation opened with your original question and context. Nothing was sent.");
+    });
+    if (focus) page.focus({ preventScroll: true });
+  };
+  const render = (focus = true) => {
+    const current = destinations[handoffs];
+    const next = destinations[handoffs + 1];
+    trail.textContent = `${destinations.slice(0, handoffs + 1).join(" → ")} · Handoffs: ${handoffs}/${limit}`;
+    page.innerHTML = `<h3>${current}</h3><p>${current === "FAQ" ? "For frequently asked questions, please ask somewhere else." : current === "Chatbot" ? "I understand your question. Have you tried the page you just left?" : "Our contact team recommends contacting our help center."}</p>${handoffs === limit ? `<p>The support team has exhausted its redirect budget.</p><button class="demo-button" id="help-answer">Show the refund policy</button>` : `<form id="help-handoff">${worse ? `<label for="help-explanation">Explain your problem again (at least 8 characters)</label><textarea id="help-explanation" minlength="8" maxlength="200" required placeholder="Where is the refund policy?"></textarea><small>Your previous explanation did not survive the handoff.</small>` : ""}<button class="demo-button">Go to ${next}</button></form>`}`;
+    if (handoffs === limit) page.querySelector("#help-answer").addEventListener("click", () => showAnswer());
+    else page.querySelector("form").addEventListener("submit", event => {
+      event.preventDefault();
+      if (worse && page.querySelector("textarea").value.trim().length < 8) {
+        say("Explain the fictional problem in at least 8 non-padding characters.");
+        return;
+      }
+      handoffs++;
+      render();
+    });
+    if (focus) page.focus({ preventScroll: true });
+  };
+  if (fixed) showAnswer(false);
+  else render(false);
+  return () => {};
+}
 
 function renderLayoutEarthquake({ stage, mode }) {
   const fixed = mode === "fixed";

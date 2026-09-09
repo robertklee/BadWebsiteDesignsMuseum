@@ -26,22 +26,8 @@
   background: var(--marketing-paper);
 }
 
-.marketing-exhibit .marketing-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  margin: 16px 0;
-}
-
-.marketing-exhibit .marketing-progress {
-  font-size: 0.875rem;
-  font-weight: 700;
-  line-height: 1.5;
-}
-
 .checkout-exhibit { --checkout-green: #174d39; --checkout-pink: #f8c7d5; }
-.checkout-exhibit .checkout-viewport { background: #f6f8f5; border-color: var(--checkout-green); border-radius: 8px; }
+.checkout-exhibit .checkout-viewport { background: #f6f8f5; border-color: var(--checkout-green); border-radius: 8px; overflow-anchor: none; }
 .checkout-exhibit .checkout-document { padding: 20px; }
 .checkout-exhibit .checkout-masthead { display: flex; align-items: start; justify-content: space-between; gap: 14px; padding-bottom: 20px; border-bottom: 3px solid var(--checkout-green); color: var(--checkout-green); }
 .checkout-exhibit .checkout-masthead h3 { font-family: Georgia, serif; font-size: 1.9rem; line-height: 1.1; margin: 10px 0; }
@@ -60,18 +46,46 @@
 .checkout-exhibit .checkout-total { display: flex; justify-content: space-between; gap: 12px; line-height: 1.5; }
 .checkout-exhibit .checkout-item { margin: 14px 0; font-size: 0.85rem; }
 .checkout-exhibit .checkout-item strong { white-space: nowrap; }
+.checkout-exhibit .checkout-item > div { min-width: 0; }
+.checkout-exhibit #checkout-delivery { display: block; width: 100%; max-width: 100%; min-height: 44px; margin-top: 6px; border: 1px solid var(--checkout-green); border-radius: 4px; background: white; color: inherit; font: inherit; }
+.checkout-exhibit .checkout-coupon { border-top: 1px solid #c7cfc8; padding-block: 12px; font-size: 0.8rem; line-height: 1.5; }
+.checkout-exhibit .checkout-coupon summary { cursor: pointer; padding-block: 8px; }
+.checkout-exhibit .checkout-coupon label { display: block; margin-bottom: 6px; }
+.checkout-exhibit .checkout-coupon-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.checkout-exhibit .checkout-coupon-controls input { min-width: 0; width: 100%; flex: 1 1 130px; box-sizing: border-box; min-height: 44px; border: 1px solid var(--checkout-green); border-radius: 4px; padding: 8px; font: inherit; }
+.checkout-exhibit .checkout-coupon-controls button { flex: 0 0 auto; min-height: 44px; padding: 8px 12px; }
+.checkout-exhibit #checkout-coupon-status:empty { display: none; }
 .checkout-exhibit .checkout-total { padding-top: 16px; border-top: 2px dashed var(--checkout-green); font-weight: 700; }
 .checkout-exhibit .checkout-total strong { font-size: 1.4rem; }
 .checkout-exhibit .checkout-receipt-note { font-size: 0.75rem; line-height: 1.5; }
 .checkout-exhibit .checkout-action { display: grid; justify-items: start; gap: 10px; padding-block: 18px; }
 .checkout-exhibit #checkout-confirm { width: min(100%, 270px); min-height: 48px; background: var(--checkout-green); color: white; border-color: var(--checkout-green); }
 .checkout-exhibit .checkout-action small { line-height: 1.5; }
+.checkout-exhibit .checkout-upsell-overlay { position: absolute; inset-inline: 0; height: 100%; box-sizing: border-box; z-index: 3; display: grid; align-items: center; padding: 16px; overflow: auto; overscroll-behavior: contain; background: rgb(23 77 57 / 55%); }
+.checkout-exhibit .checkout-upsell-overlay .checkout-upsell-dialog { width: min(100%, 440px); box-sizing: border-box; margin: auto; padding: 20px; border: 2px solid #174d39; border-radius: 8px; }
+.checkout-exhibit .checkout-upsell-dialog button { display: block; width: 100%; margin-top: 12px; }
+.checkout-exhibit .checkout-cart-change:empty { display: none; }
+.checkout-exhibit .checkout-cart-change { width: 100%; box-sizing: border-box; padding: 14px; background: #fff0b5; border-left: 5px solid #a23822; }
+.checkout-exhibit .checkout-change-title { font-family: Georgia, serif; font-size: 1.2rem; }
+.checkout-exhibit .checkout-cart-change p { margin: 10px 0; font-size: 0.85rem; line-height: 1.5; }
+.checkout-exhibit .checkout-added-product,
+.checkout-exhibit .checkout-change-total { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; }
+.checkout-exhibit .checkout-added-product { font-size: 0.9rem; line-height: 1.4; }
+.checkout-exhibit .checkout-change-total { border-top: 1px solid #a23822; padding-top: 10px; }
+.checkout-exhibit .checkout-change-total > span { white-space: nowrap; }
+.checkout-exhibit .checkout-change-total del { margin-right: 6px; }
+.checkout-exhibit .checkout-unwanted-item { padding: 12px; background: #fff0b5; border-left: 5px solid #a23822; }
+.checkout-exhibit .checkout-unwanted-item b { font-size: 0.7rem; color: #87301d; }
 .checkout-exhibit .checkout-footer { padding-block: 14px; border-top: 1px solid var(--checkout-green); font-family: monospace; font-size: 0.7rem; line-height: 1.6; }
 .checkout-exhibit .checkout-footer span { display: block; }
 .checkout-exhibit .checkout-footer small { display: block; margin-top: 8px; font-size: 0.65rem; }
 .checkout-exhibit .checkout-footer a { color: inherit; }
 .checkout-exhibit .checkout-banner,
 .checkout-exhibit .checkout-recommendations { padding: 18px; margin: 14px 0; border-left: 5px solid #ae3055; background: var(--checkout-pink); }
+.checkout-exhibit .checkout-decline { display: block; margin-top: 24px; max-width: 100%; }
+.checkout-exhibit .checkout-delivery-change { padding-bottom: 14px; margin-bottom: 16px; border-bottom: 2px solid #87301d; color: #742718; }
+.checkout-exhibit .checkout-delivery-change p { margin: 8px 0; font-weight: 700; font-size: 0.9rem; line-height: 1.4; }
+.checkout-exhibit .checkout-delivery-change small { display: block; font-size: 0.8rem; line-height: 1.4; }
 .checkout-exhibit .checkout-banner:nth-child(even) { background: #e2ed89; border-color: var(--checkout-green); }
 .checkout-exhibit .checkout-promotions strong,
 .checkout-exhibit .checkout-recommendations strong { display: block; font-family: Georgia, serif; font-size: 1.25rem; line-height: 1.2; }

@@ -12,6 +12,7 @@ const exhibitOrder = [
   "runaway",
   "password-gym",
   "correcting-search",
+  "layout-checkout",
   "layout-earthquake",
   "scroll-modal",
   "validation-afterthought",
@@ -44,7 +45,6 @@ const exhibitOrder = [
   "alphabet",
   "corporate",
   "loading",
-  "layout-checkout",
 ];
 
 const newExhibitIds = new Set([
@@ -52,6 +52,7 @@ const newExhibitIds = new Set([
   "scroll-modal",
   "validation-afterthought",
   "hover-menu",
+  "layout-checkout",
 ]);
 
 const allExhibits = [...formsExhibits, ...interactionExhibits, ...contentExhibits, ...commerceExhibits, ...websiteExhibits];

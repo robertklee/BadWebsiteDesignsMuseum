@@ -8,6 +8,7 @@ import { exhibits as websiteExhibits } from "./website-behavior.js";
 // contributes its own records (metadata + preview + render); this registry only orders,
 // validates, and dispatches -- it owns no exhibit-specific content itself.
 const exhibitOrder = [
+  "unresponsive-buttons",
   "cat-captcha",
   "runaway",
   "password-gym",
@@ -48,6 +49,7 @@ const exhibitOrder = [
 ];
 
 const newExhibitIds = new Set([
+  "unresponsive-buttons",
   "layout-earthquake",
   "scroll-modal",
   "validation-afterthought",

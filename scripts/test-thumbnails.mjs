@@ -14,7 +14,7 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(museumUrl, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator(".thumb-scene").count(), 32, "All thirty-two older previews must render");
+    assert.equal(await page.locator(".thumb-scene").count(), 33, "All thirty-three responsive scene previews must render");
     const issues = await page.evaluate(() => {
       const failures = [];
       for (const scene of document.querySelectorAll(".thumb-scene")) {

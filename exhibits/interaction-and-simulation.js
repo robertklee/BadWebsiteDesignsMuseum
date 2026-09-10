@@ -2,6 +2,7 @@
 import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
+  { id: "unresponsive-buttons", name: "The Sometimes Button", category: "Interaction", color: "pink", tagline: "Nothing. Nothing. Eleven.", description: "Find the working part of a quantity button. Click impatiently and order far too much nothing.", lesson: "The button received several of your complaints and has processed them all as extra chairs. The working department has since moved to another part of the button.", fix: "The entire button now works, each click updates the quantity immediately, and five means five.", worseChange: "Smaller working areas and a longer silence before all your clicks arrive together.", preview: '<div class="thumb-scene thumb-sometimes"><span class="thumb-kicker">JUST FIVE CHAIRS. PLEASE.</span><div class="thumb-sometimes-counter"><span>−</span><strong>11<small>WANTED: 5</small></strong><span>+<i></i></span></div><small class="thumb-footer">Oh. Those clicks did go through.</small></div>', render: renderUnresponsiveButtons },
   { id: "runaway", name: "The Runaway Button", category: "Interaction", color: "lilac", tagline: "A call to action. A refusal to cooperate.", description: "Finally, a button with a healthy fear of commitment.", lesson: "The button has considered your request and chosen flight. It is currently exploring opportunities near the opposite edge of the box.", fix: "After extensive negotiations, the button has agreed to remain in one place.", worseChange: "The button brought decoys and a much stronger sense of self-preservation.", preview: `<div class="thumb-scene thumb-runaway"><span class="thumb-kicker">A CALL TO ACTION. A CHANGE OF PLANS.</span><div class="thumb-chase"><span class="thumb-button-shadow"></span><i class="thumb-chase-pointer" aria-hidden="true">↖</i><span class="thumb-chase-trail"></span><small>come back here.</small><span class="thumb-fleeing-button">Click me ↗</span></div></div>`, render: renderRunaway },
   { id: "loading", name: "The Loading Experience", category: "Interaction", color: "lilac", tagline: "Almost ready to start getting ready.", description: "An entire loading ceremony for one sentence. Please approve the wait.", lesson: "Nothing important is happening, but it is happening in ten impressive stages. Stage eleven is reflecting on the journey.", fix: "The sentence was ready the whole time. It has finally been allowed indoors.", worseChange: "The wait now requires your active participation.", preview: `<div class="thumb-scene thumb-loading"><span class="thumb-kicker">ALMOST THERE. PREVIOUSLY.</span><div class="thumb-progress-numbers"><s>99%</s><span>→</span><strong>12%</strong></div><div class="thumb-backward-bar"><i></i><b>←</b></div><span class="thumb-loading-status">Reconsidering the first 98%.</span><small class="thumb-footer">All this to load one sentence.</small></div>`, render: renderLoading },
   { id: "seismic-editor", name: "The Seismic Text Editor", category: "Interaction", color: "pink", tagline: "Every keystroke is a structural risk.", description: "Type carefully. The editor shakes, and your whole sentence might tumble.", lesson: "The sentence was built on ambitious foundations. Punctuation remains a known seismic risk, especially the excitable kind.", fix: "The editor passed inspection. Exclamation marks may now enter without a hard hat.", worseChange: "The editor is feeling every keystroke more intensely.", preview: `<div class="thumb-scene thumb-collapse"><span class="thumb-kicker">STRUCTURAL INTEGRITY: QUESTIONABLE</span><div class="thumb-collapse-page"><span>UNTITLED / UNSAVED / UNSTABLE</span><div class="thumb-broken-baseline"><i></i><b>!</b></div><div class="thumb-letter-rubble"><b>T</b><b>Y</b><b>P</b><b>E</b></div></div><small class="thumb-footer">One more letter. What could go wrong?</small></div>`, render: renderSeismicEditor },
@@ -10,6 +11,94 @@ export const exhibits = [
   { id: "volume-seesaw", category: "Interaction", color: "blue", name: "The Volume Seesaw", tagline: "A delicate balance of unnecessary effort.", description: "Load weights onto a wobbling seesaw to set a silent volume slider.", lesson: "The ideal listening level is a delicate agreement between anvils and balloons. Pebbles are present in an advisory role.", fix: "The playground equipment was removed, revealing a slider underneath.", worseChange: "Balloons join the balance, and the weights may wander.", preview: '<div class="thumb-scene thumb-seesaw"><span class="thumb-kicker">VOLUME: SOME ASSEMBLY REQUIRED</span><div class="thumb-balance"><span class="thumb-balance-value">73<span>%</span></span><div class="thumb-beam"><i class="thumb-pebble"></i><i class="thumb-brick"></i><i class="thumb-brick thumb-brick-top"></i></div><div class="thumb-fulcrum"></div><span class="thumb-balance-minus">−</span><span class="thumb-balance-plus">+</span></div><small class="thumb-footer">Could you turn it down one brick?</small></div>', render: renderVolumeSeesaw },
   { id: "notification-swatter", category: "Interaction", color: "yellow", name: "The Notification Fly Swatter", tagline: "Please dismiss your way to productivity.", description: "Swat a swarm of fake alerts before they bury the form you are completing.", lesson: "Your focus is important to us, which is why twelve messages have arrived to discuss it. More may be scheduled.", fix: "The notifications have been shown the door. The form can finally hear itself think.", worseChange: "The swarm is faster, and missed clicks attract attention.", preview: '<div class="thumb-scene thumb-swatter"><span class="thumb-kicker">WE VALUE YOUR FOCUS</span><div class="thumb-alert-stack"><div class="thumb-form-under"><span>YOUR MESSAGE</span><b>Hello, I would like to</b><div class="fake-lines"></div></div><div class="thumb-alert thumb-alert-back"><b>A quick update</b><span>×</span><small>You have updates.</small></div><div class="thumb-alert thumb-alert-front"><b>One more thing</b><span>×</span><small>About that update.</small></div></div><small class="thumb-footer">There was a form here a moment ago.</small></div>', render: renderNotificationSwatter },
 ];
+
+function renderUnresponsiveButtons({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const { shell, say } = createStageShell(stage);
+  shell("SEATING ARRANGEMENTS, EVENTUALLY", "Reserve exactly five imaginary chairs.",
+    fixed ? "The whole button works. One click, one chair, immediate feedback." : "Only a strip of each button works, and that strip moves after an update. Some clicks do nothing. Others arrive together after a suspicious silence. Clicking faster can overshoot five.",
+    `<div class="sometimes-machine">
+      <span class="demo-kicker">TARGET: 5 CHAIRS · NO REAL RESERVATION</span>
+      <div class="sometimes-controls">
+        <button type="button" class="sometimes-button" data-chair-step="-1" aria-label="Remove one chair"><span aria-hidden="true">−</span></button>
+        <output class="sometimes-count" aria-label="Chair quantity" aria-live="polite">1</output>
+        <button type="button" class="sometimes-button" data-chair-step="1" aria-label="Add one chair"><span aria-hidden="true">+</span></button>
+      </div>
+      <p class="sometimes-feedback">${fixed ? "Ready when you are." : "Did that click register? Give it a moment."}</p>
+      ${fixed ? "" : '<button type="button" class="plain-button" id="sometimes-reveal" aria-pressed="false">Show working areas</button>'}
+      <button type="button" class="demo-button" id="sometimes-confirm">Reserve five chairs →</button>
+      <p class="sometimes-help">${fixed ? "No dead spots. No delayed pile-up." : "Try different parts, then wait for the quantity to settle. Use − to recover from an overshoot. Keyboard: Tab to a button and press Enter or Space; no aiming required."}</p>
+    </div>`);
+  const buttons = [...stage.querySelectorAll("[data-chair-step]")];
+  const count = stage.querySelector(".sometimes-count");
+  const feedback = stage.querySelector(".sometimes-feedback");
+  const confirm = stage.querySelector("#sometimes-confirm");
+  const listeners = new AbortController();
+  const options = { signal: listeners.signal };
+  const width = worse ? .24 : .42;
+  const positions = [0, 1 - width, (1 - width) / 2];
+  let quantity = 1;
+  let phase = 0;
+  let pending = [];
+  let timer = null;
+  let complete = false;
+  const position = index => positions[(phase + index) % positions.length];
+  function showAreas() {
+    buttons.forEach((button, index) => {
+      button.style.setProperty("--working-left", `${position(index) * 100}%`);
+      button.style.setProperty("--working-width", `${width * 100}%`);
+    });
+  }
+  function flush() {
+    timer = null;
+    const clicks = pending.length;
+    for (const step of pending) quantity = Math.max(0, Math.min(99, quantity + step));
+    pending = [];
+    count.textContent = String(quantity);
+    phase++;
+    showAreas();
+    feedback.textContent = `${clicks} click${clicks === 1 ? "" : "s"} processed. ${quantity > 5 ? "Too many chairs. Try removing some." : quantity === 5 ? "Five chairs. Now confirm your reservation." : "Not quite five yet."}`;
+  }
+  buttons.forEach((button, index) => {
+    button.addEventListener("click", event => {
+      if (complete) return;
+      if (!fixed && event.detail !== 0) {
+        const bounds = button.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width;
+        const y = (event.clientY - bounds.top) / bounds.height;
+        if (x < position(index) || x > position(index) + width || y < 0 || y > 1) return;
+      }
+      // Bound the backlog while preserving each accepted click in a burst.
+      if (pending.length >= 20) return;
+      pending.push(Number(button.dataset.chairStep));
+      if (fixed) flush();
+      else if (timer === null) timer = setTimeout(flush, worse ? 1600 : 900);
+    }, options);
+  });
+  stage.querySelector("#sometimes-reveal")?.addEventListener("click", event => {
+    const reveal = event.currentTarget.getAttribute("aria-pressed") !== "true";
+    event.currentTarget.setAttribute("aria-pressed", String(reveal));
+    event.currentTarget.textContent = reveal ? "Hide working areas" : "Show working areas";
+    stage.querySelector(".sometimes-controls").classList.toggle("sometimes-revealed", reveal);
+  }, options);
+  confirm.addEventListener("click", () => {
+    if (complete) return;
+    if (pending.length) return say("Some clicks are still on their way. Wait for the quantity to settle before confirming.");
+    if (quantity !== 5) return say(`You have ${quantity} imaginary chairs. Adjust the quantity to exactly five.`);
+    complete = true;
+    buttons.forEach(button => { button.disabled = true; });
+    confirm.disabled = true;
+    say("Reserved exactly five imaginary chairs. Nothing was purchased. You may sit down now.");
+    stage.dispatchEvent(new CustomEvent("exhibit-complete"));
+  }, options);
+  showAreas();
+  return () => {
+    clearTimeout(timer);
+    pending = [];
+    listeners.abort();
+  };
+}
 
 function renderRunaway({ stage, mode }) {
   const fixed = mode === "fixed";

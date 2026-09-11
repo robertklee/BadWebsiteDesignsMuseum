@@ -18,7 +18,13 @@ npm start
 
 Open **http://localhost:3000**. Set `PORT` to use a different port.
 
-The site deploys to Cloudflare Workers with `npm run build` followed by `npm run deploy`. The build creates `dist/` with the browser assets, 37 per-exhibit share pages, and 38 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
+The site deploys to Cloudflare Workers with `npm run deploy`. The custom build command in `wrangler.jsonc` automatically runs `npm run build` before production deploys, preview version uploads, and local `npm run preview` sessions. The build creates `dist/` with the browser assets, 37 per-exhibit share pages, and 38 social-preview images. Clean URLs such as `/exhibit/cat-captcha` contain their own title, description, canonical URL, and 1200×630 Open Graph/Twitter artwork; the Worker injects the active workers.dev or custom-domain origin. Legacy hash exhibit URLs open normally and upgrade to their clean shareable route in the browser. Google Fonts is optional; local font fallbacks are included.
+
+### Cloudflare branch deployments
+
+This project uses **Workers Builds**, not Cloudflare Pages. Configure the connected repository with root directory `/`, no separate build command, production deploy command `npx wrangler deploy`, and non-production deploy command `npx wrangler versions upload`. Enable builds for the desired non-production branches in Cloudflare.
+
+Both deploy commands invoke the Wrangler build hook, so a fresh clone does not need an existing `dist/` directory. That directory is generated and intentionally ignored by Git. Without the hook (or an explicit `npm run build` before deploying), preview uploads fail with `assets.directory` pointing to a missing `dist/`. The branch being deployed must contain the updated Wrangler configuration.
 
 ### Generate share thumbnails
 

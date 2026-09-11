@@ -43,6 +43,7 @@ const exhibitOrder = [
   "ai-store",
   "mystery-menu",
   "alphabet",
+  "back-amnesia",
   "corporate",
   "loading",
 ];

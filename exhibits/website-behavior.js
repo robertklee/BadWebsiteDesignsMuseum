@@ -4,6 +4,7 @@ export const exhibits = [
   { id: "hover-menu", name: "The Hover Dependency", category: "Navigation", color: "pink", tagline: "I wanted a lamp. Not a mouse exam.", description: "One desk lamp. Several menus. Apparently you need the hands of a surgeon.", lesson: "The designer drew the menu open. Nobody asked how a person would get there.", fix: "Click-open menus stay open across gaps, touch gestures, and moments of hesitation.", worseChange: "The bridges now take a tiny twisting detour. So does your shopping trip.", preview: `<div class="new-preview preview-hover-tightrope"><span class="hover-preview-kicker">ONLINE SHOPPING / MOTOR SKILLS EXAM</span><strong>I JUST WANTED<br>A LAMP.</strong><div class="hover-preview-course" aria-hidden="true"><span class="hover-preview-shop">Shop +</span><i class="hover-preview-wire"></i><span class="hover-preview-destination">Desk lamps</span><b class="hover-preview-cursor">&#8598;</b><span class="hover-preview-fall">1 pixel later...</span></div><div class="hover-preview-verdict"><b>Menu closed.</b><span>Try being a surgeon.</span></div></div>`, render: renderHoverDependency },
   { id: "layout-earthquake", name: "The Layout Earthquake", category: "Content", color: "green", tagline: "The link was right there a second ago.", description: "Read the news while oversized ads push the story and its bookmark out of reach.", lesson: "Nobody reserved space for the content. Unfortunately, your click already had a reservation.", fix: "The ads have their own space. Your story stays where you left it.", worseChange: "The library story is further down, the ads are harder to shake, and even the columns won't sit still.", preview: `<div class="new-preview preview-earthquake-paper"><span class="earthquake-preview-masthead">THE DAILY DISPLACEMENT</span><strong>Just one quick article.</strong><img src="/assets/library.jpg" alt="" width="1200" height="800"><div class="earthquake-preview-ad"><span>BREAKING: SPONSORED CONTENT</span><b>THIS AD HAS<br>RIGHT OF WAY.</b><small>Your article can take the stairs.</small></div><span class="earthquake-preview-link">Read arti&hellip; <i aria-hidden="true">&#8595;</i></span><span class="earthquake-preview-pointer" aria-hidden="true">&#8598;</span><small class="earthquake-preview-punchline">You clicked here.<br>The article didn't.</small></div>`, render: renderLayoutEarthquake },
   { id: "validation-afterthought", name: "The Validation Afterthought", category: "Forms", color: "blue", tagline: "Four fields. One error. Start over.", description: "One answer was wrong. The form cleared the others for their involvement.", lesson: "The form knew the requirements all along. Apparently that information was on a need-to-fail basis.", fix: "Requirements are visible, errors belong to their fields, and your other answers stay put.", worseChange: "Useful guidance has been replaced by one cryptic complaint.", preview: `<div class="new-preview preview-validation-rejection"><span class="validation-preview-kicker">APPLICATION / NOT EVEN CLOSE</span><strong class="validation-preview-verdict">INVALID.</strong><div class="validation-preview-question"><b>Which field?</b><span>That's a secret.</span></div><div class="validation-preview-answers"><span>NAME <s>Alex Example</s></span><span>EMAIL <s>alex@example.test</s></span><b>ANSWERS DELETED</b></div><small class="validation-preview-footer">Start over. Guess better.</small></div>`, render: renderValidationAfterthought },
+  { id: "back-amnesia", name: "The Back Button Amnesia", category: "Navigation", color: "yellow", tagline: "Back to the list. Back to square one.", description: "Compare desk lamps in a catalog that forgets your filters and place.", lesson: "The product remembered its price. The website forgot the entire journey that brought you to it.", fix: "Filters, sorting, scroll position, and focus survive the trip to a product and back.", worseChange: "Even a quick peek is enough to erase your place.", preview: `<div class="thumb-scene thumb-back-amnesia"><div class="back-thumb-browser"><div class="back-thumb-chrome"><i></i><i></i><i></i><span>ATELIER / DESK LAMPS</span></div><div class="back-thumb-history"><b aria-hidden="true">&#8592;</b><span>BACK TO RESULTS</span><small>Page 4 of 12</small></div><div class="back-thumb-filters"><span>LIGHTING</span><span>UNDER $50</span><span>PRICE: LOW &#8594; HIGH</span><strong>MEMORY<br>SUCCESSFULLY<br>DELETED</strong></div><div class="back-thumb-return"><small>WELCOME BACK</small><b>WHO ARE YOU?</b></div></div><div class="back-thumb-punchline"><span>YOU PRESSED BACK.</span><strong>WE PRESSED<br>FACTORY RESET.</strong></div></div>`, render: renderBackAmnesia },
   { id: "scroll-modal", name: "The Scroll-Through Modal", category: "Interaction", color: "lilac", tagline: "You're scrolling. Just not the dialog.", description: "Save one day for $5,000. Free delivery? Keep scrolling. Wrong window.", lesson: "Two scroll containers entered. The one you couldn't use got every gesture.", fix: "The active dialog owns its scrolling, and the background stays still.", worseChange: "Shipping speed requires a third dialog, opened from the bottom of the second. Each gesture randomly scrolls one, two, or all three layers, sometimes in opposite directions.", preview: `<div class="new-preview preview-scroll-checkout"><div class="scroll-preview-back"><span>YOUR ORDER</span><span>Delivery: still deciding</span></div><div class="scroll-preview-front"><span class="scroll-preview-title">DELIVERY OPTIONS <b aria-hidden="true">&times;</b></span><span class="scroll-preview-offer">SAVE ONE DAY.</span><strong>$5,000</strong><small>One day. Five grand.</small><span class="scroll-preview-free">Free? Further down.</span><i class="scroll-preview-rail" aria-hidden="true"></i></div><span class="scroll-preview-punchline">YOU SCROLLED THE WRONG WINDOW.</span></div>`, render: renderScrollModal },
 ];
 
@@ -201,7 +202,7 @@ function renderHoverDependency({ stage, mode }) {
     { name: "Pause clock", price: 40, shape: "clock", department: "Decor", detail: "Keeps time. The navigation spends it." },
     { name: "Sunday throw", price: 54, shape: "throw", department: "Textiles", detail: "For when browsing leaves you emotionally cold." },
   ];
-  catalog.innerHTML = `<header class="hover-catalog-heading"><span>THE EVERYDAY COLLECTION / NEW ARRIVALS</span><h3>Good things for ordinary days.</h3><p>Kitchen, lighting, textiles &amp; the occasional unnecessary vase.</p></header><div class="hover-arrivals">${arrivals.map((item, index) => `<article><button class="hover-arrival" data-arrival="${index}" aria-expanded="false" aria-controls="hover-arrival-${index}"><span class="hover-object-scene"><i class="hover-object hover-object-${item.shape}" aria-hidden="true"></i></span><span class="hover-arrival-department">${item.department}</span><span class="hover-arrival-name">${item.name}<b>${item.price}</b></span></button><p id="hover-arrival-${index}" hidden>${item.detail}</p></article>`).join("")}</div><footer class="hover-catalog-footer"><span>DESIGNED FOR EVERYDAY LIVING.</span><span>Finding it may take longer.</span></footer>`;
+  catalog.innerHTML = `<header class="hover-catalog-heading"><span>THE EVERYDAY COLLECTION / NEW ARRIVALS</span><h3>Good things for ordinary days.</h3><p>Kitchen, lighting, textiles &amp; the occasional unnecessary vase.</p></header><div class="hover-arrivals">${arrivals.map((item, index) => `<article><button class="hover-arrival" data-arrival="${index}" aria-expanded="false" aria-controls="hover-arrival-${index}"><span class="hover-object-scene"><i class="hover-object hover-object-${item.shape}" aria-hidden="true"></i></span><span class="hover-arrival-department">${item.department}</span><span class="hover-arrival-name">${item.name}<b>$${item.price}</b></span></button><p id="hover-arrival-${index}" hidden>${item.detail}</p></article>`).join("")}</div><footer class="hover-catalog-footer"><span>DESIGNED FOR EVERYDAY LIVING.</span><span>Finding it may take longer.</span></footer>`;
   catalog.addEventListener("click", event => {
     const button = event.target.closest("[data-arrival]");
     if (!button) return;
@@ -322,6 +323,72 @@ function renderHoverDependency({ stage, mode }) {
   const visibility = () => { clear(); if (!document.hidden) arm(); };
   document.addEventListener("visibilitychange", visibility);
   return () => { clear(); document.removeEventListener("visibilitychange", visibility); };
+}
+
+function renderBackAmnesia({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const { shell, say } = createStageShell(stage);
+  const products = [
+    { name: "Fold chair", type: "Furniture", price: 90 }, { name: "Loop shelf", type: "Furniture", price: 64 },
+    { name: "Arc floor lamp", type: "Lighting", price: 120 }, { name: "Linen shade", type: "Lighting", price: 28 },
+    { name: "Oak stool", type: "Furniture", price: 55 }, { name: "Wall rail", type: "Furniture", price: 38 },
+    { name: "Paper pendant", type: "Lighting", price: 36 }, { name: "Globe light", type: "Lighting", price: 60 },
+    { name: "Tray table", type: "Furniture", price: 72 }, { name: "Beam desk lamp", type: "Lighting", price: 62, hours: 25000 },
+    { name: "Pivot desk lamp", type: "Lighting", price: 48, hours: 30000 }, { name: "Studio desk lamp", type: "Lighting", price: 85 },
+  ];
+  shell("ATELIER / THE OBJECT CATALOG", "A little comparison shopping.", "Inspect the full specifications of both Beam and Pivot desk lamps, then choose the less expensive one.",
+    `<div class="web-demo"><div class="web-masthead">ATELIER <small>THINGS WORTH FINDING TWICE</small></div><p id="catalog-compared" class="web-receipt">Specifications inspected: 0 / 2</p><section id="catalog-list"><div class="catalog-filters"><label>Department<select id="catalog-filter"><option>All departments</option><option>Lighting</option><option>Furniture</option></select></label><label>Sort<select id="catalog-sort"><option value="featured">Featured</option><option value="price">Price: low to high</option></select></label></div><div class="web-viewport catalog-viewport" tabindex="0" aria-label="Product results"><div id="catalog-results"></div></div></section><section id="catalog-product" tabindex="-1" hidden></section><section id="catalog-preview" class="catalog-preview" role="dialog" aria-label="Quick product preview" tabindex="-1" hidden></section></div>`);
+  const filter = stage.querySelector("#catalog-filter");
+  const sort = stage.querySelector("#catalog-sort");
+  const list = stage.querySelector("#catalog-list");
+  const viewport = stage.querySelector(".catalog-viewport");
+  const details = stage.querySelector("#catalog-product");
+  const preview = stage.querySelector("#catalog-preview");
+  const seen = new Set();
+  let complete = false;
+  const paint = () => {
+    let visible = products.map((product, index) => ({ ...product, index })).filter(product => filter.value === "All departments" || product.type === filter.value);
+    if (sort.value === "price") visible = visible.sort((first, second) => first.price - second.price);
+    stage.querySelector("#catalog-results").innerHTML = visible.map(product => `<article class="catalog-item"><span class="catalog-department">${product.type}</span><h3>${product.name}</h3><p>$${product.price}</p><div class="web-tools"><button class="demo-button" data-inspect="${product.index}">View specifications<span class="sr-only"> for ${product.name}</span></button><button class="plain-button" data-preview="${product.index}">Quick preview<span class="sr-only"> of ${product.name}</span></button></div></article>`).join("");
+  };
+  const reset = () => { filter.value = "All departments"; sort.value = "featured"; paint(); viewport.scrollTop = 0; };
+  [filter, sort].forEach(control => control.addEventListener("change", () => { paint(); viewport.scrollTop = 0; }));
+  list.addEventListener("click", event => {
+    const button = event.target.closest("[data-inspect], [data-preview]");
+    if (!button) return;
+    const quick = button.hasAttribute("data-preview");
+    const product = products[Number(quick ? button.dataset.preview : button.dataset.inspect)];
+    const savedScroll = viewport.scrollTop;
+    const panel = quick ? preview : details;
+    list.hidden = !quick;
+    list.inert = quick;
+    panel.hidden = false;
+    if (!quick && product.hours) seen.add(product.name);
+    stage.querySelector("#catalog-compared").textContent = `Specifications inspected: ${seen.size} / 2`;
+    panel.innerHTML = `<button class="plain-button" id="catalog-return">${quick ? "Close preview" : "Back to results"}</button><span class="demo-kicker">${quick ? "QUICK LOOK" : "FULL SPECIFICATIONS"}</span><h3>${product.name}</h3><p>$${product.price} / ${product.type}</p>${quick ? `<p>Full specifications available on the product page.</p>` : `<dl class="catalog-specs"><dt>Finish</dt><dd>Brushed steel</dd><dt>Warranty</dt><dd>2 years</dd><dt>Rated light life</dt><dd>${product.hours ? `${product.hours.toLocaleString("en-US")} hours` : "Not applicable"}</dd></dl><button class="demo-button" id="catalog-choose">Choose this product</button>`}`;
+    panel.focus({ preventScroll: true });
+    const back = () => {
+      panel.hidden = true;
+      list.hidden = false;
+      list.inert = false;
+      if (!fixed && (!quick || worse)) { reset(); filter.focus({ preventScroll: true }); say("All departments. Featured order. Top of the list. Welcome back."); }
+      else { viewport.scrollTop = savedScroll; button.focus({ preventScroll: true }); }
+    };
+    panel.querySelector("#catalog-return").addEventListener("click", back);
+    panel.onkeydown = event => { if (event.key === "Escape") { event.stopPropagation(); back(); } };
+    panel.querySelector("#catalog-choose")?.addEventListener("click", event => {
+      if (seen.size < 2) { say("Inspect both Beam and Pivot specifications before choosing."); return; }
+      if (product.name !== "Pivot desk lamp") { say("Pivot is the less expensive of the two desk lamps. Keep comparing."); return; }
+      if (complete) return;
+      complete = true;
+      event.currentTarget.disabled = true;
+      say("Pivot selected: $48 versus $62. No order was placed.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    });
+  });
+  paint();
+  return () => {};
 }
 
 function renderValidationAfterthought({ stage, mode }) {

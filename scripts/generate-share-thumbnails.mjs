@@ -131,7 +131,10 @@ async function renderShareSheet(page, id, reverse = false) {
     }
 
     const text = document.body.innerText;
-    if (/\bexhibit\s*(?:#\s*)?\d+\b/i.test(text)) throw new Error(`Ordinal leaked: ${exhibitId}`);
+    const textNodes = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    while (textNodes.nextNode()) {
+      if (/\bexhibit\s*(?:#\s*)?\d+\b/i.test(textNodes.currentNode.textContent)) throw new Error(`Ordinal leaked: ${exhibitId}`);
+    }
     const bounds = copy.getBoundingClientRect();
     if (bounds.top < 40 || bounds.bottom > 565 || bounds.right > 1146) {
       throw new Error(`Copy overflows card: ${exhibitId}`);

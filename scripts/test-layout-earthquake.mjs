@@ -24,6 +24,29 @@ async function openLibrary(page, mode, capture = false) {
   assert.equal(await page.locator("#news-story").isVisible(), true);
 }
 try {
+  for (const width of [320, 390, 720, 1280, 1760]) {
+    for (const mode of ["easy", "hard", "fixed"]) {
+      const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto(`${origin}/exhibit/layout-earthquake?mode=${mode}`);
+      await page.locator(".news-front").waitFor();
+      const stageBounds = await page.locator("#stage").boundingBox();
+      assert(stageBounds.width >= width * .94, "Exhibit uses nearly the full page width");
+      if (width <= 720) {
+        assert(stageBounds.y < 450, "Mobile exhibit starts without excessive museum chrome");
+        const toolbar = await page.locator(".exhibit-toolbar").boundingBox();
+        assert(toolbar.height <= 100, "Mobile toolbar stays compact");
+        for (const control of await page.locator(".exhibit-toolbar button, .toolbar-exit").all()) {
+          const bounds = await control.boundingBox();
+          assert(bounds.height >= 44, "Mobile controls retain touch-friendly heights");
+          assert(bounds.x >= 0 && bounds.x + bounds.width <= width, "Mobile controls remain on screen");
+        }
+      }
+      await page.screenshot({ path: `${output}/layout-${mode}-${width}.png` });
+      await page.close();
+    }
+    console.log(`Passed exhibit layout at ${width}px in easy, hard and fixed modes.`);
+  }
   for (const width of [1280, 390, 320]) {
     for (const mode of ["easy", "hard", "fixed"]) {
       const page = await browser.newPage({ viewport: { width, height: 1000 }, reducedMotion: "reduce" });

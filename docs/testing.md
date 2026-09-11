@@ -32,6 +32,14 @@ Run the focused Runaway Button suite with:
 npm run test:runaway
 ```
 
+Run all website-behavior exhibits in Easy, Hard, and Fix it modes with:
+
+```sh
+npm run test:website
+```
+
+This suite covers completion events, canonical URLs, cleanup, keyboard and touch operation, and desktop and mobile layouts. Screenshots are written to `/tmp/museum-website-behavior`; set `SCREENSHOT_DIR` to override the location.
+
 Set `MUSEUM_URL` to test another running origin:
 
 ```sh
@@ -48,6 +56,7 @@ Additional direct Playwright scripts live in `scripts/`:
 - `test-checkout-thumbnail.mjs`
 - `test-layout-earthquake.mjs`
 - `test-hover-dependency.mjs`
+- `test-website-behavior.mjs`
 
 Run a focused script with Node and set `MUSEUM_URL` when its default origin does not match the running server:
 

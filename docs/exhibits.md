@@ -286,6 +286,14 @@ Use a slider containing a randomly ordered alphabet to select and append one cha
 
 Easy reshuffles after each appended character; Hard also reshuffles after committed slider adjustments. Fix it uses ordinary text input.
 
+## The Back Button Amnesia
+
+**Route:** `/exhibit/back-amnesia`
+
+Inspect the Beam and Pivot desk lamp specifications, then choose the cheaper lamp. Returning from a product resets the catalog's department, sorting, and scroll position while preserving comparison progress.
+
+Hard also resets the catalog when a quick preview closes. Fix it preserves browsing state and restores focus. This replaces the Horizontal Lifestyle with a new route. No order is placed.
+
 ## The Corporate Fog Machine
 
 **Route:** `/exhibit/corporate`

@@ -520,6 +520,8 @@ button{border-radius:0}
 .chase-arena{height:340px;position:relative;max-width:900px;margin:20px auto;background-image:radial-gradient(#78629455 1px,transparent 1px);background-size:20px 20px;border:1px dashed #78629477;border-radius:8px;overflow:hidden}
 .runaway-stage{background:#c1ace7}
 .runaway-button{position:absolute;left:calc(50% - 95px);top:125px;width:190px;max-width:100%;z-index:2;transition:left .08s,top .08s}
+.runaway-button[data-state="hesitating"]{outline:3px dashed #654584;outline-offset:3px}
+.runaway-button[data-state="resting"],.runaway-button[data-state="cornered"]{background:#f4efcb;color:#252921;outline:3px solid #654584;outline-offset:3px}
 .runaway-decoy{position:absolute;background:#252921;color:white;padding:12px 14px;border-radius:4px;cursor:pointer;font-size:12px;max-width:100%;z-index:1}
 .worse.runaway-stage{background:repeating-linear-gradient(-35deg,#c1ace7,#c1ace7 20px,#cbb9eb 20px,#cbb9eb 40px)}
 .fixed.runaway-stage{background:#e6ebdc}

@@ -15,20 +15,46 @@ function renderRunaway({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { status, say } = createDemoStatus();
-  let cleanup = () => {};
+  const behaviors = ["reaction", "exhaustion", "sneak", "corner"];
+  const behavior = fixed ? "fixed" : behaviors[Math.floor(Math.random() * behaviors.length)];
+  const rules = worse
+    ? { warmup: 20000, warmupEscapes: 20, reaction: 180, escapes: 8, rest: 600, speed: 140, radius: 65, step: 140, trapped: 3 }
+    : { warmup: 10000, warmupEscapes: 10, reaction: 250, escapes: 5, rest: 900, speed: 300, radius: 0, step: 90, trapped: 12 };
+  const hints = {
+    reaction: "It hesitates before fleeing. Click before it makes up its mind.",
+    exhaustion: "Even this button gets tired. Chase it until it needs a breather.",
+    sneak: "It can smell panic. Approach slowly, then click.",
+    corner: "It can run, but it cannot teleport. Herd it into a corner.",
+  };
   stage.innerHTML = `<div class="demo-centered"><span class="demo-kicker">COMMITMENT ISSUES, AS A SERVICE</span><h2>${fixed ? "Your button is ready." : "One click. How hard can it be?"}</h2><p>${fixed ? "No chase. No tricks. Just a button." : worse ? "Catch the real button. It came prepared for this." : "Catch the button before it finds another excuse to leave."}</p><div class="chase-arena"><button class="demo-button runaway-button">Claim your prize →</button></div>${status}<small>Keyboard users: tab to the real button and press Enter. It never runs from the keyboard, and decoys never receive focus.<br>Reduced-motion preferences disable every kind of evasion, and Fix it removes the chase entirely.</small></div>`;
   const button = stage.querySelector(".runaway-button");
   const arena = stage.querySelector(".chase-arena");
+  const intro = stage.querySelector(".demo-centered > p");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const coarse = matchMedia("(hover: none), (pointer: coarse)");
+  let input = coarse.matches ? "touch" : "mouse";
+  arena.dataset.behavior = behavior;
   if (!fixed) stage.querySelector(".demo-kicker").textContent = worse
     ? "HARD MODE — NOW IT'S PERSONAL"
     : "EASY MODE — CONSIDER THIS A WARM-UP";
   let attempts = 0;
   let lastMove = -Infinity;
-  let dodgedAt = -Infinity;
-  let rejectedTouch = false;
   let directHits = 0;
+  let touchHit = false;
+  let mouseEscapes = 0;
+  let warmingUp = !fixed;
+  let warmupEscapes = 0;
+  let warmupRemaining = rules.warmup;
+  let warmupStartedAt = null;
+  let warmupTimer = null;
+  let reactionTimer = null;
+  let restTimer = null;
+  let cornered = false;
+  let latestMouse = null;
+  let mouseSample = null;
+  let lastMousePosition = null;
+  let disposed = false;
+  const contacts = new Set();
   // Weighted offsets keep the median at zero despite the longer positive tail.
   const hitOffsets = [-2, -2, -1, -1, 0, 0, 0, 0, 1, 1, 2, 2, 3, 4];
   const requiredHits = (worse ? 20 : 8) + hitOffsets[Math.floor(Math.random() * hitOffsets.length)];
@@ -48,31 +74,112 @@ function renderRunaway({ stage, mode }) {
   let drift = null;
   let caught = false;
   const history = [];
-  function escape(pointer, note) {
-    if (fixed || caught || motion.matches) return;
-    lastMove = performance.now();
-    attempts++;
-    if (worse) button.style.width = `${Math.max(100, 190 - attempts * 9)}px`;
+  function updateHint() {
+    arena.dataset.input = input;
+    arena.dataset.phase = fixed ? "fixed" : warmingUp ? "warmup" : "challenge";
+    if (caught) return;
+    intro.textContent = fixed ? "No chase. No tricks. Just a button."
+      : motion.matches ? "Reduced motion: the button will stay put. Click or tap to catch it."
+        : input === "touch" ? "Tap the real button repeatedly. Clean hits count; near misses do not."
+          : warmingUp ? "It is still showing off. Keep chasing; every button has a weakness."
+            : hints[behavior];
+  }
+  function canEvade() {
+    return !disposed && !fixed && !caught && !motion.matches && !document.hidden && !button.matches(":focus-visible");
+  }
+  function clearMouseTimers() {
+    pauseWarmup();
+    clearTimeout(reactionTimer);
+    clearTimeout(restTimer);
+    reactionTimer = null;
+    restTimer = null;
+    cornered = false;
+    if (!caught) {
+      button.dataset.state = "ready";
+    }
+  }
+  function pauseWarmup() {
+    if (warmupStartedAt !== null) {
+      warmupRemaining = Math.max(0, warmupRemaining - (performance.now() - warmupStartedAt));
+    }
+    warmupStartedAt = null;
+    clearTimeout(warmupTimer);
+    warmupTimer = null;
+  }
+  function finishWarmup() {
+    if (!warmingUp || input !== "mouse" || !canEvade() || (warmupRemaining > 0 && warmupEscapes < rules.warmupEscapes)) return;
+    pauseWarmup();
+    warmingUp = false;
+    updateHint();
+    say(`It is running out of excuses. ${hints[behavior]}`);
+  }
+  function warmupEscape(pointer) {
+    if (!canEvade() || input !== "mouse") return;
+    if (warmupRemaining > 0 && warmupTimer === null) {
+      warmupStartedAt = performance.now();
+      warmupTimer = setTimeout(() => {
+        pauseWarmup();
+        finishWarmup();
+      }, warmupRemaining);
+    }
+    if (performance.now() - lastMove < 100) return;
+    if (escape(local(pointer))) warmupEscapes++;
+    finishWarmup();
+  }
+  function stopDrift() {
+    clearInterval(drift);
+    drift = null;
+  }
+  function setInput(next) {
+    if (next === input || caught || disposed) return;
+    clearMouseTimers();
+    stopDrift();
+    input = next;
+    latestMouse = null;
+    mouseSample = null;
+    mouseEscapes = 0;
+    updateHint();
+    if (input === "touch") startDrift();
+  }
+  function escape(pointer, note, herd = false) {
+    if (!canEvade()) return false;
+    if (worse) button.style.width = `${Math.max(100, 190 - (attempts + 1) * 9)}px`;
     const maxX = Math.max(0, arena.clientWidth - button.offsetWidth);
     const maxY = Math.max(0, arena.clientHeight - button.offsetHeight);
     const old = { x: button.offsetLeft, y: button.offsetTop };
-    // Without a pointer to flee from, it simply flees from wherever it is standing.
     const from = pointer || { x: old.x + button.offsetWidth / 2, y: old.y + button.offsetHeight / 2 };
-    // Favor distant, unvisited destinations instead of bouncing between corners.
-    const candidates = Array.from({ length: 60 }, () => {
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
-      const pointerDistance = Math.hypot(
-        Math.max(x - from.x, 0, from.x - x - button.offsetWidth),
-        Math.max(y - from.y, 0, from.y - y - button.offsetHeight),
-      );
-      const novelty = Math.min(...[...history, old].map(point => Math.hypot(x - point.x, y - point.y)));
-      return { x, y, pointerDistance, score: pointerDistance + novelty * 2 };
-    });
-    // Keep the destination clear of the pointer because the browser dispatches the click to the
-    // element under the pointer when it lifts.
-    const pick = candidates.filter(candidate => candidate.pointerDistance > 140);
-    const destination = (pick.length ? pick : candidates).reduce((best, candidate) => candidate.score > best.score ? candidate : best);
+    let destination;
+    if (herd) {
+      const dx = old.x + button.offsetWidth / 2 - from.x;
+      const dy = old.y + button.offsetHeight / 2 - from.y;
+      const distance = Math.hypot(dx, dy);
+      destination = {
+        x: Math.max(0, Math.min(maxX, old.x + (distance ? dx / distance : 1) * rules.step)),
+        y: Math.max(0, Math.min(maxY, old.y + (distance ? dy / distance : 0) * rules.step)),
+      };
+      if (Math.hypot(destination.x - old.x, destination.y - old.y) <= rules.trapped) {
+        cornered = true;
+        button.dataset.state = "cornered";
+        say("Nowhere left to run. Claim your prize.");
+        return false;
+      }
+    } else {
+      // Favor distant, unvisited destinations instead of bouncing between corners.
+      const candidates = Array.from({ length: 60 }, () => {
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+        const pointerDistance = Math.hypot(
+          Math.max(x - from.x, 0, from.x - x - button.offsetWidth),
+          Math.max(y - from.y, 0, from.y - y - button.offsetHeight),
+        );
+        const novelty = Math.min(...[...history, old].map(point => Math.hypot(x - point.x, y - point.y)));
+        return { x, y, pointerDistance, score: pointerDistance + novelty * 2 };
+      });
+      const pick = candidates.filter(candidate => candidate.pointerDistance > 140);
+      destination = (pick.length ? pick : candidates).reduce((best, candidate) => candidate.score > best.score ? candidate : best);
+    }
+    lastMove = performance.now();
+    attempts++;
     history.push(destination);
     if (history.length > 8) history.shift();
     if (worse) {
@@ -82,13 +189,16 @@ function renderRunaway({ stage, mode }) {
       decoy.setAttribute("aria-hidden", "true");
       decoy.style.left = `${old.x}px`;
       decoy.style.top = `${old.y}px`;
-      decoy.addEventListener("click", () => { if (!caught) say("That was a decoy. The real button has already left."); });
+      decoy.addEventListener("click", () => {
+        if (!caught && (input === "mouse" || !touchHit)) say("That was a decoy. The real button has already left.");
+      });
       arena.append(decoy);
       if (arena.querySelectorAll(".runaway-decoy").length > 5) arena.querySelector(".runaway-decoy").remove();
     }
     button.style.left = `${destination.x}px`;
     button.style.top = `${destination.y}px`;
     say(note || `Escape ${attempts}. ${worse ? "Smaller target. More impostors. Same absolutely nothing." : "A new destination. Another missed opportunity."}`);
+    return true;
   }
   function flee(event, note) {
     if (performance.now() - lastMove < 100) return;
@@ -96,7 +206,7 @@ function renderRunaway({ stage, mode }) {
   }
   function local(event) {
     const bounds = arena.getBoundingClientRect();
-    return { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+    return { x: event.clientX - bounds.left - arena.clientLeft, y: event.clientY - bounds.top - arena.clientTop };
   }
   function gap(event) {
     const rect = button.getBoundingClientRect();
@@ -105,26 +215,102 @@ function renderRunaway({ stage, mode }) {
   // Touch has no hover state, so use timed movement instead. Keyboard focus pauses movement to
   // preserve the accessible path.
   function startDrift() {
-    if (drift || fixed || caught || motion.matches) return;
+    if (drift !== null || input !== "touch" || fixed || caught || disposed || motion.matches || document.hidden) return;
     drift = setInterval(() => {
-      if (document.hidden || !onscreen || button.matches(":focus-visible")) return;
+      if (!canEvade() || !onscreen) return;
       escape(null, `It moved on its own. Escape ${attempts + 1}. ${worse ? "It will not wait for you." : "Tap it before it goes again."}`);
     }, worse ? 900 : 1400);
   }
-  if (coarse.matches) startDrift();
-  button.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") flee(event); });
+  function reactToMouse(speed = Infinity) {
+    if (input !== "mouse" || !latestMouse || !canEvade() || restTimer !== null || cornered) return;
+    if (gap(latestMouse) > rules.radius) {
+      clearTimeout(reactionTimer);
+      reactionTimer = null;
+      button.dataset.state = "ready";
+      return;
+    }
+    if (warmingUp) {
+      warmupEscape(latestMouse);
+      return;
+    }
+    if (behavior === "reaction") {
+      if (reactionTimer !== null) return;
+      button.dataset.state = "hesitating";
+      say("It hesitated. Click before it changes its mind.");
+      reactionTimer = setTimeout(() => {
+        reactionTimer = null;
+        button.dataset.state = "ready";
+        if (input === "mouse" && latestMouse && gap(latestMouse) <= rules.radius) escape(local(latestMouse));
+      }, rules.reaction);
+      return;
+    }
+    if (behavior === "sneak" && speed <= rules.speed) return;
+    if (performance.now() - lastMove < 100) return;
+    if (!escape(local(latestMouse), undefined, behavior === "corner")) return;
+    if (behavior === "exhaustion" && ++mouseEscapes >= rules.escapes) {
+      mouseEscapes = 0;
+      button.dataset.state = "resting";
+      say("It needs a breather. Catch it while it rests!");
+      restTimer = setTimeout(() => {
+        restTimer = null;
+        button.dataset.state = "ready";
+        say("Breather over. The chase is back on.");
+        reactToMouse();
+      }, rules.rest);
+    }
+  }
+  // Only actual mouse movement or a mouse press restores cursor play. Pointer entry can be
+  // synthesized after touch or a layout change and must not revive a stale mouse strategy.
+  function trackPointer(event) {
+    if (caught || disposed) return;
+    if (event.pointerType !== "mouse") {
+      if (event.type === "pointerdown") contacts.add(event.pointerId);
+      if (event.type === "pointerdown" || event.buttons || event.pressure > 0) setInput("touch");
+      return;
+    }
+    if (contacts.size || event.sourceCapabilities?.firesTouchEvents) return;
+    const position = { clientX: event.clientX, clientY: event.clientY };
+    if (event.type === "pointermove") {
+      const moved = !lastMousePosition || position.clientX !== lastMousePosition.clientX || position.clientY !== lastMousePosition.clientY;
+      if (input === "touch" && !moved && !event.movementX && !event.movementY) return;
+      setInput("mouse");
+      const now = performance.now();
+      // Cap idle time so waiting, then jumping onto the button, is not mistaken for sneaking.
+      const speed = mouseSample
+        ? Math.hypot(position.clientX - mouseSample.clientX, position.clientY - mouseSample.clientY) * 1000 / Math.max(1, Math.min(80, now - mouseSample.at))
+        : Infinity;
+      mouseSample = { ...position, at: now };
+      latestMouse = position;
+      lastMousePosition = position;
+      reactToMouse(speed);
+    } else {
+      setInput("mouse");
+    }
+  }
+  function releasePointer(event) {
+    contacts.delete(event.pointerId);
+  }
+  document.addEventListener("pointermove", trackPointer, true);
+  document.addEventListener("pointerdown", trackPointer, true);
+  document.addEventListener("pointerup", releasePointer, true);
+  document.addEventListener("pointercancel", releasePointer, true);
+  updateHint();
+  startDrift();
   arena.addEventListener("pointerdown", event => {
-    rejectedTouch = false;
-    if (fixed || caught || event.pointerType === "mouse" || motion.matches) return;
+    if (fixed || caught || motion.matches || event.button !== 0) return;
+    if (event.pointerType === "mouse") {
+      if (input === "mouse" && event.target === button) {
+        if (warmingUp) warmupEscape(event);
+        else win("pointer");
+      }
+      return;
+    }
+    touchHit = event.target === button;
     startDrift();
-    // The guard only ever applies to the tap that caused a dodge, so rapid tapping still wins.
-    dodgedAt = -Infinity;
-    if (!event.target.closest(".runaway-button")) {
-      rejectedTouch = true;
+    if (event.target !== button) {
       // Near misses scare it off, so a touch has to be accurate and not merely present.
       if (gap(event) >= (worse ? 130 : 90)) return;
       flee(event);
-      dodgedAt = performance.now();
       return;
     }
     directHits++;
@@ -132,22 +318,39 @@ function renderRunaway({ stage, mode }) {
       win("direct hit");
       return;
     }
-    rejectedTouch = true;
     escape(local(event), `${flinches[(directHits - 1) % flinches.length]} Direct hits: ${directHits}.`);
-    dodgedAt = performance.now();
   });
   arena.addEventListener("pointermove", event => {
-    if (fixed || caught || motion.matches) return;
-    const touch = event.pointerType !== "mouse";
-    // Dragging a finger toward it is not a shortcut either.
-    if (touch ? !(event.buttons || event.pressure > 0) : !worse) return;
-    if (gap(event) < (touch ? 90 : 65)) flee(event);
-    else return;
-    if (touch) {
-      rejectedTouch = true;
-      dodgedAt = performance.now();
-    }
+    if (event.pointerType === "mouse" || !(event.buttons || event.pressure > 0)) return;
+    if (gap(event) < 90) flee(event);
   });
+  function suspend() {
+    clearMouseTimers();
+    stopDrift();
+    latestMouse = null;
+    mouseSample = null;
+  }
+  function preferencesChanged() {
+    suspend();
+    updateHint();
+    startDrift();
+  }
+  function visibilityChanged() {
+    suspend();
+    contacts.clear();
+    if (!document.hidden) startDrift();
+  }
+  function blur() {
+    suspend();
+    contacts.clear();
+  }
+  button.addEventListener("focus", () => {
+    if (button.matches(":focus-visible")) clearMouseTimers();
+  });
+  window.addEventListener("blur", blur);
+  window.addEventListener("focus", startDrift);
+  document.addEventListener("visibilitychange", visibilityChanged);
+  motion.addEventListener("change", preferencesChanged);
   const resize = new ResizeObserver(() => {
     if (fixed || !attempts) return;
     button.style.left = `${Math.min(button.offsetLeft, Math.max(0, arena.clientWidth - button.offsetWidth))}px`;
@@ -155,21 +358,30 @@ function renderRunaway({ stage, mode }) {
   });
   resize.observe(arena);
   watcher.observe(arena);
-  cleanup = () => {
+  const cleanup = () => {
+    disposed = true;
     resize.disconnect();
     watcher.disconnect();
-    clearInterval(drift);
+    suspend();
+    document.removeEventListener("pointermove", trackPointer, true);
+    document.removeEventListener("pointerdown", trackPointer, true);
+    document.removeEventListener("pointerup", releasePointer, true);
+    document.removeEventListener("pointercancel", releasePointer, true);
+    window.removeEventListener("blur", blur);
+    window.removeEventListener("focus", startDrift);
+    document.removeEventListener("visibilitychange", visibilityChanged);
+    motion.removeEventListener("change", preferencesChanged);
     document.body.classList.remove("runaway-won");
   };
   function win(method = "pointer") {
     if (caught) return;
     caught = true;
-    clearInterval(drift);
-    drift = null;
+    suspend();
     watcher.disconnect();
     arena.querySelectorAll(".runaway-decoy").forEach(decoy => decoy.remove());
     document.body.classList.add("runaway-won");
     button.textContent = "Caught! ✓";
+    button.dataset.state = "caught";
     button.disabled = true;
     stage.querySelector("h2").textContent = "You caught it!";
     stage.querySelector(".demo-centered > p").textContent = "The chase is over. It has officially run out of excuses.";
@@ -181,9 +393,15 @@ function renderRunaway({ stage, mode }) {
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   }
   button.addEventListener("click", event => {
-    // Safari snaps a near miss onto the closest button, which would turn a dodge into a win.
-    if (!fixed && !motion.matches && event.detail !== 0 && (rejectedTouch || performance.now() - dodgedAt < 350)) { event.preventDefault(); return; }
-    win(fixed ? "fixed" : motion.matches ? "reduced motion" : event.detail === 0 ? "keyboard" : "pointer");
+    if (fixed || motion.matches) {
+      win(fixed ? "fixed" : "reduced motion");
+    } else if (event.detail === 0 && event.pointerType !== "touch" && event.pointerType !== "pen") {
+      win("keyboard");
+    } else {
+      // Pointer catches are settled on down. In particular, Safari's near-miss click snapping
+      // must not turn a touch miss (or an earlier direct hit) into a completed round.
+      event.preventDefault();
+    }
   });
   return cleanup;
 }

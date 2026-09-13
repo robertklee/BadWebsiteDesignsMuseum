@@ -80,7 +80,7 @@ try {
       const dismissed = await page.locator('[data-slot="0"]').evaluate(element => element.clientHeight);
       assert.equal(dismissed > 0, mode === "fixed");
       await page.locator("#edition-step").click();
-      assert.equal(await page.locator('#news-feed [data-dismiss="0"]').count(), mode === "hard" ? 1 : 0);
+      assert.equal(await page.locator('#news-feed [data-dismiss="0"]').count(), mode === "hard" && width > 700 ? 1 : 0);
       await openLibrary(page, mode, true);
       const bookmarkBefore = await position("#news-bookmark");
       for (let index = 2; index < 5; index++) await page.locator("#edition-step").click();
@@ -101,6 +101,10 @@ try {
       assert.equal(await page.locator("#news-story [data-story-slot]").count(), mode === "hard" ? 5 : 2);
       if (mode === "hard") {
         assert.equal(await page.locator(".news-squeezed").count(), 1);
+        if (width <= 700) {
+          assert.equal(await page.locator('[data-story-slot="4"]').evaluate(element => element.clientHeight), 0);
+          await page.locator("#edition-step").click();
+        }
         assert((await page.locator('[data-story-slot="4"]').evaluate(element => element.clientHeight)) > 0);
       }
       assert.equal(await page.locator("#stage").evaluate(element => element.offsetHeight), stageHeight);

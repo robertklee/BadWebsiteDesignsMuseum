@@ -11,6 +11,7 @@ function renderLayoutEarthquake({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const narrow = matchMedia("(max-width: 700px)");
   const { shell, say } = createStageShell(stage);
   shell("THE DAILY DISPLACEMENT", "News that won't stay put.", "Find the article 'The public library opens late' and bookmark it.",
     `<div class="web-demo earthquake-paper"><div class="web-tools news-tools"><button class="demo-button" id="edition-open">Load live edition</button><button class="plain-button" id="edition-pause" disabled>Pause loading</button><button class="plain-button" id="edition-step" hidden>Load next section</button><output id="edition-state">Edition ready</output></div><div class="web-viewport news-viewport" tabindex="0" aria-label="Newspaper"><header class="news-masthead"><div class="news-edition"><span>INDEPENDENT SINCE THIS MORNING</span><span>VOL. 01 / CITY EDITION</span></div><h3>The Daily Displacement</h3><div class="news-sections"><span>LOCAL</span><span>CULTURE</span><span>TRANSPORT</span><span class="news-live">LIVE EDITION</span></div></header><div id="news-feed"><div class="news-insert" data-slot="0"></div><div class="news-front"><article class="news-lead"><span class="news-category">NEIGHBORHOOD / THE BIG READ</span><h3>The public library opens late</h3><p>More time for the next chapter. The reading room is keeping its lights on until nine.</p><figure class="news-photo"><img src="/assets/library.jpg" alt="Rows of books and reading tables inside a public library" width="1200" height="800"><figcaption>A longer evening between the shelves. / City desk</figcaption></figure><div class="news-insert" data-slot="1"></div><div class="news-byline"><span>By the City Desk / 3 min read</span><button class="demo-button" data-article="library">Read library article</button></div></article><aside class="news-briefs" aria-label="More headlines"><span class="news-column-label">ELSEWHERE TODAY</span><article><span class="news-category">TRANSPORT</span><h3>A new timetable. Eventually.</h3><p>The last bus is running late. So is the announcement.</p><button class="plain-button" data-article="transport">Read transport report</button></article><article><span class="news-category">CULTURE</span><h3>A museum of questionable decisions</h3><p>Critics describe the new collection as deeply inconvenient.</p><button class="plain-button" data-article="museum">Read museum article</button></article><div class="news-insert" data-slot="2"></div></aside></div><footer class="news-footer">ALL THE NEWS THAT FITS. PLUS THE ADS THAT DON'T.</footer></div><section id="news-story" tabindex="-1" hidden></section></div></div>`);
@@ -66,7 +67,18 @@ function renderLayoutEarthquake({ stage, mode }) {
       : `<div class="news-ad-copy"><span>PAID PLACEMENT / ${index ? "RECOMMENDED FOR YOU" : "A WORD FROM OUR SPONSOR"}</span><strong>${index ? "Before you read on.<br>A word about premium." : "Your attention.<br>Now available to rent."}</strong><p>${index ? "The story can wait. This offer apparently cannot." : "An announcement with an unusually large footprint."}</p></div><button class="plain-button news-dismiss" type="button" data-dismiss="${index}" aria-label="Dismiss ${index ? "recommendation" : "sponsor"}" title="Dismiss advertisement">&#215;</button>`;
   };
   const paint = () => {
-    const sizes = updates ? heights[(updates - 1) % heights.length] : [0, 0, 0, 0, 0, 0];
+    let sizes = updates ? heights[(updates - 1) % heights.length] : [0, 0, 0, 0, 0, 0];
+    const mobileShifts = narrow.matches && !fixed;
+    const content = story.hidden ? feed : story;
+    const previousHeight = mobileShifts ? content.getBoundingClientRect().height : 0;
+    if (mobileShifts && updates) {
+      // Move placements together so expansion and collapse cannot cancel each other out.
+      const primaryHeight = viewport.clientHeight * (worse ? .6 : .45);
+      const secondaryHeight = viewport.clientHeight * (worse ? .3 : .2);
+      sizes = sizes.map((height, index) => updates % 2
+        ? Math.max(height, index < 2 ? primaryHeight : secondaryHeight)
+        : 0);
+    }
     viewport.classList.toggle("news-squeezed", worse && updates > 0 && updates % 3 !== 0);
     slots.forEach(slot => {
       const index = Number(slot.dataset.slot);
@@ -76,6 +88,9 @@ function renderLayoutEarthquake({ stage, mode }) {
       const index = Number(slot.dataset.storySlot);
       paintInsert(slot, index, sizes[index]);
     });
+    // Retain the scroll runway so shrinking ads cannot pin a mobile reader to the bottom.
+    if (mobileShifts) content.style.minHeight = `${Math.ceil(Math.max(previousHeight, content.getBoundingClientRect().height))}px`;
+    else [feed, story].forEach(element => { element.style.minHeight = ""; });
   };
   const advance = () => {
     if (!started || paused || complete || (fixed && updates >= heights.length)) return;
@@ -172,9 +187,11 @@ function renderLayoutEarthquake({ stage, mode }) {
   }));
   paint();
   reduced.addEventListener("change", schedule);
+  narrow.addEventListener("change", paint);
   return () => {
     stop();
     reduced.removeEventListener("change", schedule);
+    narrow.removeEventListener("change", paint);
     startEvents.forEach(type => viewport.removeEventListener(type, start));
   };
 }

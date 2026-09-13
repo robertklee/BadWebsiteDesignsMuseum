@@ -40,6 +40,8 @@ MUSEUM_URL=http://127.0.0.1:3019 npm run test:runaway
 
 ## Focused scripts
 
+Run `npm run test:earthquake:mobile` for mobile earthquake displacement checks. These measure on-screen movement across repeated updates at 320, 390, and 700 pixels, including ad collapse near the bottom, stable Fix it mode, desktop resizing, reduced motion, and automatic pause/resume.
+
 Additional direct Playwright scripts live in `scripts/`:
 
 - `test-layout-checkout.mjs`

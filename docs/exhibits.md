@@ -50,6 +50,8 @@ Hard adds more personalized interruptions and less stable presentation. Fix it r
 
 Find and open a library story in a newspaper layout while ads expand into its position. Early attempts insert sponsored blocks instead of opening the link, and live updates continue to shift the article.
 
+On narrow screens, live placements expand and collapse together at viewport-scaled sizes, so their movements do not cancel out. The newspaper retains its scrollable height during updates to keep shrinking ads from silently holding the reader in place at the bottom. Reduced-motion users advance these changes manually.
+
 Hard buries the story deeper, intercepts more attempts, and adds more aggressive layout changes. Dismissed ads can return. Fix it places the story first, opens it immediately, and reserves space so surrounding content remains stable.
 
 ## The Scroll-Through Modal

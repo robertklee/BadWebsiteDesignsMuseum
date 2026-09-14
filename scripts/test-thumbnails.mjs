@@ -14,7 +14,7 @@ try {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(museumUrl, { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
-    assert.equal(await page.locator(".thumb-scene").count(), 32, "All thirty-two older previews must render");
+    assert.equal(await page.locator(".thumb-scene").count(), 33, "All thirty-three scene previews must render");
     const issues = await page.evaluate(() => {
       const failures = [];
       for (const scene of document.querySelectorAll(".thumb-scene")) {
@@ -73,7 +73,7 @@ try {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   await page.emulateMedia({ reducedMotion: "no-preference" });
-  animatedIds.push("layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal", "unix-birthday");
+  animatedIds.push("layout-earthquake", "hover-menu", "validation-afterthought", "scroll-modal", "unix-birthday", "unresponsive-buttons");
   for (const { width, trigger } of [1440, 768, 320].flatMap(width => ["hover", "focus"].map(trigger => ({ width, trigger })))) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto(museumUrl, { waitUntil: "networkidle" });
@@ -88,6 +88,7 @@ try {
         if (!animations.length) return { error: "No preview animation" };
         const finite = animations.every(animation => animation.effect.getTiming().iterations === 1);
         const textSequence = {
+          "unresponsive-buttons": [".thumb-eventually-stepper>strong", "1", "1"],
           "correcting-search": [".thumb-search-field>strong", "quiet cafes", "quiet cafes"],
           "expanding-form": [".thumb-name-field>b", "A", "Ale"],
           "elevator-date": [".thumb-lift-display", "↓ 1994", "↓ 1993"],
@@ -114,7 +115,7 @@ try {
               const target = element.querySelector(selector);
               if (target && getComputedStyle(target, "::before").opacity !== (progress === 0 ? "1" : "0")) return { error: `${selector} must reveal its final text` };
             }
-            for (const selector of [".thumb-recipe-gate", ".validation-preview-verdict", ".validation-preview-answers>b", ".hover-preview-verdict", ".earthquake-preview-ad"]) {
+            for (const selector of [".thumb-eventually-receipt", ".thumb-recipe-gate", ".validation-preview-verdict", ".validation-preview-answers>b", ".hover-preview-verdict", ".earthquake-preview-ad"]) {
               const target = element.querySelector(selector);
               if (target && getComputedStyle(target).opacity !== String(progress)) return { error: `${selector} must arrive after the setup` };
             }

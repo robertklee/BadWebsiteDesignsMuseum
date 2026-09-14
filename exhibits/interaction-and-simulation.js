@@ -17,7 +17,7 @@ function renderUnresponsiveButtons({ stage, mode }) {
   const worse = mode === "worse";
   const { shell, say } = createStageShell(stage);
   shell("EVENTUALLY TICKETS / BOX OFFICE", "Two tickets. One quiet afternoon.",
-    "You and a friend are visiting the Museum of Administrative Delays. Reserve exactly 2 tickets. No entourage.",
+    "You and a friend are visiting the Really Bad Designs Museum. Reserve exactly 2 tickets.",
     `<section class="eventually-booking${fixed ? " eventually-fixed" : ""}" aria-label="Ticket reservation">
       <div class="eventually-heading"><div><span class="demo-kicker">GENERAL ADMISSION</span><h3>The permanent backlog</h3></div><span class="eventually-price">$12 / person</span></div>
       <div class="eventually-order"><span>Visitors</span><span>Requested party: <b>2 people</b></span></div>

@@ -122,6 +122,34 @@ try {
   await position("runaway");
   await advance(220);
   assert.equal(await activeCount(), 1, "A new collection visit permits a fresh replay");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(museumUrl, { waitUntil: "networkidle" });
+  await position("unresponsive-buttons");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await advance(250);
+  const eventually = page.locator('.exhibit-card[href="/exhibit/unresponsive-buttons"]');
+  assert.equal(await eventually.evaluate(element => element.classList.contains("thumb-scroll-active")), true, "Ticket preview activates on settled touch scrolling");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await advance(32);
+  assert.equal(await eventually.evaluate(element => {
+    getComputedStyle(element.querySelector(".thumb-eventually-stepper>strong")).animationName;
+    return element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-eventually-")).length;
+  }), 0, "Reduced motion stops the ticket replay");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await advance(250);
+  assert.deepEqual(await eventually.evaluate(element => {
+    const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-eventually-"));
+    if (animations.length !== 4) throw new Error("Ticket preview needs count, final value, presses, and receipt animations");
+    return [0, .5, .6, .75, 1].map(progress => {
+      for (const animation of animations) {
+        animation.pause();
+        animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
+      }
+      const count = element.querySelector(".thumb-eventually-stepper>strong");
+      const overlay = getComputedStyle(count, "::before");
+      return overlay.opacity === "0" ? count.textContent : JSON.parse(overlay.content);
+    });
+  }), ["1", "1", "2", "9", "12"], "Quantity must lag behind presses, then overshoot");
   await mkdir("/tmp/museum-thumbnails", { recursive: true });
   await page.screenshot({ path: "/tmp/museum-thumbnails/mobile-scroll-activation.png" });
 

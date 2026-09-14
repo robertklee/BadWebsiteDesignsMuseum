@@ -2,6 +2,7 @@
 import { createStageShell, createDemoStatus } from "./shared.js";
 
 export const exhibits = [
+  { id: "unresponsive-buttons", name: "The Eventually Responsive Buttons", category: "Interaction", color: "green", tagline: "Nothing. Nothing. Twelve tickets.", description: "Book exactly two tickets using buttons with selective hearing and an excellent memory for every impatient click.", lesson: "The padding is decorative, the feedback is late, and your retries have been interpreted as a school trip. Every click mattered. Eventually.", fix: "The whole button works. The count updates immediately. Two people can now attend without founding a delegation.", worseChange: "The working patch changes sides after each burst, and your clicks spend longer in the waiting room.", preview: '<div class="thumb-scene thumb-eventually"><span class="thumb-kicker">JUST TWO TICKETS, PLEASE</span><div class="thumb-eventually-label">GENERAL ADMISSION</div><div class="thumb-eventually-stepper"><span>−</span><strong>12</strong><span class="thumb-eventually-plus">+</span></div><div class="thumb-eventually-receipt">Group booking detected.</div><small class="thumb-footer">Oh. Those clicks did count.</small></div>', render: renderUnresponsiveButtons },
   { id: "runaway", name: "The Runaway Button", category: "Interaction", color: "lilac", tagline: "A call to action. A refusal to cooperate.", description: "Finally, a button with a healthy fear of commitment.", lesson: "The button has considered your request and chosen flight. It is currently exploring opportunities near the opposite edge of the box.", fix: "After extensive negotiations, the button has agreed to remain in one place.", worseChange: "The button brought decoys and a much stronger sense of self-preservation.", preview: `<div class="thumb-scene thumb-runaway"><span class="thumb-kicker">A CALL TO ACTION. A CHANGE OF PLANS.</span><div class="thumb-chase"><span class="thumb-button-shadow"></span><i class="thumb-chase-pointer" aria-hidden="true">↖</i><span class="thumb-chase-trail"></span><small>come back here.</small><span class="thumb-fleeing-button">Click me ↗</span></div></div>`, render: renderRunaway },
   { id: "loading", name: "The Loading Experience", category: "Interaction", color: "lilac", tagline: "Almost ready to start getting ready.", description: "An entire loading ceremony for one sentence. Please approve the wait.", lesson: "Nothing important is happening, but it is happening in ten impressive stages. Stage eleven is reflecting on the journey.", fix: "The sentence was ready the whole time. It has finally been allowed indoors.", worseChange: "The wait now requires your active participation.", preview: `<div class="thumb-scene thumb-loading"><span class="thumb-kicker">ALMOST THERE. PREVIOUSLY.</span><div class="thumb-progress-numbers"><s>99%</s><span>→</span><strong>12%</strong></div><div class="thumb-backward-bar"><i></i><b>←</b></div><span class="thumb-loading-status">Reconsidering the first 98%.</span><small class="thumb-footer">All this to load one sentence.</small></div>`, render: renderLoading },
   { id: "seismic-editor", name: "The Seismic Text Editor", category: "Interaction", color: "pink", tagline: "Every keystroke is a structural risk.", description: "Type carefully. The editor shakes, and your whole sentence might tumble.", lesson: "The sentence was built on ambitious foundations. Punctuation remains a known seismic risk, especially the excitable kind.", fix: "The editor passed inspection. Exclamation marks may now enter without a hard hat.", worseChange: "The editor is feeling every keystroke more intensely.", preview: `<div class="thumb-scene thumb-collapse"><span class="thumb-kicker">STRUCTURAL INTEGRITY: QUESTIONABLE</span><div class="thumb-collapse-page"><span>UNTITLED / UNSAVED / UNSTABLE</span><div class="thumb-broken-baseline"><i></i><b>!</b></div><div class="thumb-letter-rubble"><b>T</b><b>Y</b><b>P</b><b>E</b></div></div><small class="thumb-footer">One more letter. What could go wrong?</small></div>`, render: renderSeismicEditor },
@@ -10,6 +11,129 @@ export const exhibits = [
   { id: "volume-seesaw", category: "Interaction", color: "blue", name: "The Volume Seesaw", tagline: "A delicate balance of unnecessary effort.", description: "Load weights onto a wobbling seesaw to set a silent volume slider.", lesson: "The ideal listening level is a delicate agreement between anvils and balloons. Pebbles are present in an advisory role.", fix: "The playground equipment was removed, revealing a slider underneath.", worseChange: "Balloons join the balance, and the weights may wander.", preview: '<div class="thumb-scene thumb-seesaw"><span class="thumb-kicker">VOLUME: SOME ASSEMBLY REQUIRED</span><div class="thumb-balance"><span class="thumb-balance-value">73<span>%</span></span><div class="thumb-beam"><i class="thumb-pebble"></i><i class="thumb-brick"></i><i class="thumb-brick thumb-brick-top"></i></div><div class="thumb-fulcrum"></div><span class="thumb-balance-minus">−</span><span class="thumb-balance-plus">+</span></div><small class="thumb-footer">Could you turn it down one brick?</small></div>', render: renderVolumeSeesaw },
   { id: "notification-swatter", category: "Interaction", color: "yellow", name: "The Notification Fly Swatter", tagline: "Please dismiss your way to productivity.", description: "Swat a swarm of fake alerts before they bury the form you are completing.", lesson: "Your focus is important to us, which is why twelve messages have arrived to discuss it. More may be scheduled.", fix: "The notifications have been shown the door. The form can finally hear itself think.", worseChange: "The swarm is faster, and missed clicks attract attention.", preview: '<div class="thumb-scene thumb-swatter"><span class="thumb-kicker">WE VALUE YOUR FOCUS</span><div class="thumb-alert-stack"><div class="thumb-form-under"><span>YOUR MESSAGE</span><b>Hello, I would like to</b><div class="fake-lines"></div></div><div class="thumb-alert thumb-alert-back"><b>A quick update</b><span>×</span><small>You have updates.</small></div><div class="thumb-alert thumb-alert-front"><b>One more thing</b><span>×</span><small>About that update.</small></div></div><small class="thumb-footer">There was a form here a moment ago.</small></div>', render: renderNotificationSwatter },
 ];
+
+function renderUnresponsiveButtons({ stage, mode }) {
+  const fixed = mode === "fixed";
+  const worse = mode === "worse";
+  const { shell, say } = createStageShell(stage);
+  shell("EVENTUALLY TICKETS / BOX OFFICE", "Two tickets. One quiet afternoon.",
+    "You and a friend are visiting the Museum of Administrative Delays. Reserve exactly 2 tickets. No entourage.",
+    `<section class="eventually-booking${fixed ? " eventually-fixed" : ""}" aria-label="Ticket reservation">
+      <div class="eventually-heading"><div><span class="demo-kicker">GENERAL ADMISSION</span><h3>The permanent backlog</h3></div><span class="eventually-price">$12 / person</span></div>
+      <div class="eventually-order"><span>Visitors</span><span>Requested party: <b>2 people</b></span></div>
+      <div class="eventually-stepper" role="group" aria-label="Number of tickets">
+        <button type="button" class="eventually-adjust" data-delta="-1" aria-label="Remove one ticket" title="Remove one ticket"><span aria-hidden="true">−</span></button>
+        <output class="eventually-count" aria-label="Ticket quantity" aria-live="polite">1</output>
+        <button type="button" class="eventually-adjust" data-delta="1" aria-label="Add one ticket" title="Add one ticket"><span aria-hidden="true">+</span></button>
+      </div>
+      <p class="eventually-caption">A solo visit. Your friend will understand.</p>
+      <div class="eventually-total"><span>Total (pretend money)</span><strong>$12</strong></div>
+      <button type="button" class="demo-button eventually-reserve">Reserve tickets</button>
+      <small class="eventually-policy">All retries are treated as expressions of enthusiasm.</small>
+    </section>`);
+  const controls = [...stage.querySelectorAll(".eventually-adjust")];
+  const count = stage.querySelector(".eventually-count");
+  const caption = stage.querySelector(".eventually-caption");
+  const total = stage.querySelector(".eventually-total strong");
+  const reserve = stage.querySelector(".eventually-reserve");
+  const controller = new AbortController();
+  const pending = [];
+  let quantity = 1;
+  let timer = null;
+  let burst = 0;
+  let complete = false;
+  let disposed = false;
+
+  function setPatches() {
+    controls.forEach(button => {
+      const right = (Number(button.dataset.delta) === 1) !== (worse && burst % 2 === 1);
+      button.dataset.side = right ? "right" : "left";
+      button.style.setProperty("--eventually-patch", worse ? "40%" : "50%");
+    });
+  }
+
+  function updateQuantity(delta) {
+    quantity = Math.max(0, Math.min(99, quantity + delta));
+    count.textContent = quantity;
+    total.textContent = `$${quantity * 12}`;
+    caption.textContent = quantity === 0 ? "An admirably affordable day out. Nobody is going."
+      : quantity === 1 ? "A solo visit. Your friend will understand."
+        : quantity === 2 ? "Two people. A socially manageable amount."
+          : quantity < 6 ? "Your plus-one has brought plus-ones."
+            : quantity < 12 ? "A committee. We will arrange a clipboard."
+              : "Group booking detected. Your coach driver gets in free.";
+  }
+
+  function drain() {
+    timer = null;
+    if (disposed || complete || document.hidden) return;
+    updateQuantity(pending.shift());
+    if (pending.length) {
+      timer = setTimeout(drain, worse ? 240 : 180);
+    } else {
+      burst++;
+      setPatches();
+      say(quantity > 2 ? "All your clicks have arrived. Thank you for growing the arts sector."
+        : "Availability updated. We appreciate your patience, including the extra clicks.");
+    }
+  }
+
+  controls.forEach(button => button.addEventListener("click", event => {
+    if (disposed || complete || document.hidden) return;
+    if (!fixed && event.detail !== 0) {
+      const bounds = button.getBoundingClientRect();
+      const horizontal = (event.clientX - bounds.left) / bounds.width;
+      const vertical = (event.clientY - bounds.top) / bounds.height;
+      const patch = worse ? 0.4 : 0.5;
+      const inside = horizontal >= 0 && horizontal <= 1 && vertical >= 0 && vertical <= 1
+        && (button.dataset.side === "right" ? horizontal >= 1 - patch : horizontal <= patch);
+      if (!inside) {
+        say("Your click is important to us. This part of the button is not currently staffed.");
+        return;
+      }
+    }
+    const delta = Number(button.dataset.delta);
+    if (fixed) {
+      updateQuantity(delta);
+      say("Quantity updated. Immediately. We also found this surprising.");
+      return;
+    }
+    if (pending.length >= 99) return;
+    pending.push(delta);
+    if (timer === null) timer = setTimeout(drain, worse ? 1800 : 1100);
+  }, { signal: controller.signal }));
+
+  reserve.addEventListener("click", () => {
+    if (complete || disposed || document.hidden) return;
+    if (pending.length) {
+      say("Your quantity is still being negotiated with your previous clicks.");
+    } else if (quantity !== 2) {
+      say(quantity > 2 ? `That is ${quantity - 2} unexpected guests. Your friend requested quality time, not a conference.`
+        : "The booking is for two. Your friend has already cleared their afternoon.");
+    } else {
+      complete = true;
+      controls.forEach(button => { button.disabled = true; });
+      reserve.disabled = true;
+      say("Two tickets reserved. The school trip has been averted. Nothing was charged.");
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    }
+  }, { signal: controller.signal });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden || !pending.length) return;
+    clearTimeout(timer);
+    timer = null;
+    pending.length = 0;
+    say("Unprocessed clicks expired while the box office was unattended. Your displayed quantity is unchanged.");
+  }, { signal: controller.signal });
+  setPatches();
+  return () => {
+    disposed = true;
+    controller.abort();
+    clearTimeout(timer);
+    pending.length = 0;
+  };
+}
 
 function renderRunaway({ stage, mode }) {
   const fixed = mode === "fixed";

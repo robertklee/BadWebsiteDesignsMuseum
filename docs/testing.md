@@ -44,6 +44,7 @@ Run `npm run test:earthquake:mobile` for mobile earthquake displacement checks. 
 
 Additional direct Playwright scripts live in `scripts/`:
 
+- `test-unresponsive-buttons.mjs` (or `npm run test:unresponsive-buttons`): partial hit areas, delayed overshoot and recovery, completion, cleanup, keyboard, touch, and responsive screenshots.
 - `test-layout-checkout.mjs`
 - `test-checkout-thumbnail.mjs`
 - `test-layout-earthquake.mjs`

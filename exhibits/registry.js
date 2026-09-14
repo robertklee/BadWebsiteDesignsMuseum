@@ -27,6 +27,7 @@ const exhibitOrder = [
   "recipe",
   "expanding-form",
   "dropdown",
+  "unresponsive-buttons",
   "seismic-editor",
   "volume-seesaw",
   "wind-volume",
@@ -48,6 +49,7 @@ const exhibitOrder = [
 ];
 
 const newExhibitIds = new Set([
+  "unresponsive-buttons",
   "layout-earthquake",
   "scroll-modal",
   "validation-afterthought",

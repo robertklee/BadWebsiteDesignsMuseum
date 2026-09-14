@@ -158,6 +158,16 @@ Tune a frequency dial to the exact station assigned to a letter, space, or punct
 
 Hard reassigns station locations after every character. Undo removes mistakes, and Fix it restores a normal text box. The directory is informational rather than a shortcut.
 
+## The Eventually Responsive Buttons
+
+**Route:** `/exhibit/unresponsive-buttons`
+
+Reserve exactly two fictional museum tickets. Only the subtly darker part of each quantity button accepts pointer clicks, and accepted clicks wait before updating the count. Impatient retries queue up and arrive individually, overshooting into an accidental group booking. Subtraction suffers from the same problem, but always allows recovery.
+
+Hard shrinks the working patches, swaps their sides after each completed burst, and delays feedback longer. Keyboard activation bypasses spatial hit testing but keeps the delayed queue. Touch uses the same tall working patches; there is no motion-dependent challenge. Fix it makes the whole button respond immediately.
+
+Completion requires explicitly reserving exactly two tickets with no updates pending. Reset, navigation, and mode changes discard pending clicks. Hiding the tab cancels unprocessed clicks without changing the displayed quantity. No purchase or payment occurs.
+
 ## The Seismic Text Editor
 
 **Route:** `/exhibit/seismic-editor`

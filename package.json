@@ -9,6 +9,7 @@
     "test:earthquake": "node scripts/test-layout-earthquake.mjs",
     "test:earthquake:mobile": "node scripts/test-layout-earthquake-mobile.mjs",
     "test:runaway": "node scripts/test-runaway.mjs",
+    "test:unresponsive-buttons": "node scripts/test-unresponsive-buttons.mjs",
     "test:thumbnails": "node scripts/test-thumbnails.mjs",
     "test:thumbnails:mobile": "node scripts/test-mobile-thumbnails.mjs",
     "generate:share": "node scripts/generate-share-thumbnails.mjs",

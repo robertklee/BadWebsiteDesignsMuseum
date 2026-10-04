@@ -38,7 +38,7 @@ Run the shared exhibit experience suite with:
 npm run test:exhibit-experience
 ```
 
-This checks the first-visit guide, dismissal across exhibit visits, reopening, blocked-storage behavior, keyboard entry, manual completion actions, mode-preserving restart, direct and legacy routes, and museum control bounds at desktop and narrow mobile widths. It also opens every exhibit in all three modes to check framing and mission coverage. Review screenshots are written under `/tmp/museum-exhibit-experience`.
+This checks the first-visit guide, dismissal across exhibit visits, reopening, blocked-storage behavior, keyboard entry, manual completion actions, mode-preserving restart, direct and legacy routes, and museum control bounds at desktop and narrow mobile widths. It also opens every exhibit in all three modes to check framing, mode-specific tasks, and recognizable task context in the introductions. CAPTCHA checks cover the familiar checkbox/picture-check explanation, the correct cheese count in each game mode, and completion of the checkbox version. Review screenshots are written under `/tmp/museum-exhibit-experience`.
 
 Set `MUSEUM_URL` to test another running origin:
 

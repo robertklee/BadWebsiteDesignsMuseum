@@ -117,12 +117,18 @@ try {
   assert.equal(await page.locator("#stage").evaluate(element => element === document.activeElement), true);
   const placement = await page.evaluate(() => ({
     stageTop: document.querySelector("#stage").getBoundingClientRect().top,
+    taskTop: document.querySelector("#exhibit-task").getBoundingClientRect().top,
+    taskBottom: document.querySelector("#exhibit-task").getBoundingClientRect().bottom,
     toolbarBottom: document.querySelector(".exhibit-toolbar").getBoundingClientRect().bottom,
   }));
-  assert(placement.stageTop >= placement.toolbarBottom, "Jumping into the exhibit clears the sticky controls");
-  assert(placement.stageTop <= placement.toolbarBottom + 24, "Jumping into the exhibit does not leave excessive empty space");
+  assert(placement.taskTop >= placement.toolbarBottom, "Jumping into the exhibit keeps the mission below the sticky controls");
+  assert(placement.taskTop <= placement.toolbarBottom + 24, "Jumping into the exhibit does not leave excessive empty space before the mission");
+  assert(placement.stageTop >= placement.taskBottom, "The simulation follows the visible mission");
   await page.keyboard.press("Tab");
   assert.equal(await page.locator("#stage").evaluate(element => element.contains(document.activeElement)), true, "Keyboard entry reaches exhibit controls");
+  await page.keyboard.press("Escape");
+  assert.equal(new URL(page.url()).pathname, "/exhibit/runaway", "Escape inside an exhibit does not discard the attempt");
+  await page.locator(".reset-button").focus();
   await page.keyboard.press("Escape");
   await page.waitForURL("**/#collection");
 
@@ -218,10 +224,13 @@ try {
     await checkControls(mobile, width);
     const visibleStage = await mobile.evaluate(() => ({
       stage: document.querySelector("#stage").getBoundingClientRect().top,
+      task: document.querySelector("#exhibit-task").getBoundingClientRect().top,
+      taskBottom: document.querySelector("#exhibit-task").getBoundingClientRect().bottom,
       toolbar: document.querySelector(".exhibit-toolbar").getBoundingClientRect().bottom,
     }));
-    assert(visibleStage.stage >= visibleStage.toolbar, `Exhibit entry clears toolbar at ${width}px`);
-    assert(visibleStage.stage <= visibleStage.toolbar + 24, `Exhibit entry stays close to toolbar at ${width}px`);
+    assert(visibleStage.task >= visibleStage.toolbar, `Exhibit mission clears toolbar at ${width}px`);
+    assert(visibleStage.task <= visibleStage.toolbar + 24, `Exhibit mission stays close to toolbar at ${width}px`);
+    assert(visibleStage.stage >= visibleStage.taskBottom, `Exhibit entry preserves the mission before the stage at ${width}px`);
     await mobile.screenshot({ path: `${screenshots}/playing-${width}.png` });
     await mobile.locator('[data-mode="fixed"]').click();
     await mobile.locator('[data-delta="1"]').click();

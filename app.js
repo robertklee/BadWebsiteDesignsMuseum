@@ -207,11 +207,11 @@ function renderExhibit(id, focus = false) {
     <details class="exhibit-guide"${guideOpen ? " open" : ""}>
       <summary>New here? Here's how this works <span aria-hidden="true">↓</span></summary>
       <div class="guide-body"><p class="guide-intro">This website collects the worst ways to do simple tasks online. Each exhibit starts with something familiar, then makes it far more difficult than it needs to be.</p>
-      <ol class="guide-steps"><li><strong>Try a familiar task.</strong><span>Click, type, or scroll in the demo below. The instructions tell you what you're trying to do.</span></li><li><strong>Make it even worse.</strong><span>Choose the more frustrating version whenever you like. You don't have to finish first.</span></li><li><strong>Stay in control.</strong><span>Restart begins the current demo again. Exit returns to the collection. “Fix it” removes the obstacles.</span></li></ol>
+      <ol class="guide-steps"><li><strong>Try a familiar task.</strong><span>Click, type, or scroll in the demo below. The instructions tell you what you're trying to do.</span></li><li><strong>Make it even worse.</strong><span>Choose the more frustrating version whenever you like. You don't have to finish first. Switching modes starts a fresh demo and clears progress.</span></li><li><strong>Stay in control.</strong><span>Restart begins the current demo again. Exit returns to the collection. “Fix it” removes the obstacles. Escape exits only when focus is on the museum controls; inside the demo, it belongs to the current control or pop-up.</span></li></ol>
       <div class="guide-footer"><p>These are demos, not real services. Use made-up details, never real passwords or payment information.</p><button type="button" class="guide-dismiss">Got it — let's try it</button></div></div>
     </details>
     <div class="exhibit-toolbar"><span class="museum-controls-label">MUSEUM CONTROLS <span>These actually work.</span></span><div class="mode-controls" role="group" aria-label="Exhibit mode"><button type="button" data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button type="button" data-mode="worse" aria-pressed="${mode === "worse"}">Make it even worse ↗</button><button type="button" class="mode-fix" data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button type="button" class="reset-button" aria-label="Restart in the current mode">↻ Restart</button><a class="toolbar-exit" href="/#collection">Exit ↗</a></div></div>
-    <p class="mode-note" role="status"><strong>${modeLabel}.</strong> ${modeNote}</p>
+    <p class="mode-note" role="status"><strong>${modeLabel}.</strong> ${modeNote} Switching modes starts a fresh demo and clears progress.</p>
     <section class="exhibit-frame" aria-labelledby="simulation-title">
       <div class="exhibit-frame-heading"><div><span class="eyebrow" id="simulation-title">INTERACTIVE DEMO</span><p>Try the task here. No real-world consequences.</p></div><button type="button" class="start-exhibit">Jump into exhibit ↓</button></div>
       <div class="exhibit-task" id="exhibit-task"><span>YOUR TASK</span><p>${mode === "fixed" ? exhibit.fixedTask : exhibit.task}</p></div>
@@ -229,11 +229,18 @@ function renderExhibit(id, focus = false) {
     guideOpen = guide.open;
     if (!guide.open) dismissGuide();
   });
+  const stage = main.querySelector("#stage");
   const enterStage = () => {
-    const stage = main.querySelector("#stage");
     stage.focus({ preventScroll: true });
-    stage.scrollIntoView({ block: "start", behavior: "instant" });
+    const taskTop = main.querySelector("#exhibit-task").getBoundingClientRect().top + window.scrollY;
+    const toolbarHeight = main.querySelector(".exhibit-toolbar").getBoundingClientRect().height;
+    window.scrollTo({ top: Math.max(0, taskTop - toolbarHeight - 12), behavior: "instant" });
   };
+  const enterMuseumControls = () => {
+    main.querySelector(".exhibit-toolbar").scrollIntoView({ block: "start", behavior: "instant" });
+    main.querySelector('[data-mode][aria-pressed="true"]').focus({ preventScroll: true });
+  };
+  stage.addEventListener("museum-controls", enterMuseumControls);
   main.querySelector(".guide-dismiss").addEventListener("click", () => {
     guide.open = false;
     dismissGuide();
@@ -257,7 +264,11 @@ function renderExhibit(id, focus = false) {
   const completionCleanup = setupCompletionActions(changeMode);
   renderStage(id);
   const stageCleanup = cleanup;
-  cleanup = () => { completionCleanup(); stageCleanup(); };
+  cleanup = () => {
+    stage.removeEventListener("museum-controls", enterMuseumControls);
+    completionCleanup();
+    stageCleanup();
+  };
   if (focus) main.focus({ preventScroll: true });
 }
 
@@ -284,6 +295,20 @@ function setupCompletionActions(changeMode) {
     notification.hidden = false;
   };
   stage.addEventListener("exhibit-complete", complete);
+  const reset = () => {
+    if (disposed) return;
+    completed = false;
+    delete stage.dataset.outcome;
+    main.querySelector("#exhibit-task > span").textContent = "YOUR TASK";
+    main.querySelector(".exhibit-frame-footer > span").textContent = "SIMULATION ONLY";
+    notice.hidden = true;
+    notice.querySelector("h2").textContent = "Task complete";
+    notice.querySelector("p").textContent = "";
+    notification.hidden = true;
+    notification.querySelector("strong").textContent = "";
+    notification.querySelector("span").textContent = "";
+  };
+  stage.addEventListener("exhibit-reset", reset);
   notice.querySelector("[data-difficulty-action='stay']").addEventListener("click", () => {
     notice.hidden = true;
     notification.hidden = true;
@@ -305,6 +330,7 @@ function setupCompletionActions(changeMode) {
   return () => {
     disposed = true;
     stage.removeEventListener("exhibit-complete", complete);
+    stage.removeEventListener("exhibit-reset", reset);
   };
 }
 
@@ -342,6 +368,8 @@ document.querySelector(".skip-link").addEventListener("click", event => {
   main.focus();
 });
 window.addEventListener("keydown", event => {
-  if (event.key === "Escape" && currentId) location.href = "/#collection";
+  if (event.key !== "Escape" || !currentId || event.defaultPrevented || event.isComposing
+      || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  if (event.target instanceof Element && event.target.closest(".exhibit-toolbar")) location.href = "/#collection";
 });
 route();

@@ -11,6 +11,7 @@ a{color:inherit;text-decoration:none}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed}
 :focus-visible{outline:3px solid #829cfa;outline-offset:5px}
+.exhibit-stage :focus-visible{outline:3px solid #33479c;outline-offset:3px;box-shadow:0 0 0 6px #fff}
 h1,h2,h3,p{margin-top:0}
 h1,h2,h3{font-family:var(--heading);line-height:1.12;letter-spacing:-.045em}
 button{border-radius:0}
@@ -612,7 +613,7 @@ body.runaway-won{--bg:#153c2b;--line:#527b60;--muted:#c1d9c7}
 .word-page-heading,.word-editor-page>label{display:block;font:10px monospace;letter-spacing:1px;margin-bottom:20px}
 .word-letters{display:flex;flex-wrap:wrap;gap:12px 8px;align-items:start}
 .word-letter{display:flex;flex-direction:column;gap:3px;width:76px;flex-shrink:0}
-.word-letter>span{font:9px monospace;color:#8b7d6a}
+.word-letter>span{font:10px monospace;color:#655846}
 .word-letter select{width:100%;height:42px;background:#f6f0e6;color:#413a30;border:1px solid #b9a184;border-radius:2px;font:17px Georgia}
 .word-editor-hint{font-size:11px;color:#77664f;margin:20px 0}
 .word-readable{border-top:1px solid #dcccb5;margin-top:25px;padding-top:20px}

@@ -20,6 +20,10 @@ export function completeExhibit(stage, message, outcome = "success") {
   }));
 }
 
+export function resetExhibit(stage) {
+  stage.dispatchEvent(new CustomEvent("exhibit-reset", { bubbles: true }));
+}
+
 export function matchesDemoText(value, target) {
   return value.trim().toLowerCase() === target.toLowerCase();
 }

@@ -75,6 +75,7 @@ for (const id of exhibitOrder) {
 for (const exhibit of allExhibits) {
   if (!exhibitOrder.includes(exhibit.id)) throw new Error(`Exhibit ${exhibit.id} is missing from the collection order.`);
   if (typeof exhibit.task !== "string" || !exhibit.task.trim()) throw new Error(`Exhibit ${exhibit.id} needs a visitor mission.`);
+  if (typeof exhibit.fixedTask !== "string" || !exhibit.fixedTask.trim()) throw new Error(`Exhibit ${exhibit.id} needs a Fix it task.`);
   if (!exhibit.worseChange) throw new Error(`Exhibit ${exhibit.id} needs a Worse-mode change summary.`);
   if (typeof exhibit.preview !== "string" || !exhibit.preview) throw new Error(`Exhibit ${exhibit.id} needs a preview.`);
   if (typeof exhibit.render !== "function") throw new Error(`Exhibit ${exhibit.id} needs a render function.`);

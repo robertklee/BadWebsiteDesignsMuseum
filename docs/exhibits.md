@@ -1,6 +1,6 @@
 # Exhibit catalog
 
-Each exhibit turns a familiar task into a deliberately frustrating interface. **Original disaster** (Easy) presents the original idea, **Make it even worse** (Hard) intensifies the joke, and the smaller **Fix it** option offers a break from the nonsense. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly. The descriptions below use Easy and Hard as shorthand for these modes.
+Each exhibit starts with a recognizable online experience, then introduces an absurd obstacle. The visitor copy explains that context before the mechanics, while retaining the satire. **Original disaster** (Easy) presents the original idea, **Make it even worse** (Hard) intensifies the joke, and the smaller **Fix it** option offers a break from the nonsense. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly. The descriptions below use Easy and Hard as shorthand for these modes.
 
 This catalog explains each experience and its major mode differences without duplicating every timing constant or test case. The exhibit source and focused browser tests remain authoritative for exact mechanics.
 
@@ -8,7 +8,7 @@ This catalog explains each experience and its major mode differences without dup
 
 **Route:** `/exhibit/cat-captcha`
 
-Collect cheese and reach the mouse hole while a cat moves toward you after every turn. The game supports arrow keys, WASD, direction buttons, and taps on adjacent squares.
+A CAPTCHA is the familiar human check a website presents before letting you continue, often as a checkbox or picture puzzle. This version replaces that check with a cat-and-mouse game: collect cheese and reach the mouse hole while a cat moves toward you after every turn. The game supports arrow keys, WASD, direction buttons, and taps on adjacent squares.
 
 Hard adds more cheese, occasional two-step cat turns, and an exit that changes after the first apparent success. Fix it replaces the chase with a simple demo checkbox. This is a puzzle, not a real security check.
 
@@ -122,7 +122,7 @@ Hard styles every character independently. Fix it uses consistent typography and
 
 **Route:** `/exhibit/unix-birthday`
 
-Choose a birthday by moving through Unix timestamps in milliseconds while a live UTC date preview translates the number. An alignment control snaps the current value to UTC midnight.
+Instead of choosing a birthday from a calendar, move through Unix timestamps: numbers counting milliseconds from January 1, 1970. A millisecond is one thousandth of a second. A live calendar preview translates the number using UTC, the standard world time, and an alignment control snaps the value to midnight.
 
 Hard removes the slider and expects a timestamp to be entered manually, while still explaining whether it represents a valid birthday. Fix it uses a native date field.
 
@@ -268,7 +268,7 @@ Hard adds decoy pieces and reshuffles the tray after edits. Fix it allows normal
 
 **Route:** `/exhibit/retro`
 
-Explore a deliberately broken personal homepage where navigation opens the wrong section, nickname input reverses itself, and the guestbook requires a cat CAPTCHA.
+Personal homepages often had guestbooks where visitors left a name or message, before social profiles became common. This deliberately broken version sends menu links to the wrong section, reverses the visitor's nickname, and requires a cat-picture CAPTCHA to sign the guestbook.
 
 Hard replaces vowels, rearranges CAPTCHA tiles after each choice, and requires another round. Fix it restores dependable navigation and input.
 

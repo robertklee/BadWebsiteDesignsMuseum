@@ -1,8 +1,8 @@
 # Exhibit catalog
 
-Each exhibit starts with a recognizable online experience, then introduces an absurd obstacle. The visitor copy explains that context before the mechanics, while retaining the satire. **Original disaster** (Easy) presents the original idea, **Make it even worse** (Hard) intensifies the joke, and the smaller **Fix it** option offers a break from the nonsense. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly. The descriptions below use Easy and Hard as shorthand for these modes.
+Each exhibit starts with a recognizable online experience, then introduces an absurd obstacle. Visitor-facing copy gives plain-language context and a playful hint, leaving escalation and punchlines to the interaction. Tasks, safety guidance, and recovery controls remain explicit. Optional help and curator's notes explain the mechanics when requested. **Original disaster** (Easy) presents the original idea, **Make it even worse** (Hard) intensifies the joke, and the smaller **Fix it** option offers a break from the nonsense. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly. The descriptions below use Easy and Hard as shorthand for these modes.
 
-This catalog explains each experience and its major mode differences without duplicating every timing constant or test case. The exhibit source and focused browser tests remain authoritative for exact mechanics.
+This developer catalog deliberately explains each experience and its major mode differences in full; it is not the spoiler-light public introduction. The exhibit source and focused browser tests remain authoritative for exact mechanics.
 
 Goals describe ordinary outcomes, not the obstacles: send a message, save a note, find a receipt, or choose a setting. Supplied text and dates give the character-entry and date puzzles a bounded mission. Text comparisons ignore capitalization and outer whitespace; dates and the supplied test-account password must match their stated targets.
 

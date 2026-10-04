@@ -281,7 +281,10 @@ try {
     }
 
     await withExhibit("volume-seesaw", "hard", width, async page => {
-      assert.match(await page.locator(".new-demo-intro").textContent(), /Every third addition makes the oldest weight on that side roll across to the opposite side/);
+      assert.doesNotMatch(await page.locator(".new-demo-intro").textContent(), /Every third addition/);
+      assert.equal(await page.locator(".seesaw-help").evaluate(element => element.open), false, "Detailed weight rules are optional rather than an opening spoiler");
+      await page.locator(".seesaw-help summary").click();
+      assert.match(await page.locator(".seesaw-help").textContent(), /Every third addition makes the oldest weight on that side roll across to the opposite side/);
       for (const weight of ["0", "1", "2"]) {
         await page.locator("#seesaw-weight").selectOption(weight);
         await page.locator("#seesaw-add-right").click();

@@ -201,7 +201,8 @@ async function testRecipe(page, mode, profile) {
   if (mode !== "fixed") {
     await unfinished(page, 1);
     assert.match(await page.locator(".reading-progress").textContent(), /0 \/ 6/);
-    assert.match(await page.locator("#jump-recipe + small").textContent(), /skip button lies/);
+    assert.match(await page.locator("#jump-recipe + small").textContent(), /museum's.*Fix it.*Exit controls always work/);
+    assert.doesNotMatch(await page.locator("#jump-recipe + small").textContent(), /skip button lies/, "The museum reassures visitors without revealing the blog's shortcut trap");
     await shortcutTrap(page, mode, profile, 0, 1);
     for (let index = 0; index < chapters.length; index++) await approve(page, index, mode, profile, 1);
   }
@@ -263,7 +264,7 @@ async function downloadReceipt(page, mode, profile, attempt) {
 }
 
 async function testReceipt(page, mode, profile) {
-  assert.match(await page.locator(".exhibit-heading p").textContent(), /fictional expense receipt/);
+  assert.match(await page.locator(".exhibit-heading p").textContent(), /receipt/i);
   assert.match(await page.locator("#exhibit-task p").textContent(), /receipt.*demo expense claim|demo expense claim.*receipt/i);
   assert.match(await page.locator("#exhibit-task p").textContent(), /Download receipt/);
   assert.match(await page.locator(".new-demo-intro").textContent(), /fictional receipt for a demo expense claim/);

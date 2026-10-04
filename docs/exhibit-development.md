@@ -14,7 +14,7 @@
 
 ## Exhibit records
 
-Each module exports exhibit records containing metadata, a `task` for the original and Hard modes, a `fixedTask` for Fix it, preview markup, a Hard-mode change summary, and a render function. The registry validates unique IDs, complete ordering, both tasks, previews, summaries, and render functions. Tasks say what to do and how to finish without solving the challenge for the visitor. They appear outside the simulated website. Fix it has its own task because some simulations replace the original interaction entirely.
+Each module exports exhibit records containing metadata, a `task` for the original and Hard modes, a `fixedTask` for Fix it, preview markup, a Hard-mode hint (`worseChange`), and a render function. The registry validates unique IDs, complete ordering, both tasks, previews, hints, and render functions. Tasks say what to do and how to finish without solving the challenge for the visitor or narrating upcoming obstacles. They appear outside the simulated website. Fix it has its own task because some simulations replace the original interaction entirely.
 
 Add a new exhibit to the appropriate behavior module and to `exhibitOrder` in `exhibits/registry.js`. Add it to `newExhibitIds` only while it should display the **New** badge. Do not duplicate catalog metadata elsewhere in application code.
 
@@ -43,7 +43,7 @@ Lock accepted forms and their editing controls so later edits cannot contradict 
 ## Modes
 
 - **Easy** should express the core bad-design idea while remaining completable.
-- **Hard** should intensify that idea without becoming accidentally impossible. A deliberate impossibility must be part of the joke and clearly explained.
+- **Hard** should intensify that idea without becoming accidentally impossible. A deliberate impossibility must be part of the joke and clearly explained at its blocked endpoint, never presented as success.
 - **Fix it** should remove the obstacle instead of merely restyling it.
 
 The museum labels Easy **Original disaster** and Hard **Make it even worse**. Modes are always available without completing a task. Mode changes and restart must restore initial state, clear progress, and cancel pending work; disclose this behavior in the visitor instructions. Restart preserves the selected mode; selecting the already-active mode does not restart the simulation. Direct links still use `?mode=hard` and `?mode=fixed`; omitted or unrecognized values open the original disaster.
@@ -52,9 +52,11 @@ The museum labels Easy **Original disaster** and Hard **Make it even worse**. Mo
 
 ### Visitor-facing copy
 
-Frame each exhibit around an experience visitors recognize before introducing the absurd change: entering a phone number, checking a CAPTCHA, cancelling a subscription, reading a recipe, or using a shopping basket. Explain technical terms in that context rather than assuming design or programming knowledge.
+Explain the ordinary experience in plain language before offering one playful hint: entering a phone number, passing a website's human check, cancelling a subscription, reading a recipe, or using a shopping basket. Visitors should not need design or programming knowledge. Prefer "pop-up" to "modal" and "checking answers" to "validation"; briefly define technical terms when they are needed to operate a control. Longer explanations, such as how timestamps count milliseconds, belong in optional help beside that control.
 
-Keep the personality. This is not a requirement to flatten every sentence into plain language. Titles, previews, fictional sales pitches, and feedback can be playful, but instructions should establish the familiar task, the twist, and what to try. Describe mode changes concretely. Keep intentionally confusing text when it is the interaction itself, such as the cancellation questions, corporate jargon, or fictional legal agreement; explain that premise outside the challenge.
+Give each layer a distinct job. Collection descriptions establish familiar context; taglines offer a short hint. Tasks state the exact outcome, including required text, dates, quantities, or volume ranges. Demo introductions provide the context and basic operating instructions without announcing hidden escalation, surprise charges, solutions, or blocked endings. `worseChange` hints at increased difficulty instead of listing every Hard-mode trick. The collapsed curator's note and optional control help can explain the mechanics in full.
+
+Keep the personality. This is not a requirement to flatten every sentence into plain language. Titles, previews, fictional sales pitches, and feedback can be playful. Keep intentionally confusing text when it is the interaction itself, such as the cancellation questions, corporate jargon, or fictional legal agreement. Safety warnings, keyboard/touch instructions, reduced-motion behavior, recovery controls, and the fact that switching modes clears progress must remain explicit and trustworthy; do not hide practical guidance to protect a joke.
 
 Keep museum navigation controls stable and outside exhibit interference. The labeled exhibit frame separates the simulation from the sticky museum toolbar. The inline first-visit guide can be dismissed and reopened; only its dismissal is remembered in session storage for the current tab. Visitor inputs are never stored. Provide keyboard operation, a usable touch path, and reduced-motion behavior for animated interactions. Hidden tabs and abandoned exhibits must not continue time-sensitive work.
 
@@ -66,6 +68,6 @@ Do not create browser traps, flashing effects, real purchases, real subscription
 
 ## Previews
 
-Gallery previews must communicate the exhibit's joke without requiring interaction. Interactive animation may enhance a preview, but its static state must remain understandable for reduced motion and share-image rendering. Keep previews within their card bounds at desktop and mobile widths.
+Gallery previews must communicate the exhibit's premise without revealing its full payoff. Hint at the interface's attitude rather than showing the final failed order, a backward-progress reveal, or the exact unexpected rule. Interactive animation may enhance a preview, but its static state must remain understandable for reduced motion and share-image rendering. Keep previews within their card bounds at desktop and mobile widths.
 
 After adding or changing an exhibit, update [the catalog](exhibits.md), regenerate or validate its share image, and run the smallest relevant checks described in [testing](testing.md).

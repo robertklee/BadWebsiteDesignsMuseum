@@ -11,12 +11,12 @@ const errors = [];
 const observe = page => page.on("pageerror", error => errors.push(error.message));
 const guideOpen = page => page.locator(".exhibit-guide").evaluate(element => element.open);
 const familiarContext = {
-  "cat-captcha": /CAPTCHA/,
-  runaway: /normally you click a button/i,
-  "password-gym": /password requirements/i,
+  "cat-captcha": /CAPTCHA|human check/i,
+  runaway: /button|ticket/i,
+  "password-gym": /password/i,
   "correcting-search": /search/i,
   "layout-checkout": /checkout/i,
-  "layout-earthquake": /ads?/i,
+  "layout-earthquake": /ads?|library/i,
   "scroll-modal": /delivery/i,
   "validation-afterthought": /form|register/i,
   "hover-menu": /menus?/i,
@@ -26,8 +26,8 @@ const familiarContext = {
   "terms-game": /terms|agreement/i,
   fonts: /font/i,
   "unix-birthday": /birthday/i,
-  cancel: /cancel/i,
-  recipe: /recipe/i,
+  cancel: /cancel|subscription/i,
+  recipe: /recipe|ingredients|toast/i,
   "expanding-form": /contact/i,
   dropdown: /message/i,
   "unresponsive-buttons": /tickets/i,
@@ -39,16 +39,35 @@ const familiarContext = {
   "physics-cart": /basket/i,
   "email-auction": /email/i,
   "elevator-date": /calendar|date/i,
-  "shrinking-unsubscribe": /subscription/i,
+  "shrinking-unsubscribe": /subscription|cancellation/i,
   "word-editor": /document|dropdown|note/i,
   cookies: /cookie/i,
   "address-jigsaw": /delivery|address/i,
   retro: /guestbook/i,
   "ai-store": /object|spoon|umbrella/i,
-  "mystery-menu": /delivery policy|receipt/i,
+  "mystery-menu": /receipt/i,
   alphabet: /message/i,
-  corporate: /setup|product/i,
+  corporate: /setup|set up|product|task board/i,
   loading: /progress|sentence|booking confirmation/i,
+};
+
+const protectedSurprises = {
+  "cat-captcha": /moves twice|two steps|first escape|another exit/i,
+  "password-gym": /32 rules|final rule|contradict|deliberately impossible/i,
+  "correcting-search": /quiet cages|written explanation|each rejection/i,
+  "layout-checkout": /Dave|emotional support cushion|surprise costs/i,
+  "scroll-modal": /\$5,000|opposite directions|wrong window|page behind it moves/i,
+  "validation-afterthought": /answers deleted|clears your other answers|deletes the others/i,
+  "notification-swatter": /missed clicks create|a missed click creates/i,
+  "tetris-volume": /clearing a row|row cleared|completed rows.*lower|quieter now/i,
+  recipe: /6 compulsory quizzes|six chapters|skip button lies|reset your reading/i,
+  dropdown: /after every letter|changes the station numbers/i,
+  "unresponsive-buttons": /booked twelve|group booking|only part of each button|working part|impatient retry/i,
+  "checkbox-ecosystem": /every third feeding|creates another checked box/i,
+  "password-crane": /every third grab|neighboring character/i,
+  retro: /nickname reverses|xelA|vowels become numbers/i,
+  corporate: /after four|more setup|adds.*steps|product still blocked/i,
+  loading: /ten loading stages|backward progress|goes backward|99%.*12%/i,
 };
 
 async function completeTickets(page, mode) {
@@ -245,13 +264,20 @@ try {
   observe(catalog);
   assert.equal(Object.keys(familiarContext).length, getCatalog().length, "Every exhibit has contextual-copy coverage");
   for (const exhibit of getCatalog()) {
+    assert.match(exhibit.description, familiarContext[exhibit.id], `${exhibit.id} introduces familiar context on its collection card`);
+    const spoiler = protectedSurprises[exhibit.id];
+    if (spoiler) {
+      assert.doesNotMatch([exhibit.tagline, exhibit.description, exhibit.task, exhibit.worseChange, exhibit.preview].join("\n"), spoiler, `${exhibit.id} hints at its premise without explaining the surprise in cards, tasks, modes, or share artwork`);
+    }
     for (const mode of ["easy", "hard", "fixed"]) {
       await catalog.goto(`${origin}/exhibit/${exhibit.id}?mode=${mode}`);
+      assert.equal(await catalog.locator('meta[name="description"]').getAttribute("content"), `${exhibit.tagline} ${exhibit.description}`, `${exhibit.id}/${mode} shares the same contextual, spoiler-light copy`);
       assert.equal(await catalog.locator("#stage").getAttribute("aria-describedby"), "exhibit-task");
       assert.equal(await catalog.locator("#exhibit-task p").textContent(), mode === "fixed" ? exhibit.fixedTask : exhibit.task);
       assert.equal(await catalog.locator("#stage").evaluate(element => element.children.length > 0), true, `${exhibit.id}/${mode} renders inside the frame`);
       const introduction = await catalog.locator("#stage .new-demo-intro, #stage .form-demo > p, #stage .word-editor-intro > p, #stage .demo-centered > p, #stage .recipe-intro > p, #stage .retro-subtitle, #stage .corporate-content > p").first().textContent();
       assert.match(introduction, familiarContext[exhibit.id], `${exhibit.id}/${mode} introduces the familiar task`);
+      if (spoiler) assert.doesNotMatch(introduction, spoiler, `${exhibit.id}/${mode} leaves escalation to the interaction`);
       assert.doesNotMatch(introduction, /A fake website inside a real museum|Prove you're human\. Become a mouse/i);
       if (exhibit.id === "cat-captcha" && mode === "hard") assert.match(introduction, /6 pieces of cheese/);
       assert.equal(await catalog.locator(".curator-note").evaluate(element => element.open), false, "Curator commentary does not distract from play");

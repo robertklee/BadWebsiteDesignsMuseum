@@ -35,4 +35,4 @@ Check-only mode validates that previews can be exported; it does not compare gen
 
 ## Visual direction
 
-Show the absurd task and its consequence. Keep the exhibit recognizable, the punchline brief, and the joke aimed at the interface rather than the visitor. Fictional money, purchases, and subscriptions must be clearly fictional. A strong existing visual joke does not need to be replaced merely to make the collection uniform.
+Show the familiar task and hint at the absurd obstacle, rather than revealing the full consequence. Keep the exhibit recognizable without assuming technical knowledge. Captions should invite exploration, not announce surprise charges, a failed group booking, a reversed progress bar, or a hidden final rule. Aim the joke at the interface rather than the visitor. Fictional money, purchases, and subscriptions must be clearly fictional. A strong visual premise does not need to be replaced merely to make the collection uniform.

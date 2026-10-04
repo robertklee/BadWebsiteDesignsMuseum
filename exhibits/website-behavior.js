@@ -211,7 +211,7 @@ function renderHoverDependency({ stage, mode }) {
   const path = ["Filter", "Home", "Lighting", ...(worse ? ["Desk lamps"] : []), "Pivot desk lamp"];
   shell("ATELIER / OBJECTS FOR EVERYDAY", "A lamp, several menus away.",
     fixed ? "Open the shop menus to find the Pivot desk lamp and check whether its arm is adjustable. Click-open menus stay open while you choose."
-      : `You've opened a shop menu and watched it disappear while moving toward the next option. Here, finding one lamp requires crossing narrow paths between menus. Find the Pivot desk lamp and check whether its arm is adjustable.${worse ? " There is an extra menu and twisting paths to cross." : ""} Hold menu open offers a way through if you need it; keyboard navigation has no deadline.`,
+      : `You've opened a shop menu and watched it disappear while moving toward the next option. Here, finding one lamp requires crossing narrow paths between menus. Find the Pivot desk lamp and check whether its arm is adjustable.${worse ? " There is an extra menu and twisting paths to cross." : ""} After two failed tries, Hold menu open appears to offer a way through; keyboard navigation has no deadline. Reduced motion keeps menus open automatically.`,
     `<div class="web-demo hover-shop ${worse ? "hover-hostile" : ""}"><div class="web-tools"><label><input type="checkbox" id="menu-hold" ${reduced.matches ? "checked" : ""}> Hold menu open</label><button class="plain-button" id="menu-close" aria-label="Close product menus" title="Close product menus">&#215;</button></div><nav class="hover-navigation" aria-label="Product categories">${path.map((name, index) => `<div class="hover-level" data-level="${index}" ${index ? "hidden" : ""}><button class="${index === path.length - 1 ? "demo-button" : "plain-button"}" data-depth="${index}" ${index < path.length - 1 ? `aria-expanded="false" aria-controls="hover-level-${index + 1}"` : ""}>${name}${index < path.length - 1 ? " +" : ""}</button>${index ? `<button class="plain-button" data-other="${index}">${["", "Outdoor", "Textiles", "Ceiling lights", "Studio lamp"][index]}</button>` : ""}</div>`).join("")}</nav><div class="hover-merch"><span>THE EVERYDAY COLLECTION</span><div class="web-lamp" role="img" aria-label="Pivot desk lamp"><i></i><b></b></div><h3>Light. Within reach, allegedly.</h3></div><section id="hover-product" tabindex="-1" hidden><h3>Pivot desk lamp</h3><p>Adjustable arm. Warm light. $48. No purchase required.</p></section></div>`);
   const filterButton = stage.querySelector('[data-depth="0"]');
   filterButton.classList.add("hover-filter-button");
@@ -280,7 +280,7 @@ function renderHoverDependency({ stage, mode }) {
     close();
     failedTries++;
     holdControl.hidden = fixed || failedTries < 2;
-    say(message);
+    say(`${message}${!fixed && failedTries === 2 ? " Hold menu open is now available above the shop menus." : ""}`);
   };
   const arm = () => {
     clearTimeout(deadline);
@@ -368,6 +368,7 @@ function renderValidationAfterthought({ stage, mode }) {
   const banner = stage.querySelector("#registration-error");
   let complete = false;
   const mark = field => {
+    if (complete) return true;
     const input = form.elements.namedItem(field.id);
     const valid = field.valid(input.value);
     input.setAttribute("aria-invalid", String(!valid));
@@ -396,8 +397,16 @@ function renderValidationAfterthought({ stage, mode }) {
     }
     complete = true;
     banner.hidden = true;
-    form.querySelector("button").disabled = true;
-    say("Your fictional place is reserved. Nothing was sent or stored.");
+    fields.forEach(field => {
+      const input = form.elements.namedItem(field.id);
+      input.readOnly = true;
+      input.removeAttribute("aria-invalid");
+      stage.querySelector(`#error-${field.id}`).textContent = "";
+    });
+    const submit = form.querySelector("button");
+    submit.disabled = true;
+    submit.textContent = "Demo place reserved";
+    say("Your fictional place is reserved. These answers are locked; use Restart for a new attempt. Nothing was sent or stored.");
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   return () => {};
@@ -410,7 +419,7 @@ function renderScrollModal({ stage, mode }) {
   shell("ATELIER / DELIVERY", worse ? "One parcel. Three scrollbars." : "One parcel. Two scrollbars.",
     fixed ? "Choose free Standard delivery in the pop-up and confirm it. Scrolling moves the pop-up, not the order page behind it."
       : `You open a delivery pop-up and scroll for the free option, but the page behind it moves instead. Find and confirm free Standard delivery without accidentally choosing $5,000 express shipping.${worse ? " Choosing shipping speed opens a third pop-up, and scrolling can move several layers at once." : ""} The scrollbars remain usable. No real order or payment is made.`,
-    `<div class="web-demo"><div class="web-tools"><button class="demo-button" id="delivery-open">Choose delivery</button><output id="delivery-background">Order page: 0 px</output></div><div class="delivery-host"><div class="delivery-background" tabindex="0" aria-label="Fictional order page"><header class="web-masthead">YOUR ORDER <small>ONE PIVOT DESK LAMP / $48</small></header>${["Order summary", "Packaging", "Dispatch", "Returns", "More from Atelier", "Even more from Atelier"].map((title, index) => `<section><span>0${index + 1}</span><h3>${title}</h3><p>${index ? "Your parcel will exist only in this demonstration. There is no payment or shipment." : "Pivot desk lamp. Brushed steel. Warm light. Delivery not yet selected."}</p></section>`).join("")}</div><div class="delivery-overlay" hidden><section class="delivery-dialog" role="dialog" aria-label="Delivery options"><header><h3 id="delivery-heading" tabindex="-1">Delivery options</h3><button class="plain-button" id="delivery-close" aria-label="Close delivery dialog" title="Close delivery dialog">&#215;</button></header><div class="delivery-scroll-layout"><div class="delivery-body" tabindex="0" aria-label="Delivery information"></div><input id="delivery-scroll" type="range" min="0" max="100" value="0" aria-label="Dialog scroll position" aria-orientation="vertical" ${fixed ? "hidden" : ""}></div></section></div></div></div>`);
+    `<div class="web-demo"><div class="web-tools"><button class="demo-button" id="delivery-open">Choose delivery</button><output id="delivery-background">Order page: 0 px</output></div><div class="delivery-host"><div class="delivery-background" tabindex="0" aria-label="Fictional order page"><header class="web-masthead">YOUR ORDER <small>ONE PIVOT DESK LAMP / $48</small></header>${["Order summary", "Packaging", "Dispatch", "Returns", "More from Atelier", "Even more from Atelier"].map((title, index) => `<section><span>0${index + 1}</span><h3>${title}</h3><p>${index ? "Your parcel will exist only in this demonstration. There is no payment or shipment." : 'Pivot desk lamp. Brushed steel. Warm light. <span id="delivery-order-summary">Delivery not yet selected.</span>'}</p></section>`).join("")}</div><div class="delivery-overlay" hidden><section class="delivery-dialog" role="dialog" aria-label="Delivery options"><header><h3 id="delivery-heading" tabindex="-1">Delivery options</h3><button class="plain-button" id="delivery-close" aria-label="Close delivery dialog" title="Close delivery dialog">&#215;</button></header><div class="delivery-scroll-layout"><div class="delivery-body" tabindex="0" aria-label="Delivery information"></div><input id="delivery-scroll" type="range" min="0" max="100" value="0" aria-label="Dialog scroll position" aria-orientation="vertical" ${fixed ? "hidden" : ""}></div></section></div></div></div>`);
   const background = stage.querySelector(".delivery-background");
   const overlay = stage.querySelector(".delivery-overlay");
   const body = stage.querySelector(".delivery-body");
@@ -421,7 +430,7 @@ function renderScrollModal({ stage, mode }) {
   stage.querySelector(".web-tools").remove();
   const checkout = document.createElement("section");
   checkout.className = "delivery-checkout";
-  checkout.innerHTML = `<h3>Ready for checkout</h3><dl class="catalog-specs"><dt>Pivot desk lamp</dt><dd>$48.00</dd><dt>Quantity</dt><dd>1</dd><dt>Delivery</dt><dd>Not selected</dd><dt>Subtotal</dt><dd>$48.00</dd></dl>`;
+  checkout.innerHTML = `<h3>Ready for checkout</h3><dl class="catalog-specs"><dt>Pivot desk lamp</dt><dd>$48.00</dd><dt>Quantity</dt><dd>1</dd><dt>Delivery</dt><dd id="delivery-selection">Not selected</dd><dt>Subtotal</dt><dd>$48.00</dd></dl>`;
   checkout.append(trigger);
   const checkoutFooter = document.createElement("footer");
   checkoutFooter.className = "delivery-checkout-footer";
@@ -438,7 +447,8 @@ function renderScrollModal({ stage, mode }) {
   const noticeBody = notice.querySelector(".delivery-notice-body");
   noticeBody.classList.remove("delivery-body");
   const noticeSlider = notice.querySelector("#delivery-notice-scroll");
-  const speedChoices = `<fieldset class="delivery-speeds"><legend>Shipping speed</legend><label><input type="radio" name="delivery-service" value="express"> Fastest / 2 days / $5,000<small>One day faster than free delivery.</small></label><label><input type="radio" name="delivery-service" value="standard"> ${fixed ? "Standard delivery" : "I'm OK waiting an extra day"} / 3 days / Free</label></fieldset>`;
+  const standardLabel = `Standard delivery${fixed ? "" : " — I'm OK waiting an extra day"} / 3 days / Free`;
+  const speedChoices = `<fieldset class="delivery-speeds"><legend>Shipping speed</legend><label><input type="radio" name="delivery-service" value="express"> Fastest / 2 days / $5,000<small>One day faster than free delivery.</small></label><label><input type="radio" name="delivery-service" value="standard"> ${standardLabel}</label></fieldset>`;
   const speedDone = notice.querySelector("#delivery-notice-done");
   notice.setAttribute("aria-label", "Choose shipping speed");
   notice.querySelector("h3").textContent = "Choose shipping speed";
@@ -527,7 +537,7 @@ function renderScrollModal({ stage, mode }) {
     const choice = noticeBody.querySelector('input[name="delivery-service"]:checked');
     if (!choice) return;
     selected = choice.value;
-    body.querySelector("#delivery-speed-summary").textContent = selected === "standard" ? "I'm OK waiting an extra day / 3 days / Free" : "Fastest / 2 days / $5,000";
+    body.querySelector("#delivery-speed-summary").textContent = selected === "standard" ? standardLabel : "Fastest / 2 days / $5,000";
     body.querySelector("#delivery-confirm").disabled = false;
     closeNotice();
   });
@@ -542,7 +552,7 @@ function renderScrollModal({ stage, mode }) {
     stopBounces();
     nested = false;
     heading.textContent = "Delivery options";
-    body.innerHTML = `<p class="delivery-intro">A little information before your parcel goes nowhere.</p>${["Dispatch times", "Packaging standards", "Delivery area", "Missed deliveries"].map(title => `<section><h4>${title}</h4><p>Orders are prepared on fictional business days. Packaging is recyclable in theory. There is no real parcel, address, carrier, charge, or delivery.</p></section>`).join("")}<button class="plain-button" id="delivery-details">${worse ? "Choose shipping speed" : "Delivery details"}</button>${worse ? `<p id="delivery-speed-summary">${selected === "standard" ? "I'm OK waiting an extra day / 3 days / Free" : selected === "express" ? "Fastest / 2 days / $5,000" : "Shipping speed not selected"}</p>` : speedChoices}<button class="demo-button" id="delivery-confirm" ${worse && !selected ? "disabled" : ""}>Use this delivery</button>`;
+    body.innerHTML = `<p class="delivery-intro">A little information before your parcel goes nowhere.</p>${["Dispatch times", "Packaging standards", "Delivery area", "Missed deliveries"].map(title => `<section><h4>${title}</h4><p>Orders are prepared on fictional business days. Packaging is recyclable in theory. There is no real parcel, address, carrier, charge, or delivery.</p></section>`).join("")}<button class="plain-button" id="delivery-details">${worse ? "Choose shipping speed" : "Delivery details"}</button>${worse ? `<p id="delivery-speed-summary">${selected === "standard" ? standardLabel : selected === "express" ? "Fastest / 2 days / $5,000" : "Shipping speed not selected"}</p>` : speedChoices}<button class="demo-button" id="delivery-confirm" ${worse && !selected ? "disabled" : ""}>Use this delivery</button>`;
     body.scrollTop = savedScroll;
     sync();
     body.querySelectorAll("input").forEach(input => {
@@ -566,6 +576,9 @@ function renderScrollModal({ stage, mode }) {
       if (complete) return;
       complete = true;
       close();
+      stage.querySelector("#delivery-selection").textContent = "Standard — Free / 3 days";
+      stage.querySelector("#delivery-order-summary").textContent = "Standard delivery confirmed — Free / 3 days.";
+      trigger.textContent = "Standard delivery confirmed";
       trigger.disabled = true;
       say("Standard delivery selected. No parcel dispatched or payment taken.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));

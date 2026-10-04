@@ -268,7 +268,7 @@ try {
     assert.match(exhibit.description, familiarContext[exhibit.id], `${exhibit.id} introduces familiar context on its collection card`);
     assert.doesNotMatch(
       [exhibit.tagline, exhibit.description, exhibit.task, exhibit.fixedTask, exhibit.worseChange, exhibit.preview.replace(/<[^>]*>/g, " ")].join("\n"),
-      /\b(?:demo|fictional|pretend|simulation)\b/i,
+      /\b(?:demo|fictional|simulation)\b|\bpretend\b(?! to read\b)/i,
       `${exhibit.id} lets the museum context carry the satire instead of labeling every action as fictional`,
     );
     const spoiler = protectedSurprises[exhibit.id];

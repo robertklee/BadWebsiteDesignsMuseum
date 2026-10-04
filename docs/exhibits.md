@@ -1,6 +1,6 @@
 # Exhibit catalog
 
-Each exhibit turns a familiar task into a deliberately frustrating interface. **Easy** presents the original idea, **Hard** intensifies it, and **Fix it** replaces the obstacle with a usable control. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly.
+Each exhibit turns a familiar task into a deliberately frustrating interface. **Original disaster** (Easy) presents the original idea, **Make it even worse** (Hard) intensifies the joke, and the smaller **Fix it** option offers a break from the nonsense. Add `?mode=hard` or `?mode=fixed` to an exhibit URL to open that mode directly. The descriptions below use Easy and Hard as shorthand for these modes.
 
 This catalog explains each experience and its major mode differences without duplicating every timing constant or test case. The exhibit source and focused browser tests remain authoritative for exact mechanics.
 
@@ -314,6 +314,8 @@ Hard interrupts the wait with approval prompts. Fix it reveals the sentence imme
 
 ## Shared behavior
 
-Every exhibit includes a reset control, curator's note, and persistent mode toolbar. Completing Easy starts a short countdown to Hard; **Stay here** keeps the current result. Hard and Fix it do not advance automatically.
+Every exhibit has a labeled simulation frame, a visitor mission, a collapsible curator's note, and a sticky museum toolbar outside the fake website. A short first-visit guide explains the setup and can be reopened at any time; its dismissal is remembered only for the current tab.
+
+Completing a task preserves the result and shows an inline invitation to **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience without changing its mode.
 
 The museum's Exit, Reset, and Fix it controls remain trustworthy even when the exhibit is not. Tasks support keyboard operation and provide touch and reduced-motion behavior where relevant. Simulated orders, payments, subscriptions, messages, and personal details never leave the browser; use invented information in form-based exhibits.

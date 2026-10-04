@@ -4,7 +4,7 @@ import { createStageShell, createDemoStatus, completeExhibit, downloadDemoFile }
 export const exhibits = [
   { id: "recipe", task: "Find the ingredients and method for buttered toast. The blog makes you pass reading quizzes before showing the recipe.", fixedTask: "Find the buttered-toast ingredients and method. They are available immediately.", name: "The Recipe Odyssey", category: "Content", color: "green", tagline: "You wanted a recipe. The website wants you to read a memoir.", description: "Like a recipe buried beneath a long personal story, but now you must pass a quiz after every chapter before you can make toast.", lesson: "You search for a quick recipe and find the author's entire family history first. This version goes further: it checks that you read the story before letting you reach two ingredients and a toaster.", fix: "The recipe comes first. The story is still there for anyone who wants to read it.", worseChange: "Wrong answers and attempts to skip the story reset your reading progress.", preview: `<div class="thumb-scene thumb-recipe"><span class="thumb-kicker">A PINCH OF PATIENCE</span><div class="thumb-toast-intro"><div class="thumb-toast" aria-hidden="true"><i></i></div><div><strong>Toast.</strong><span>2 ingredients.<br>6 compulsory quizzes.</span></div></div><div class="thumb-recipe-gate"><span>BEFORE WE COOK</span><b>What did Grandma own?</b><small>Breakfast is an open-book exam.</small></div></div>`, render: renderRecipe },
   { id: "terms-game", task: "Decide whether to accept the demo agreement. Accepting requires the reading exam; declining is always allowed.", fixedTask: "Read the summary and choose Accept demo terms or Decline demo terms.", name: "Terms & Conditions: The Game", category: "Content", color: "lilac", tagline: "You checked 'I have read the terms.' Now take the exam.", description: "That agreement you usually scroll past? This one makes you answer questions about it before you're allowed to accept.", lesson: "Most people recognize the checkbox saying they've read the terms and conditions. Here the website takes that claim literally and tests your memory. Signing up has become homework.", fix: "A short summary replaces the long document and exam. Accepting or declining has no real legal effect.", worseChange: "The agreement doubles in length. There are more questions, fewer hints, and wrong answers restart the exam.", preview: `<div class="thumb-scene thumb-terms"><span class="thumb-kicker">YOU SAID YOU READ THE TERMS</span><div class="thumb-terms-check">☑ I have read the terms</div><div class="thumb-exam"><span>READING EXAM / QUESTION 1 OF 8</span><strong>Lovely.<br>Prove it.</strong><div class="fake-lines"></div></div><small class="thumb-footer">The checkbox brought homework.</small></div>`, render: renderTermsGame },
-  { id: "mystery-menu", task: "Find your receipt for an expense claim. Open Receipts and select Download receipt.", fixedTask: "Open Receipts and select Download receipt for your expense claim.", name: "The Mystery Meat Menu", category: "Navigation", color: "blue", tagline: "Find the shipping policy behind six unexplained icons.", description: "Find a receipt for an expense claim using a website menu with no words, just unexplained symbols.", lesson: "You've probably stared at an unfamiliar icon wondering what it does. This menu removes every label, so even finding shipping information becomes trial and error.", fix: "The menu shows clear destination names that stay in the same places.", worseChange: "Each click changes which destination every icon leads to.", preview: `<div class="thumb-scene thumb-mystery"><span class="thumb-kicker">YOUR RECEIPT IS ONE OF THESE</span><div class="thumb-symbol-menu"><span>⌘</span><span>◇</span><span>✳</span><span>◌</span><span class="thumb-mystery-active">⧉</span><span>⌁</span></div><div class="thumb-useless-tooltip">The other thing.</div><small class="thumb-footer">Six icons. A small paperwork adventure.</small></div>`, render: renderMysteryMenu },
+  { id: "mystery-menu", task: "Find the fictional receipt for a demo expense claim. Open Receipts and select Download receipt.", fixedTask: "Open Receipts and select Download receipt for your demo expense claim.", name: "The Mystery Meat Menu", category: "Navigation", color: "blue", tagline: "Find a fictional expense receipt behind six unexplained icons.", description: "Find a fictional receipt for a demo expense claim using a website menu with no words, just unexplained symbols.", lesson: "You've probably stared at an unfamiliar icon wondering what it does. This menu removes every label, so even finding and downloading a fictional expense receipt becomes trial and error.", fix: "The menu shows clear destination names that stay in the same places, so you can find and download the fictional receipt.", worseChange: "Each click changes which destination every icon leads to.", preview: `<div class="thumb-scene thumb-mystery"><span class="thumb-kicker">YOUR RECEIPT IS ONE OF THESE</span><div class="thumb-symbol-menu"><span>⌘</span><span>◇</span><span>✳</span><span>◌</span><span class="thumb-mystery-active">⧉</span><span>⌁</span></div><div class="thumb-useless-tooltip">The other thing.</div><small class="thumb-footer">Six icons. A small paperwork adventure.</small></div>`, render: renderMysteryMenu },
   { id: "retro", task: "Enter a made-up nickname in the guestbook, then complete the cat-picture check to sign it.", fixedTask: "Enter a made-up nickname and select Sign guestbook.", name: "The Retro Personal Homepage", category: "Nostalgia", color: "yellow", tagline: "Leave a guestbook message on a homepage from another era.", description: "Visit a 1990s-style personal homepage and try to sign its guestbook. The links misbehave, your nickname reverses, and a cat-picture check gets in the way.", lesson: "Before social profiles, personal homepages often had a guestbook where visitors left a name or message. This one brings back the stars and visitor counters, then adds links and typing that fight back.", fix: "The nostalgic look stays, but links go where they say and the guestbook accepts ordinary typing.", worseChange: "Vowels change to numbers, cat pictures rearrange after each selection, and verification requires two rounds.", preview: `<div class="thumb-scene thumb-retro"><span class="thumb-kicker">WELCOME TO MY HOMEPAGE!</span><div class="thumb-retro-site"><div class="thumb-retro-marquee">✦ SIGN MY GUESTBOOK ✦</div><span class="thumb-retro-intent">YOU TYPED: Alex</span><div class="thumb-retro-input"><span>NICKNAME</span><b>xelA<span>|</span></b></div><div class="thumb-retro-construction">UNDER CONSTRUCTION</div><span class="thumb-retro-counter">YOU ARE VISITOR 000042</span></div><small class="thumb-footer">The keyboard is feeling nostalgic. Backwards.</small></div>`, render: renderRetro },
 ];
 
@@ -81,6 +81,7 @@ function renderRecipe({ stage, mode, shuffle }) {
   stage.innerHTML = `<div class="recipe-demo"><div class="blog-masthead">a pinch of patience<span>FOOD. FAMILY. EXCESSIVE CONTEXT.</span></div><div class="recipe-intro"><span class="demo-kicker">THE SIMPLE THINGS</span><h2>The perfect buttered toast.</h2><p>${fixed ? "The recipe is right below. Read the ingredients and method; the family story is optional." : `You came for a quick recipe, but this food blog wants you to read the whole family story first. Answer the question after each of six chapters to unlock the toast recipe.${worse ? " Wrong answers and attempts to skip start the story over." : ""}`}</p><p>By Olivia · 5 minute recipe · ${fixed ? "No expedition required" : "Recipe locked behind 6 mandatory reading-comprehension quizzes"}</p>${fixed ? "" : `<button class="plain-button" id="jump-recipe">Jump to recipe ↓</button><small>The exhibit's skip button lies. The museum's “Fix it” and Exit controls don't.</small>`}</div>${fixed ? `${recipe}<details class="optional-story"><summary>The story behind the toast (optional)</summary>${story}</details>` : `<div id="story-gate"></div>${status}`}</div>`;
   if (!fixed) {
     const gate = stage.querySelector("#story-gate");
+    const jump = stage.querySelector("#jump-recipe");
     const quizzes = [
       { question: "What appliance did grandmother own?", answer: "A toaster", options: ["A toaster", "A blender", "A particle accelerator"] },
       { question: "Which way did the kitchen window face?", answer: "Nobody could agree", options: ["Due north", "Nobody could agree", "Into the fridge"] },
@@ -94,6 +95,7 @@ function renderRecipe({ stage, mode, shuffle }) {
     const renderChapter = () => {
       if (chapter === chapters.length) {
         gate.innerHTML = recipe;
+        jump.nextElementSibling.textContent = "Recipe unlocked. The shortcut finally tells the truth.";
         gate.querySelector("#actual-recipe").focus();
         say("Six quizzes later: put butter on toast. That was the entire recipe.");
         stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
@@ -119,7 +121,11 @@ function renderRecipe({ stage, mode, shuffle }) {
       });
     };
     renderChapter();
-    stage.querySelector("#jump-recipe").addEventListener("click", () => {
+    jump.addEventListener("click", () => {
+      if (chapter === chapters.length) {
+        gate.querySelector("#actual-recipe").focus();
+        return;
+      }
       detours++;
       gate.innerHTML = `<div class="recipe-ad"><span>SPONSORED SHORTCUT ${detours}</span><h3>You jumped! To an advertisement.</h3><p>Skipping the story requires reading the story. Your toast remains unavailable.</p><button class="demo-button" id="return-story">Continue to the story you tried to skip</button></div>`;
       if (worse) chapter = 0;
@@ -247,7 +253,7 @@ function renderMysteryMenu({ stage, mode, shuffle }) {
     { id: "home", name: "Home", description: "Welcome to a site that considers words an unnecessary navigation expense." },
     { id: "shipping", name: "Shipping policy", description: "Demo orders travel by imaginary carrier pigeon. Delivery takes three fictional business days." },
     { id: "offers", name: "Special offers", description: "Today's offer: ten percent more navigation confusion. No purchase necessary or possible." },
-    { id: "receipts", name: "Receipts", description: "Download your fictional receipt for an expense claim. No order or payment was made." },
+    { id: "receipts", name: "Receipts", description: "Download your fictional receipt for a demo expense claim. No order or payment was made." },
     { id: "settings", name: "Settings", description: "Your settings are set to mysterious. This is not a configurable preference." },
     { id: "help", name: "Help", description: "To find something, click the icon that leads to it. We hope this comprehensive advice helps." },
   ];
@@ -256,7 +262,7 @@ function renderMysteryMenu({ stage, mode, shuffle }) {
   let progress = 0;
   let clicks = 0;
   shell("NAVIGATION BY PURE INTUITION", fixed ? "A menu with actual names." : "What could these possibly mean?",
-    `You need a receipt for an expense claim.${fixed ? " The menu names each page: open Receipts, then select Download receipt." : ` But every menu item is an unexplained symbol. Explore the icons to find Receipts, then select Download receipt.${worse ? " Each click changes which page every icon leads to." : ""}`}`,
+    `You need a fictional receipt for a demo expense claim.${fixed ? " The menu names each page: open Receipts, then select Download receipt." : ` But every menu item is an unexplained symbol. Explore the icons to find Receipts, then select Download receipt.${worse ? " Each click changes which page every icon leads to." : ""}`}`,
     `<div class="mystery-task" id="mystery-task">Receipt not yet downloaded</div><nav class="mystery-nav" id="mystery-nav" aria-label="Demo website menu"></nav><section class="mystery-destination" id="mystery-destination" aria-live="polite"><h3>Where would you like to go?</h3><p>${fixed ? "Open Receipts to find your expense-claim document." : "We removed the labels to make room for elegance. The elegance is now the only clue."}</p></section>`);
   const menu = stage.querySelector("#mystery-nav");
   const panel = stage.querySelector("#mystery-destination");
@@ -275,7 +281,7 @@ function renderMysteryMenu({ stage, mode, shuffle }) {
         if (progress) return;
         progress = 1;
         updateProgress();
-        say("Receipt downloaded for your demo expense claim. No shipping-policy acknowledgment was needed. Nothing was charged.");
+        say("Fictional receipt downloaded for your demo expense claim. Not valid for a real expense claim. Nothing was charged.");
         stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       });
     }

@@ -282,7 +282,7 @@ try {
       const download = await downloading;
       assert.equal(download.suggestedFilename(), id === "runaway" ? "museum-demo-ticket.txt" : "museum-demo-receipt.txt");
       assert.match(await readFile(await download.path(), "utf8"), /No (reservation|order)/);
-      await finished(downloadPage, id === "runaway" ? /ticket downloaded/ : /Receipt downloaded/);
+      await finished(downloadPage, id === "runaway" ? /ticket downloaded/ : /receipt downloaded/i);
       await downloadPage.close();
     }
 

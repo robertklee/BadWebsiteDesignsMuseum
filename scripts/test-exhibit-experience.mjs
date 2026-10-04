@@ -60,6 +60,7 @@ const protectedSurprises = {
   "validation-afterthought": /answers deleted|clears your other answers|deletes the others/i,
   "notification-swatter": /missed clicks create|a missed click creates/i,
   "tetris-volume": /clearing a row|row cleared|completed rows.*lower|quieter now/i,
+  "terms-game": /(?:^|[\s>])exam\b|quiz|questions to accept|prove it|non-binding|decline at any time/i,
   recipe: /6 compulsory quizzes|six chapters|skip button lies|reset your reading/i,
   dropdown: /after every letter|changes the station numbers/i,
   "unresponsive-buttons": /booked twelve|group booking|only part of each button|working part|impatient retry/i,

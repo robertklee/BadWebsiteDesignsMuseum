@@ -26,6 +26,20 @@ const chapters = [
   { answer: "Butter", prose: /The butter was butter/ },
   { answer: "Butter on toast", prose: /just butter on toast/ },
 ];
+const termsAnswers = new Map([
+  ["Which animal is the official spokesperson?", "capybara"],
+  ["On which weekday are emergency meetings held?", "Thursday"],
+  ["What is the approved ink color?", "aubergine"],
+  ["In what currency are ceremonial refunds issued?", "paperclips"],
+  ["How long is the ceremonial waiting period?", "17 business naps"],
+  ["What is the committee's ceremonial passphrase?", "waffle parliament"],
+  ["In which direction must the ceremonial spoon point?", "north-northeast"],
+  ["What is the name of the font auditor?", "Professor Crumb"],
+  ["What sound announces a procedural alarm?", "polite kazoo"],
+  ["What is the record-retention ceiling?", "42 imaginary minutes"],
+  ["Which archive box holds the ceremonial forms?", "B-19"],
+  ["What farewell phrase closes an official meeting?", "cordially bewildered"],
+]);
 
 async function tabTo(page, target) {
   assert.equal(await target.isVisible(), true, "Keyboard target is a visible control");
@@ -297,10 +311,115 @@ async function testReceipt(page, mode, profile) {
   await fits(page);
 }
 
+async function beginTermsReview(page, profile) {
+  const documentPanel = page.locator("#terms-document");
+  const start = page.getByRole("button", { name: "I have read the terms", exact: true });
+  assert.equal(await start.isDisabled(), true, "Reading remains required");
+  assert.equal(await page.locator("#terms-exam").isVisible(), false, "Verification is revealed only after the reading claim");
+  assert.equal(await page.locator("#terms-accept").count(), 0);
+  assert.match(await page.locator("#terms-reading-status").textContent(), /focus the document and press End/);
+  if (profile.keyboard) {
+    await tabTo(page, documentPanel);
+    await page.keyboard.press("End");
+  } else {
+    await documentPanel.evaluate(element => { element.scrollTop = element.scrollHeight; });
+  }
+  await page.waitForFunction(() => !document.querySelector("#terms-start").disabled);
+  assert.doesNotMatch(await page.locator("#terms-reading-status").textContent(), /exam|quiz|questions/i);
+  await activate(page, start, profile);
+  assert.equal(await page.locator("#terms-exam").isVisible(), true);
+  assert.equal(await page.locator("#terms-answer").evaluate(element => element === document.activeElement), true);
+}
+
+async function answerTerms(page, answer, profile) {
+  const input = page.getByRole("textbox", { name: "Your answer", exact: true });
+  if (profile.keyboard) {
+    await tabTo(page, input);
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.type(answer);
+  } else {
+    await input.fill(answer);
+  }
+  await activate(page, page.getByRole("button", { name: "Submit answer", exact: true }), profile);
+}
+
+async function testTerms(page, mode, profile) {
+  const stage = page.locator("#stage");
+  assert.doesNotMatch(await stage.innerText(), /non-binding|decline at any time|cancel anytime|unnecessarily long|regrettable reading|exam|quiz|prove it/i, "Entry copy leaves the obstacle undisclosed");
+  assert.equal(await page.locator(".curator-note").getAttribute("open"), null, "The full explanation stays optional");
+  await unfinished(page);
+  await fits(page);
+  if (mode !== "fixed") {
+    const questionCount = mode === "hard" ? 12 : 8;
+    assert.equal(await page.locator(".terms-clause").count(), mode === "hard" ? 160 : 80);
+    const documentText = await page.locator("#terms-document").textContent();
+    for (const answer of [...termsAnswers.values()].slice(0, questionCount)) {
+      assert.ok(documentText.includes(answer), `The agreement contains ${answer}`);
+    }
+    await beginTermsReview(page, profile);
+    await answerTerms(page, "not in the agreement", profile);
+    assert.match(await page.locator("#extra-status").textContent(), /Incorrect/);
+    await unfinished(page);
+    await answerTerms(page, termsAnswers.get(await page.locator("#terms-exam h3").textContent()), profile);
+    assert.match(await page.locator("#terms-exam .demo-kicker").textContent(), /^QUESTION 2/);
+    await answerTerms(page, "still not in the agreement", profile);
+    assert.match(await page.locator("#terms-exam .demo-kicker").textContent(), mode === "hard" ? /^QUESTION 1/ : /^QUESTION 2/, "Wrong answers preserve the original mode-specific progress rules");
+    await unfinished(page);
+    let hints = 0;
+    while (await page.locator("#terms-answer").count()) {
+      const question = await page.locator("#terms-exam h3").textContent();
+      const answer = termsAnswers.get(question);
+      assert.ok(answer, `Known question: ${question}`);
+      if (mode === "hard") {
+        const hint = page.locator("#terms-hint");
+        if (hints < 5) {
+          await activate(page, hint, profile);
+          hints++;
+          assert.match(await page.locator("#terms-clause-help").textContent(), /Refer to clause \d+/);
+        }
+        assert.equal(await hint.isDisabled(), true, "Revealed or exhausted hints stay disabled");
+        assert.match(await hint.textContent(), new RegExp(`\\(${5 - hints} hints? left\\)`));
+      }
+      await answerTerms(page, `  ${answer.toUpperCase()}  `, profile);
+      await unfinished(page);
+    }
+    assert.equal(await page.locator("#terms-accept").isVisible(), true);
+    assert.equal(await page.locator("#terms-accept").evaluate(element => element === document.activeElement), true);
+    assert.equal(await page.locator("#terms-decline").isEnabled(), true);
+    if (artifacts) await page.screenshot({ path: join(artifacts, `terms-game-${mode}-${profile.name}.png`) });
+  }
+  await activate(page, page.getByRole("button", { name: "Accept terms", exact: true }), profile);
+  await finished(page);
+  assert.match(await page.locator("#difficulty-progress p").textContent(), /Terms accepted/);
+  assert.equal(await page.locator("#terms-accept").isDisabled(), true);
+  assert.equal(await page.locator("#terms-decline").isDisabled(), true);
+  await activate(page, page.getByRole("button", { name: "Restart in the current mode" }), profile);
+  await unfinished(page, 1);
+  if (mode !== "fixed") {
+    assert.equal(await page.locator("#terms-start").isDisabled(), true);
+    assert.equal(await page.locator("#terms-document").evaluate(element => element.scrollTop), 0);
+  }
+  await activate(page, page.getByRole("button", { name: "Decline terms", exact: true }), profile);
+  await finished(page, 2);
+  assert.match(await page.locator("#difficulty-progress p").textContent(), /Terms declined/);
+  assert.equal(await page.locator("#terms-decline").isDisabled(), true);
+  if (mode !== "fixed") {
+    await activate(page, page.getByRole("button", { name: "Restart in the current mode" }), profile);
+    await unfinished(page, 2);
+    await beginTermsReview(page, profile);
+    if (mode === "hard") assert.match(await page.locator("#terms-hint").textContent(), /5 hints left/);
+    await activate(page, page.getByRole("button", { name: "Decline terms", exact: true }), profile);
+    await finished(page, 3);
+    assert.equal(await page.locator("#terms-exam").isVisible(), false, "Declining closes an unfinished review");
+    assert.equal(await page.locator("#terms-start").isDisabled(), true);
+  }
+  await fits(page);
+}
+
 try {
   for (const profile of profiles) {
     for (const mode of modes) {
-      for (const id of ["recipe", "mystery-menu"]) {
+      for (const id of ["recipe", "mystery-menu", "terms-game"]) {
         const { name, keyboard, ...options } = profile;
         const context = await browser.newContext({ ...options, acceptDownloads: true });
         const page = await context.newPage();
@@ -316,7 +435,8 @@ try {
             await activate(page, page.getByRole("button", { name: "Got it — let's try it" }), profile);
           }
           if (id === "recipe") await testRecipe(page, mode, profile);
-          else await testReceipt(page, mode, profile);
+          else if (id === "mystery-menu") await testReceipt(page, mode, profile);
+          else await testTerms(page, mode, profile);
           results.push({ id, mode, profile: name, status: "passed", completions: await completionCount(page) });
           console.log(`PASS ${id} ${mode} ${name}`);
         } catch (error) {
@@ -330,7 +450,7 @@ try {
     }
   }
   assert.deepEqual(errors, [], "No browser errors");
-  console.log(`UX content: ${results.length} scenarios passed; public-control completions, terminal recipes, and fictional downloads verified.`);
+  console.log(`UX content: ${results.length} scenarios passed; terminal recipes, fictional downloads, and terms review/decisions verified.`);
 } finally {
   await browser.close();
   if (artifacts) await writeFile(join(artifacts, "results.json"), JSON.stringify({ origin, results, errors }, null, 2));

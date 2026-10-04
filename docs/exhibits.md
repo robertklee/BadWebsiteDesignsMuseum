@@ -112,7 +112,7 @@ Hard also rerolls and unlocks the digit to the left, making a right-to-left stra
 
 **Route:** `/exhibit/terms-game`
 
-Scroll through an 80-clause fictional agreement before taking an eight-question open-book exam. Acceptance unlocks only after every answer is correct, while declining is always available.
+Review an 80-clause fictional agreement, then select **I have read the terms** to reveal an eight-question open-book exam. The catalog, preview, and initial instructions present routine paperwork rather than announcing the exam; reading guidance still explains the scroll requirement and keyboard shortcut. Acceptance unlocks only after every answer is correct, while the visible **Decline terms** control remains available throughout.
 
 Hard doubles the agreement, adds questions, limits hints, and reshuffles the exam after wrong answers. Fix it offers a short summary and immediate accept or decline controls. Either decision completes the interaction with its actual outcome; declining is never treated as an error. No real agreement is created.
 

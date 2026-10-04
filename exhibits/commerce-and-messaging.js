@@ -35,12 +35,14 @@ function renderLayoutCheckout({ stage, mode }) {
           <div class="checkout-recommendations" id="checkout-recommendations" hidden></div>
           <div class="checkout-action" id="checkout-action">
             <button type="button" class="demo-button" id="checkout-confirm">Checkout</button>
-            <section class="checkout-cart-change checkout-upsell-dialog" id="checkout-cushion-offer" role="dialog" aria-labelledby="checkout-cushion-title" hidden>
+            <section class="checkout-cart-change checkout-upsell-dialog" id="checkout-cushion-offer" role="dialog" aria-modal="true" aria-labelledby="checkout-cushion-title" hidden>
               <strong class="checkout-change-title" id="checkout-cushion-title">Most customers buy this add-on.</strong>
               <p>Emotional Support Cushion <b>+$6.00</b></p>
               <p>A softer seat for just $6. Your future self has already said yes.</p>
               <button type="button" class="demo-button" id="checkout-add-cushion">Add to cart - $6.00</button>
               <button type="button" class="plain-button" id="checkout-refuse-cushion">No thanks, just the bench</button>
+              <button type="button" class="plain-button" id="checkout-museum-controls">Museum controls: Restart, Fix, Exit</button>
+              <small>Escape closes this offer without choosing an extra.</small>
               <p id="checkout-cushion-reply" role="status"></p>
             </section>
             <div class="checkout-cart-change" id="checkout-cart-change" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -213,8 +215,8 @@ function renderLayoutCheckout({ stage, mode }) {
   overlay.hidden = true;
   overlay.append(offer);
   viewport.append(overlay);
-  const closeUpsell = () => {
-    upsellResolved = true;
+  const closeUpsell = (resolved = false) => {
+    if (resolved) upsellResolved = true;
     offer.hidden = true;
     overlay.hidden = true;
     documentArea.inert = false;
@@ -234,7 +236,7 @@ function renderLayoutCheckout({ stage, mode }) {
     if (cushionRefusals === replies.length) {
       refusalFee = 600;
       stage.querySelector("#checkout-no-cushion-option").hidden = false;
-      closeUpsell();
+      closeUpsell(true);
       return;
     }
     stage.querySelector("#checkout-cushion-title").textContent = "Are you sure about just the bench?";
@@ -247,12 +249,25 @@ function renderLayoutCheckout({ stage, mode }) {
     stage.querySelector("#checkout-cushion").hidden = false;
     stage.querySelector("#checkout-basket-count").textContent = "2 items";
     stage.querySelector("#checkout-cart-change").innerHTML = `<strong class="checkout-change-title">Cushion added. Dave can breathe again.</strong><div class="checkout-added-product"><strong>Emotional Support Cushion</strong><strong>+$6.00</strong></div><p>2 items in your basket.</p>`;
+    closeUpsell(true);
+  });
+  const museumControls = stage.querySelector("#checkout-museum-controls");
+  museumControls.addEventListener("click", () => {
     closeUpsell();
+    stage.dispatchEvent(new CustomEvent("museum-controls", { bubbles: true }));
   });
   offer.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      closeUpsell();
+      return;
+    }
     if (event.key !== "Tab") return;
     event.preventDefault();
-    (document.activeElement === addCushion ? refuseCushion : addCushion).focus();
+    const controls = [addCushion, refuseCushion, museumControls];
+    const index = controls.indexOf(document.activeElement);
+    controls[(index + (event.shiftKey ? controls.length - 1 : 1)) % controls.length].focus();
   });
   confirm.addEventListener("click", () => {
     if (completed || pendingOffer || !offer.hidden) return;
@@ -293,8 +308,12 @@ function renderAiStore({ stage, mode }) {
     `<div class="ai-products">${products.map(product => `<article class="ai-product"><span class="ai-product-icon" aria-hidden="true">${product.icon}</span><span class="ai-product-badge">${fixed ? "NO CHARGER REQUIRED" : "AI-POWERED, FOR SOME REASON"}</span><h3>${product.name}${fixed ? "" : "GPT"}</h3><p>${fixed ? product.description : `The world's most unnecessarily intelligent ${product.name.toLowerCase()}.`}</p><strong>$${(fixed ? product.price : product.plan).toFixed(2)}<small>${fixed ? "one time" : "per month, per object"}</small></strong><button class="demo-button" data-ai-product="${product.id}">${fixed ? "Add to demo basket" : "Set up this product →"}</button></article>`).join("")}</div><section class="ai-setup" id="ai-setup" aria-label="Product setup" hidden></section><div class="ai-basket"><h3>Demo basket</h3><ul id="ai-basket-items"></ul><p id="ai-total">Nothing added. A financially sound decision.</p></div>`);
   let total = 0;
   let count = 0;
+  const basketProducts = new Set();
+  const drafts = new Map();
   const setup = stage.querySelector("#ai-setup");
   const addProduct = product => {
+    const firstUmbrella = product.id === "umbrella" && !basketProducts.has("umbrella");
+    basketProducts.add(product.id);
     const item = document.createElement("li");
     item.textContent = `${product.name}${fixed ? "" : "GPT"} — $${(fixed ? product.price : product.plan).toFixed(2)}${fixed ? " once" : "/month"}`;
     stage.querySelector("#ai-basket-items").append(item);
@@ -303,33 +322,62 @@ function renderAiStore({ stage, mode }) {
     stage.querySelector("#ai-total").textContent = `${count} object${count === 1 ? "" : "s"}: $${(total / 100).toFixed(2)}${fixed ? " one time" : " every month"}. Demo only; no checkout or charges.`;
     say(product.id === "umbrella"
       ? fixed ? "Umbrella added for your rainy-day visit at a one-time price. No real purchase was made." : "Umbrella added for your rainy-day visit. The website forced a monthly demo plan just to keep you dry. No real subscription or purchase was made."
-      : `${product.name} added, but you still need an umbrella for your rainy-day visit.`);
-    if (product.id === "umbrella") stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      : basketProducts.has("umbrella")
+        ? `${product.name} added. Your umbrella is already in the basket; the rainy-day task remains complete. No real purchase was made.`
+        : `${product.name} added, but you still need an umbrella for your rainy-day visit.`);
+    if (firstUmbrella) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   };
   stage.querySelectorAll("[data-ai-product]").forEach(button => button.addEventListener("click", () => {
     const product = products.find(item => item.id === button.dataset.aiProduct);
     if (fixed) { addProduct(product); return; }
-    let refinements = 0;
     const required = worse ? 3 : 1;
+    if (!drafts.has(product.id)) drafts.set(product.id, {
+      prompt: "",
+      refinements: 0,
+      response: `Setup: 0 / ${required} rounds.`,
+    });
+    const draft = drafts.get(product.id);
     setup.hidden = false;
-    setup.innerHTML = `<span class="demo-kicker">REQUIRED PRODUCT SETUP</span><h3>Brief your ${product.name.toLowerCase()}.</h3><form id="ai-prompt-form"><label for="ai-prompt">Describe your intention in at least 12 characters.</label><textarea id="ai-prompt" maxlength="200" minlength="12" required placeholder="For example: I want this for ${product.keyword}."></textarea><small>Include the word “${product.keyword}”. The future is keyword matching.</small><button class="demo-button">Generate unnecessary intelligence</button></form><p id="ai-response" role="status">Setup: 0 / ${required} rounds.</p><button class="plain-button" id="ai-activate" disabled>Activate $${product.plan.toFixed(2)}/month demo plan</button>`;
-    setup.querySelector("form").addEventListener("submit", event => {
+    setup.innerHTML = `<span class="demo-kicker">REQUIRED PRODUCT SETUP</span><h3>Brief your ${product.name.toLowerCase()}.</h3><form id="ai-prompt-form"><label for="ai-prompt">Describe your intention in at least 12 characters.</label><textarea id="ai-prompt" maxlength="200" minlength="12" required placeholder="For example: I want this for ${product.keyword}."></textarea><small>Include the letters “${product.keyword}”, even inside another word. The future is crude substring matching. Unfinished setup is kept separately for each product.</small><button class="demo-button">Generate unnecessary intelligence</button></form><p id="ai-response" role="status"></p><button class="plain-button" id="ai-activate" disabled>Activate $${product.plan.toFixed(2)}/month demo plan</button>`;
+    const form = setup.querySelector("form");
+    const promptInput = setup.querySelector("textarea");
+    const generate = form.querySelector("button");
+    const response = setup.querySelector("#ai-response");
+    const activate = setup.querySelector("#ai-activate");
+    const updateSetup = () => {
+      response.textContent = draft.response;
+      const ready = draft.refinements === required;
+      promptInput.readOnly = ready;
+      generate.disabled = ready;
+      activate.disabled = !ready;
+    };
+    promptInput.value = draft.prompt;
+    promptInput.addEventListener("input", () => { draft.prompt = promptInput.value; });
+    updateSetup();
+    form.addEventListener("submit", event => {
       event.preventDefault();
-      const prompt = setup.querySelector("textarea").value.trim();
+      if (draft.refinements === required) return;
+      draft.prompt = promptInput.value;
+      const prompt = draft.prompt.trim();
       if (prompt.length < 12 || !prompt.toLowerCase().includes(product.keyword)) {
-        setup.querySelector("#ai-response").textContent = `Not accepted. Use at least 12 characters and include the word ${product.keyword}.`;
+        draft.response = `Not accepted. Use at least 12 characters and include the letters ${product.keyword}, even inside another word.`;
+        updateSetup();
         return;
       }
-      refinements = Math.min(required, refinements + 1);
-      setup.querySelector("#ai-response").textContent = `${product.generated} Setup: ${refinements} / ${required} rounds.${refinements < required ? " Please resubmit. We need to think about it again." : " Ready to activate the demo plan."}`;
-      setup.querySelector("#ai-activate").disabled = refinements < required;
+      draft.refinements++;
+      draft.response = `${product.generated} Setup: ${draft.refinements} / ${required} rounds.${draft.refinements < required ? " Please resubmit. We need to think about it again." : " Ready to activate the demo plan."}`;
+      updateSetup();
+      if (draft.refinements === required) activate.focus();
     });
-    setup.querySelector("#ai-activate").addEventListener("click", () => {
+    activate.addEventListener("click", () => {
+      if (draft.refinements !== required || !drafts.has(product.id)) return;
       addProduct(product);
+      drafts.delete(product.id);
       setup.hidden = true;
+      button.textContent = "Set up another of this product →";
       button.focus();
     });
-    setup.querySelector("textarea").focus();
+    (draft.refinements === required ? activate : promptInput).focus();
   }));
   return () => {};
 }

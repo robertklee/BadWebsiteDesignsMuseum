@@ -28,7 +28,8 @@ try {
         if (mode !== "fixed") {
           const offer = page.locator("#checkout-cushion-offer");
           assert.equal(await offer.isVisible(), true);
-          assert.equal(await offer.getByRole("button").count(), 2);
+          assert.equal(await offer.getByRole("button").count(), 3);
+          assert.equal(await offer.getByRole("button", { name: /Museum controls/ }).isVisible(), true);
           assert.equal(await page.locator("#checkout-cushion-title").textContent(), "Most customers buy this add-on.");
           assert.equal(await page.locator("#checkout-document").evaluate(element => element.inert), true);
           assert.equal(await page.locator("#checkout-total").textContent(), "$24.00");
@@ -195,6 +196,8 @@ try {
       await add.focus();
       await page.keyboard.press("Tab");
       assert.equal(await refuse.evaluate(element => element === document.activeElement), true);
+      await page.keyboard.press("Tab");
+      assert.equal(await page.locator("#checkout-museum-controls").evaluate(element => element === document.activeElement), true);
       await page.keyboard.press("Tab");
       assert.equal(await add.evaluate(element => element === document.activeElement), true);
       if (route === "refuse") {

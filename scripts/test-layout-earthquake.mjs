@@ -33,9 +33,12 @@ try {
       const stageBounds = await page.locator("#stage").boundingBox();
       assert(stageBounds.width >= width * .94, "Exhibit uses nearly the full page width");
       if (width <= 720) {
-        assert(stageBounds.y < 450, "Mobile exhibit starts without excessive museum chrome");
+        await page.locator(".guide-dismiss").click();
+        await page.locator(".start-exhibit").click();
+        const playingStage = await page.locator("#stage").boundingBox();
         const toolbar = await page.locator(".exhibit-toolbar").boundingBox();
         assert(toolbar.height <= 100, "Mobile toolbar stays compact");
+        assert(playingStage.y >= toolbar.y + toolbar.height && playingStage.y <= toolbar.y + toolbar.height + 20, "Entering the exhibit puts the simulation just below the museum controls");
         for (const control of await page.locator(".exhibit-toolbar button, .toolbar-exit").all()) {
           const bounds = await control.boundingBox();
           assert(bounds.height >= 44, "Mobile controls retain touch-friendly heights");
@@ -113,7 +116,7 @@ try {
       await page.locator("#stage").screenshot({ path: `${output}/article-${mode}-${width}.png` });
       await page.locator("#news-bookmark").click();
       assert.equal(await page.evaluate(() => window.completions), 1);
-      if (mode === "easy") await page.locator("#difficulty-progress button").click();
+      if (mode === "easy") await page.locator('[data-difficulty-action="stay"]').click();
       await page.close();
       console.log(`Passed ${mode} at ${width}px: auto-start, repeated cycles, extra placements, completion, stable outer layout.`);
     }

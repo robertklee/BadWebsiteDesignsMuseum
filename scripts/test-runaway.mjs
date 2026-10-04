@@ -386,6 +386,10 @@ try {
   await live.locator('[data-mode="fixed"]').dispatchEvent("click");
   await live.clock.runFor(5000);
   assert.equal(await status(live), "", "Difficulty changes remove stale callbacks");
+  await live.locator(".reset-button").dispatchEvent("click");
+  assert.equal(await arena(live).getAttribute("data-behavior"), "fixed", "Restart preserves the selected mode");
+  assert.equal(await live.locator('[data-mode="fixed"]').getAttribute("aria-pressed"), "true");
+  await live.locator('[data-mode="bad"]').dispatchEvent("click");
   await live.evaluate(() => { window.randomDraws = [0.6, 0.3]; });
   await live.locator(".reset-button").dispatchEvent("click");
   assert.equal(await arena(live).getAttribute("data-behavior"), "sneak", "Reset selects a fresh behavior");

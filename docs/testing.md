@@ -32,6 +32,14 @@ Run the focused Runaway Button suite with:
 npm run test:runaway
 ```
 
+Run the shared exhibit experience suite with:
+
+```sh
+npm run test:exhibit-experience
+```
+
+This checks the first-visit guide, dismissal across exhibit visits, reopening, blocked-storage behavior, keyboard entry, manual completion actions, mode-preserving restart, direct and legacy routes, and museum control bounds at desktop and narrow mobile widths. It also opens every exhibit in all three modes to check framing and mission coverage. Review screenshots are written under `/tmp/museum-exhibit-experience`.
+
 Set `MUSEUM_URL` to test another running origin:
 
 ```sh

@@ -304,7 +304,7 @@ function renderHoverDependency({ stage, mode }) {
       product.style.scrollMarginTop = `${(document.querySelector(".exhibit-toolbar")?.getBoundingClientRect().height || 0) + 16}px`;
       product.focus({ preventScroll: true });
       product.scrollIntoView({ block: "start", behavior: "instant" });
-      say("Pivot desk lamp found. No purchase made.");
+      say("Pivot desk lamp found: its arm is adjustable. No purchase made.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       return;
     }

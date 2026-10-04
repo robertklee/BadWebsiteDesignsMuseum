@@ -4,6 +4,8 @@ Each exhibit starts with a recognizable online experience, then introduces an ab
 
 This catalog explains each experience and its major mode differences without duplicating every timing constant or test case. The exhibit source and focused browser tests remain authoritative for exact mechanics.
 
+Goals describe ordinary outcomes, not the obstacles: send a message, save a note, find a receipt, or choose a setting. Supplied text and dates give the character-entry and date puzzles a bounded mission. Text comparisons ignore capitalization and outer whitespace; dates and the supplied test-account password must match their stated targets.
+
 ## The CAT-PCHA
 
 **Route:** `/exhibit/cat-captcha`
@@ -16,7 +18,7 @@ Hard adds more cheese, occasional two-step cat turns, and an exit that changes a
 
 **Route:** `/exhibit/runaway`
 
-Catch a button that chooses one of four weaknesses: delayed reactions, exhaustion after repeated escapes, tolerance for slow approaches, or movement that can be cornered. The selected weakness is revealed through a hint after the opening chase.
+Download a fictional museum ticket using a button that chooses one of four weaknesses: delayed reactions, exhaustion after repeated escapes, tolerance for slow approaches, or movement that can be cornered. The selected weakness is revealed through a hint after the opening chase. Success downloads a small text ticket explicitly marked as invalid for real admission.
 
 Hard makes the target smaller and more sensitive and introduces decoys. Touch and pen use a direct-hit challenge, while keyboard input, reduced motion, and Fix it provide non-evasive paths. Reset chooses a fresh behavior.
 
@@ -26,15 +28,15 @@ Hard makes the target smaller and more sensitive and introduces decoys. Touch an
 
 Build a fictional password while new rules appear and all earlier rules remain in force. Easy contains 20 progressively revealed requirements and can be solved.
 
-Hard expands the workout to 32 rules and ends with a deliberate contradiction, which the exhibit explains when reached. Fix it uses one visible length requirement. Never enter a real password or reuse a puzzle answer for an account.
+Hard expands the workout to 32 rules and ends with a deliberate contradiction. Reaching it finishes the demo with **goal blocked**, not a successful password. Successful phrases and the blocked endpoint stop evaluation. Fix it uses one visible length requirement. Never enter a real password or reuse a puzzle answer for an account.
 
 ## The Self-Correcting Search Bar
 
 **Route:** `/exhibit/correcting-search`
 
-Pause while typing and the search bar replaces a word with a plausible but unwanted alternative. It preserves punctuation and inflection where possible, highlights the correction, and lets the visitor reject suggestions to recover the original query.
+Find somewhere to meet a friend by searching for **quiet cafes**. Pause while typing and the search bar replaces a word with a plausible but unwanted alternative. It preserves punctuation and inflection where possible, highlights the correction, and lets the visitor reject suggestions to recover the original query.
 
-Hard offers more corrections and requires short explanations for rejection. Unmatched words remain searchable, and Fix it searches the entered text directly. Suggestions are generated locally without an external search service.
+Hard offers more corrections and requires short explanations for rejection. Other queries remain editable, but the stated cafe search completes the mission. Fix it searches the required words directly. Suggestions and results are local; no external search is performed.
 
 ## Your Button Has Moved
 
@@ -84,7 +86,7 @@ Hard adds another submenu and twisting paths. Repeated failures reveal a hold-op
 
 **Route:** `/exhibit/notification-swatter`
 
-Complete a six-field form while fake in-page notifications multiply over it. Pause holds the swarm while answers are edited, and Swat one provides a reliable alternative to clicking individual alerts.
+Send a support request with fictional contact details while fake in-page notifications multiply over the form. Name, email, subject, and message are required; organization is optional. There is no arbitrary confirmation code or requirement to dismiss every alert before sending. Pause holds the swarm while answers are edited, and Swat one provides a reliable alternative to clicking individual alerts.
 
 Hard spawns alerts faster and creates more after misses. Completion and navigation stop the swarm; Fix it removes alerts entirely. The exhibit never requests browser notification permission.
 
@@ -92,7 +94,7 @@ Hard spawns alerts faster and creates more after misses. Completion and navigati
 
 **Route:** `/exhibit/tetris-volume`
 
-Move, rotate, and drop tetrominoes on a compact board. Settled cells control a pretend volume value, while completed rows disappear and can lower it again.
+Set a fictional video player's volume to **60%**, with **58-62%** accepted in every mode. Move, rotate, and drop tetrominoes on a compact board. Settled cells control the value, while completed rows disappear and can lower it again. Reaching the target pauses the game and explicitly records success; Resume allows further experimentation without erasing that achievement.
 
 Hard accelerates gravity. The game can be paused, supports keyboard controls, and uses manual drops for reduced motion. Fix it restores a normal slider; the exhibit never plays audio or changes device volume.
 
@@ -110,13 +112,13 @@ Hard also rerolls and unlocks the digit to the left, making a right-to-left stra
 
 Scroll through an 80-clause fictional agreement before taking an eight-question open-book exam. Acceptance unlocks only after every answer is correct, while declining is always available.
 
-Hard doubles the agreement, adds questions, limits hints, and reshuffles the exam after wrong answers. Fix it offers a short summary and immediate accept or decline controls. No real agreement is created.
+Hard doubles the agreement, adds questions, limits hints, and reshuffles the exam after wrong answers. Fix it offers a short summary and immediate accept or decline controls. Either decision completes the interaction with its actual outcome; declining is never treated as an error. No real agreement is created.
 
 ## The Font Buffet
 
 **Route:** `/exhibit/fonts`
 
-Edit a sentence whose words receive competing fonts, sizes, colors, and rotations. The apparent repair action simply remixes the disagreement.
+Prepare an event notice saying **Library open until 9 pm**, then select **Save draft**. Its words receive competing fonts, sizes, colors, and rotations. **Shuffle styles** is optional and makes no promise to repair the typography. A blank or unrelated notice does not complete the task.
 
 Hard styles every character independently. Fix it uses consistent typography and a predictable editing experience.
 
@@ -124,7 +126,7 @@ Hard styles every character independently. Fix it uses consistent typography and
 
 **Route:** `/exhibit/unix-birthday`
 
-Instead of choosing a birthday from a calendar, move through Unix timestamps: numbers counting milliseconds from January 1, 1970. A millisecond is one thousandth of a second. A live calendar preview translates the number using UTC, the standard world time, and an alignment control snaps the value to midnight.
+Set Alex's fictional profile birthday to **July 16, 1992**. Instead of choosing it from a calendar, move through Unix timestamps: numbers counting milliseconds from January 1, 1970. A millisecond is one thousandth of a second. A live calendar preview translates the number using UTC, the standard world time, and an alignment control snaps the value to midnight. Every mode requires confirming the stated date; another valid date is not a win.
 
 Hard removes the slider and expects a timestamp to be entered manually, while still explaining whether it represents a valid birthday. Fix it uses a native date field.
 
@@ -140,15 +142,15 @@ Hard adds checkpoints, more confusing language, shuffled button positions, and a
 
 **Route:** `/exhibit/recipe`
 
-Read a long personal story and answer six comprehension questions before the toast recipe becomes available. The fake skip action leads to an advertisement instead.
+Find the ingredients and method for buttered toast. The website obstructs that simple goal with a personal story and six comprehension questions before making the recipe available. The fake skip action leads to an advertisement instead.
 
-Hard resets reading progress after wrong answers or skip attempts. Fix it presents the short recipe without the compulsory journey.
+Hard resets reading progress after wrong answers or skip attempts. Fix it presents the short recipe and records **Recipe ready** immediately, without adding a contrived acknowledgment button.
 
 ## The Expanding Form
 
 **Route:** `/exhibit/expanding-form`
 
-Fill out an ordinary contact form whose spacing grows exponentially with every character. Longer answers move later fields—and especially the submit button—farther away.
+Send a support message using an ordinary contact form whose spacing grows exponentially with every character. Longer answers move later fields—and especially the submit button—farther away. Reaching Send is not enough: submitting the valid form completes the task.
 
 Hard makes the growth faster, raises its limits, and folds long sections of the form. Compress temporarily removes the gaps without deleting answers. Fix it keeps conventional spacing.
 
@@ -156,7 +158,7 @@ Hard makes the growth faster, raises its limits, and folds long sections of the 
 
 **Route:** `/exhibit/dropdown`
 
-Tune a frequency dial to the exact station assigned to a letter, space, or punctuation mark. Receiving a character appends it to the message and resets the dial.
+Tell a friend **ON MY WAY**, then send the message. Tune a frequency dial to the exact station assigned to each letter or space. Receiving a character appends it to the message and resets the dial. An unrelated or one-letter message does not complete the mission.
 
 Hard reassigns station locations after every character. Undo removes mistakes, and Fix it restores a normal text box. The directory is informational rather than a shortcut.
 
@@ -174,7 +176,7 @@ Completion requires explicitly reserving exactly two tickets with no updates pen
 
 **Route:** `/exhibit/seismic-editor`
 
-Every edit shakes the writing area and adds stress. Rapid typing, pastes, and punctuation increase the risk that the sentence will collapse into letter tiles, though the exact input remains preserved.
+Write the reminder **Bring a notebook**, then select **Save draft**. Every edit shakes the writing area and adds stress. Rapid typing, pastes, and punctuation increase the risk that the note will collapse into letter tiles, though the exact input remains preserved. Rebuild restores that text before saving.
 
 Hard builds stress faster and shakes more strongly. Rebuild restores editing, reduced motion disables shaking and collapse, and Fix it behaves like a stable editor.
 
@@ -182,7 +184,7 @@ Hard builds stress faster and shakes more strongly. Rebuild restores editing, re
 
 **Route:** `/exhibit/volume-seesaw`
 
-Place pebbles, bricks, and anvils on a wobbling beam whose angle controls a pretend volume slider. The setting can be held, or weights can be removed to rebalance it.
+Set a fictional video player's volume to **65%**, required in every mode. Place pebbles, bricks, and anvils on a wobbling beam whose angle controls the slider, then select **Hold this volume**. Holding another level gives explicit guidance but does not count as success.
 
 Hard introduces buoyant balloons and occasionally moves a weight to the opposite side. Reduced motion settles the beam immediately, and Fix it uses a normal slider. No audio or device setting is changed.
 
@@ -206,15 +208,15 @@ Hard increases decay and lets fed preferences produce checked offspring. Pause f
 
 **Route:** `/exhibit/password-crane`
 
-Steer an arcade claw across banks containing all 128 ASCII characters and drop selections into a fictional password. The target phrase is visible, and undo, return, and reset controls recover from mistakes.
+Enter the supplied throwaway phrase **Claw_M00n!42** for a fictional test account in every mode. Steer an arcade claw across banks containing all 128 ASCII characters and drop selections into the password. The target phrase is visible, and undo, return, and reset controls recover from mistakes.
 
-Hard occasionally grabs a neighboring character. Keyboard controls cover movement, bank changes, and claw operation. Fix it uses a normal invented-password field; never enter real credentials.
+Hard occasionally grabs a neighboring character. Keyboard controls cover movement, bank changes, and claw operation. Fix it uses a normal field for the same supplied phrase; never enter real credentials.
 
 ## The Physics Shopping Cart
 
 **Route:** `/exhibit/physics-cart`
 
-Adding a fictional product starts a wheeled cart rolling downhill toward a pretend Buy now zone. More weight increases its cartoon acceleration, while braking, pulling back, pausing, and returning to the start preserve the basket.
+Add products, review the basket, and choose **Simulate checkout** when ready. Adding a fictional product starts a wheeled cart rolling downhill toward a pretend Buy now zone. More weight increases its cartoon acceleration, while braking, pulling back, pausing, and returning to the start preserve the basket. Reaching Buy now accidentally is an unwanted outcome, not success; return or pull back before checking out intentionally.
 
 Hard steepens the slope and adds a speed bump that disrupts the cart. Reduced motion keeps the gameplay consequence without the jump animation. Fix it uses a stationary basket and explicit simulated checkout.
 
@@ -230,7 +232,7 @@ Hard raises prices and competition, especially for useful characters such as `@`
 
 **Route:** `/exhibit/elevator-date`
 
-Ride to a year floor, then transfer to separate month and day elevators. Stops must be requested before the desired floor can be selected.
+Set Alex's fictional profile birthday to **July 16, 1992**, the same target as the Unix Birthday Picker. Ride to the required year floor, then transfer to separate month and day elevators. Stops must be requested before a floor can be selected, and an incorrect floor does not advance the task.
 
 Hard uses express service that skips floors unless stopped at the right time. Travel pauses when the tab is hidden. Fix it uses a conventional date field.
 
@@ -246,7 +248,7 @@ Both paths eventually exhaust the button's ability to escape, so cancellation re
 
 **Route:** `/exhibit/word-editor`
 
-Compose a document using a separate dropdown for every character, including spaces, punctuation, and line breaks. Existing characters can be replaced or deleted, and edits support undo and redo.
+Write the note **Meet at six** and select **Save draft**, using a separate dropdown for every character, including spaces. Existing characters can be replaced or deleted, and edits support undo and redo. A one-letter document does not satisfy the mission.
 
 Hard reshuffles each menu after every edit. Fix it restores ordinary text entry.
 
@@ -278,7 +280,7 @@ Hard replaces vowels, rearranges CAPTCHA tiles after each choice, and requires a
 
 **Route:** `/exhibit/ai-store`
 
-Choose an ordinary spoon, umbrella, or rock, then complete unnecessary scripted AI onboarding before activating its fictional subscription.
+Get an umbrella for a rainy-day visit. The shop forces unnecessary scripted AI onboarding and a fictional monthly plan before adding it to the basket. Other products remain browsable but do not complete the umbrella mission.
 
 Hard requires additional calibration rounds. Fix it sells the same objects with clear one-time prices. Responses are local scripts rather than output from an AI service.
 
@@ -286,7 +288,7 @@ Hard requires additional calibration rounds. Fix it sells the same objects with 
 
 **Route:** `/exhibit/mystery-menu`
 
-Navigate six unlabeled symbols with unhelpful tooltips to find a shipping policy and retrieve a fictional receipt.
+Find a receipt for an expense claim using six unlabeled symbols with unhelpful tooltips. **Download receipt** produces a fictional text receipt explicitly marked as invalid for a real claim. No shipping-policy acknowledgment is required.
 
 Hard reshuffles the destinations after every navigation choice. Fix it supplies stable, descriptive labels.
 
@@ -294,7 +296,7 @@ Hard reshuffles the destinations after every navigation choice. Fix it supplies 
 
 **Route:** `/exhibit/alphabet`
 
-Use a slider containing a randomly ordered alphabet to select and append one character at a time. The visible preview always shows what the current action will add.
+Send a friend **HELLO** using a slider containing a randomly ordered alphabet to select and append one character at a time. The visible preview always shows what the current action will add. The stated greeting, not any nonempty string, completes the mission.
 
 Easy reshuffles after each appended character; Hard also reshuffles after committed slider adjustments. Fix it uses ordinary text input.
 
@@ -302,15 +304,15 @@ Easy reshuffles after each appended character; Hard also reshuffles after commit
 
 **Route:** `/exhibit/corporate`
 
-Complete mandatory onboarding steps that generate more mandatory onboarding. Going backward discards progress, and the experience is intentionally open-ended.
+Try to open a sample task board while mandatory onboarding generates more mandatory onboarding. Going backward discards progress.
 
-Finishing the initial onboarding sequence counts as Easy completion before Hard continues the joke with more steps. Fix it presents a finite, direct process.
+After four completed steps, Easy and Hard reach a finite **goal blocked** endpoint: more setup was added instead of access to the product. Fix it opens the sample board directly and records successful task completion.
 
 ## The Loading Experience
 
 **Route:** `/exhibit/loading`
 
-Wait through ten fake progress stages—including backward progress near completion—to reveal one sentence. Loading can be cancelled, and timers stop on reset or navigation.
+Open a fictional booking confirmation showing the time of a museum visit. Wait through ten fake progress stages—including backward progress near completion—to reveal that one sentence. Loading can be cancelled, and timers stop on reset or navigation.
 
 Hard interrupts the wait with approval prompts. Fix it reveals the sentence immediately.
 

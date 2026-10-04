@@ -1,14 +1,14 @@
 // Commerce & messaging: marketing copy, checkout, and subscription flows.
-import { createStageShell, createDemoStatus } from "./shared.js";
+import { createStageShell, createDemoStatus, completeExhibit, matchesDemoText } from "./shared.js";
 
 export const exhibits = [
   { id: "layout-checkout", task: "Complete the demo bench order. Accept or decline the extras and keep an eye on the total.", fixedTask: "Review the bench order and select Checkout. No real order or payment is made.", name: "Your Button Has Moved", category: "Commerce", color: "orange", tagline: "You came to buy a bench. Checkout keeps adding conditions.", description: "You're ready to pay, but the shop keeps interrupting with extras, offers, and surprise costs. Dave really wants you to add a cushion.", lesson: "Online checkout sometimes feels like a negotiation: extra products, another offer, a total that keeps changing. This shop turns that experience into a conversation with Dave and his excess cushion stock.", fix: "Checkout keeps the bench, price, and delivery choice clear, without pushing extra products into the order.", worseChange: "Dave adds paid personal delivery and repeatedly challenges your choice of the free option.", preview: '<div class="new-preview checkout-thumbnail"><span class="checkout-thumb-brand">THE SITTING ROOM / YOUR BASKET</span><div class="checkout-thumb-stage"><div class="checkout-thumb-product"><img src="/assets/bench.jpg" alt="" width="250" height="167"><div><b>Just a bench.</b><strong>$24</strong></div></div><div class="checkout-thumb-offer"><span>WAIT. ONE MORE THING.</span><div><i class="checkout-thumb-cushion"></i><b>Emotional support<br>cushion <em>+$6</em></b></div></div><div class="checkout-thumb-button">Checkout <span>→</span></div><span class="checkout-thumb-cursor">↖</span></div><small class="checkout-thumb-punchline">You moved to checkout.<br>Checkout moved on.</small><span class="checkout-thumb-fiction">FICTIONAL SHOP. REAL DETOUR.</span></div>', render: renderLayoutCheckout },
-  { id: "ai-store", task: "Choose an object, complete its setup prompts, and activate the demo plan. No real subscription is created.", fixedTask: "Choose an object and add it to the demo basket at a one-time price.", name: "The AI Everything Store", category: "Commerce", color: "blue", tagline: "It's just a spoon. Why does it need an AI subscription?", description: "Buying an ordinary object now comes with AI setup: explain what you want it to do, repeat yourself, and activate a monthly plan.", lesson: "You've seen products add AI, an account, and a subscription to things that already worked. This store applies that upgrade to a spoon. Soup apparently needs a product roadmap now.", fix: "Ordinary objects have ordinary one-time prices, with no prompts or subscription setup.", worseChange: "Each object requires three rounds of setup before you can activate its demo plan.", preview: `<div class="thumb-scene thumb-ai"><span class="thumb-kicker">THE SPOON, REIMAGINED.</span><div class="thumb-spoon-product"><div class="thumb-silver-spoon" role="img" aria-label="An ordinary silver spoon"><i></i><b></b></div><div class="thumb-spoon-offer"><span>SPOON + AI</span><strong>$19.99</strong><small>/ month*</small><b>Calibration<br>required</b></div></div><small class="thumb-footer">Soup not included.</small><span class="thumb-fictional-plan">*FICTIONAL PLAN. ORDINARY SPOON.</span></div>`, render: renderAiStore },
+  { id: "ai-store", task: "Get an umbrella for a rainy day. The store forces AI setup and a monthly demo plan before adding it to your basket.", fixedTask: "Add an umbrella to the demo basket at its one-time price.", name: "The AI Everything Store", category: "Commerce", color: "blue", tagline: "It's just a spoon. Why does it need an AI subscription?", description: "Buying an ordinary object now comes with AI setup: explain what you want it to do, repeat yourself, and activate a monthly plan.", lesson: "You've seen products add AI, an account, and a subscription to things that already worked. This store applies that upgrade to a spoon. Soup apparently needs a product roadmap now.", fix: "Ordinary objects have ordinary one-time prices, with no prompts or subscription setup.", worseChange: "Each object requires three rounds of setup before you can activate its demo plan.", preview: `<div class="thumb-scene thumb-ai"><span class="thumb-kicker">THE SPOON, REIMAGINED.</span><div class="thumb-spoon-product"><div class="thumb-silver-spoon" role="img" aria-label="An ordinary silver spoon"><i></i><b></b></div><div class="thumb-spoon-offer"><span>SPOON + AI</span><strong>$19.99</strong><small>/ month*</small><b>Calibration<br>required</b></div></div><small class="thumb-footer">Soup not included.</small><span class="thumb-fictional-plan">*FICTIONAL PLAN. ORDINARY SPOON.</span></div>`, render: renderAiStore },
   { id: "shrinking-unsubscribe", task: "Catch and activate Cancel subscription to end the demo plan.", fixedTask: "Select Cancel subscription to end the demo plan.", name: "The Shrinking Unsubscribe Button", category: "Commerce", color: "pink", tagline: "You try to cancel. The button gets smaller and moves away.", description: "Find the button to end a subscription, then watch it shrink and relocate as you try to use it.", lesson: "Cancelling can already mean hunting for a tiny link. This version makes that link shrink further whenever you approach. The subscription stays full-size; only your way out gets smaller.", fix: "The cancel button stays readable, reachable, and still.", worseChange: "The cancel button shrinks faster and moves away more aggressively.", preview: `<div class="thumb-scene thumb-shrinking"><span class="thumb-kicker">YOUR PLAN STAYS FULL-SIZE</span><strong class="thumb-plan-price">$49<span>/ month*</span></strong><div class="thumb-exit-trail"><span class="thumb-exit-ghost">Unsubscribe</span><span class="thumb-exit-smaller">Unsubscribe</span><span class="thumb-exit-tiny">Unsubscribe</span><i aria-hidden="true">↖</i></div><small class="thumb-footer">*Pretend plan. Disappearing exit.</small></div>`, render: renderShrinkingUnsubscribe },
-  { id: "physics-cart", task: "Add items and try to control the cart before it reaches the pretend Buy now zone.", fixedTask: "Add items, review the basket, and select Simulate checkout.", category: "Commerce", color: "orange", name: "The Physics Shopping Cart", tagline: "Your shopping cart is heading to checkout without you.", description: "Add an item and a literal cart rolls downhill toward Buy now. More items make it faster; deciding to pay is no longer the final step.", lesson: "An online cart normally waits while you decide what to buy. This one takes 'moving toward checkout' literally. Adding products gives it more momentum, not more patience.", fix: "The basket stays still until you explicitly choose the demo checkout button.", worseChange: "The hill is steeper, and a speed bump halfway down disrupts the rolling cart.", preview: '<div class="thumb-scene thumb-cart"><span class="thumb-kicker">YOUR CART IS CHECKING ITSELF OUT</span><div class="thumb-cart-hill"><div class="thumb-cart-slope"></div><div class="thumb-rolling-cart"><div class="thumb-cart-basket"><b></b><b></b></div><i></i><i></i></div><span class="thumb-cart-speed" aria-hidden="true">→ →</span><span class="thumb-checkout-zone">BUY<br>NOW*</span><span class="thumb-brake-label">BRAKE!</span></div><small class="thumb-footer">*Pretend checkout. Real downhill energy.</small></div>', render: renderPhysicsCart },
-  { id: "corporate", task: "Start the setup and finish its original four steps. More steps are the deliberately ridiculous result.", fixedTask: "Select Try the sample task board to see the product without extra setup.", name: "The Corporate Fog Machine", category: "Copywriting", color: "blue", tagline: "Finish setting up your account. Unlock more setup.", description: "You sign up to try a product, but every setup step creates more steps. The website still won't tell you what the product does.", lesson: "You sign up for a service and spend longer answering setup questions than using it. This exhibit combines that endless onboarding with corporate language that says very little. 'Almost finished' is the product.", fix: "The page explains what the product does and lets you open a sample task board directly.", worseChange: "Every completed setup step adds three more, with extra confirmations and even vaguer sales language.", preview: `<div class="thumb-scene thumb-corporate"><span class="thumb-kicker">SYNERGIA / GETTING STARTED</span><div class="thumb-onboarding"><span class="thumb-onboarding-checks">✓ &nbsp; ✓ &nbsp; ✓ &nbsp; ✓</span><strong>All set*</strong><div class="thumb-next-setup"><span>UP NEXT</span><b>More setup.</b><i>→</i></div></div><small class="thumb-footer">*For the next setup.</small></div>`, render: renderCorporate },
+  { id: "physics-cart", task: "Add products, review your basket, and select Simulate checkout when ready. Stop the cart from buying before you decide.", fixedTask: "Add products, review your basket, and select Simulate checkout when ready.", category: "Commerce", color: "orange", name: "The Physics Shopping Cart", tagline: "Your shopping cart is heading to checkout without you.", description: "Review your basket before buying, while a literal shopping cart rolls downhill toward an accidental checkout.", lesson: "An online cart normally waits while you decide what to buy. This one takes 'moving toward checkout' literally. Adding products gives it more momentum, not more patience.", fix: "The basket stays still until you explicitly choose the demo checkout button.", worseChange: "The hill is steeper, and a speed bump halfway down disrupts the rolling cart.", preview: '<div class="thumb-scene thumb-cart"><span class="thumb-kicker">YOUR CART IS CHECKING ITSELF OUT</span><div class="thumb-cart-hill"><div class="thumb-cart-slope"></div><div class="thumb-rolling-cart"><div class="thumb-cart-basket"><b></b><b></b></div><i></i><i></i></div><span class="thumb-cart-speed" aria-hidden="true">→ →</span><span class="thumb-checkout-zone">BUY<br>NOW*</span><span class="thumb-brake-label">BRAKE!</span></div><small class="thumb-footer">*Pretend checkout. Real downhill energy.</small></div>', render: renderPhysicsCart },
+  { id: "corporate", task: "Try to open the sample task board. After four setup steps, the demo shows how the website keeps blocking access.", fixedTask: "Select Try the sample task board to open the product directly.", name: "The Corporate Fog Machine", category: "Copywriting", color: "blue", tagline: "Finish setting up your account. Unlock more setup.", description: "You want to try a task board, but every setup step creates more setup and keeps the product out of reach.", lesson: "You sign up for a service and spend longer answering setup questions than using it. This exhibit combines that endless onboarding with corporate language that says very little. 'Almost finished' is the product.", fix: "The page explains what the product does and lets you open a sample task board directly.", worseChange: "Every completed setup step adds three more, with extra confirmations and even vaguer sales language.", preview: `<div class="thumb-scene thumb-corporate"><span class="thumb-kicker">SYNERGIA / GETTING STARTED</span><div class="thumb-onboarding"><span class="thumb-onboarding-checks">✓ &nbsp; ✓ &nbsp; ✓ &nbsp; ✓</span><strong>All set*</strong><div class="thumb-next-setup"><span>UP NEXT</span><b>More setup.</b><i>→</i></div></div><small class="thumb-footer">*For the next setup.</small></div>`, render: renderCorporate },
   { id: "cancel", task: "Choose the answers that end the demo subscription, working through each confirmation.", fixedTask: "Select Cancel subscription to end the demo subscription.", name: "The Cancellation Labyrinth", category: "Copywriting", color: "lilac", tagline: "Cancel a subscription, if you can untangle the questions.", description: "You want to stop a subscription. The confirmation screens keep asking whether you don't want to not cancel it.", lesson: "Cancelling a subscription often means confirming the same choice several times. Here each confirmation adds another layer of 'don't' and 'not'. The difficulty is the wording, not your decision.", fix: "One clearly labeled cancellation button replaces the confirmation maze.", worseChange: "There are more confusing questions, answer positions change, and a wrong choice sends you back to the beginning.", preview: `<div class="thumb-scene thumb-cancel"><span class="thumb-kicker">BEFORE YOU DON'T GO...</span><div class="thumb-cancel-dialog"><div class="thumb-cancel-title"><span>Confirm cancellation</span><b>×</b></div><strong>Don't not stop<br>not staying.</strong><div class="thumb-cancel-choices"><span>Yes, don't</span><span>No, also don't</span></div></div><small class="thumb-footer">Your fictional subscription awaits.</small></div>`, render: renderCancel },
-  { id: "fonts", task: "Edit the sample sentence, try Make fonts agree, and approve a design.", fixedTask: "Edit the sample sentence and approve the consistently styled version.", name: "The Font Buffet", category: "Typography", color: "pink", tagline: "One sentence. A different style for every word.", description: "Ever struggled to read a page with too many fonts? Give every word its own size, style, and angle, then try to make them agree.", lesson: "A page can look busy before you've even read it. This exhibit gives each word a competing font and style, so a simple sentence starts to feel like several advertisements arguing.", fix: "One consistent font and size make the sentence easier to read.", worseChange: "Every letter gets its own font, size, spacing, and rotation instead of sharing a style with its word.", preview: `<div class="thumb-scene thumb-fonts"><span class="thumb-kicker">CONSISTENCY IS OVERRATED</span><div class="thumb-type-poster"><div><b>One</b><i>more</i></div><strong>FONT.</strong></div><small class="thumb-footer">Legibility left the chat.</small></div>`, render: renderFonts },
+  { id: "fonts", task: "Prepare an event notice: write Library open until 9 pm and select Save draft. The competing fonts are the obstacle.", fixedTask: "Write Library open until 9 pm and select Save draft.", name: "The Font Buffet", category: "Typography", color: "pink", tagline: "One sentence. A different style for every word.", description: "Prepare a short event notice while every word gets a competing font, size, and angle.", lesson: "A page can look busy before you've even read it. This exhibit gives each word a competing font and style, so a simple sentence starts to feel like several advertisements arguing.", fix: "One consistent font and size make the sentence easier to read.", worseChange: "Every letter gets its own font, size, spacing, and rotation instead of sharing a style with its word.", preview: `<div class="thumb-scene thumb-fonts"><span class="thumb-kicker">CONSISTENCY IS OVERRATED</span><div class="thumb-type-poster"><div><b>One</b><i>more</i></div><strong>FONT.</strong></div><small class="thumb-footer">Legibility left the chat.</small></div>`, render: renderFonts },
 ];
 
 function renderLayoutCheckout({ stage, mode }) {
@@ -289,7 +289,7 @@ function renderAiStore({ stage, mode }) {
     { id: "rock", name: "Rock", icon: "🪨", price: 1, plan: 9.99, keyword: "door", description: "A heavy object. Can hold a door open.", generated: "Door-retention model deployed. The rock continues to sit there." },
   ];
   shell("THE FUTURE OF COMPLETELY ORDINARY OBJECTS", fixed ? "Useful objects. Nothing extra." : "Everything is AI now.",
-    fixed ? "Choose a spoon, umbrella, or rock and add it to the demo basket at a one-time price. No account or AI setup is needed." : `You've seen ordinary products advertised with AI, meaning artificial intelligence, and a monthly plan. Here even a spoon gets that treatment. Choose an object, describe what you want to do with it, and activate its demo subscription.${worse ? " You must submit three rounds of setup instructions." : ""} The responses are scripted jokes, not a real AI service.`,
+    fixed ? "You need an umbrella for a rainy day. Add one to the demo basket at its one-time price. No account or AI setup is needed." : `You've seen ordinary products advertised with AI, meaning artificial intelligence, and a monthly plan. Here even a spoon gets that treatment. You need an umbrella for a rainy day, but the shop forces you to describe its purpose and activate a demo plan before you can add it to your basket.${worse ? " You must submit three rounds of setup instructions." : ""} The responses are scripted jokes, not a real AI service.`,
     `<div class="ai-products">${products.map(product => `<article class="ai-product"><span class="ai-product-icon" aria-hidden="true">${product.icon}</span><span class="ai-product-badge">${fixed ? "NO CHARGER REQUIRED" : "AI-POWERED, FOR SOME REASON"}</span><h3>${product.name}${fixed ? "" : "GPT"}</h3><p>${fixed ? product.description : `The world's most unnecessarily intelligent ${product.name.toLowerCase()}.`}</p><strong>$${(fixed ? product.price : product.plan).toFixed(2)}<small>${fixed ? "one time" : "per month, per object"}</small></strong><button class="demo-button" data-ai-product="${product.id}">${fixed ? "Add to demo basket" : "Set up this product →"}</button></article>`).join("")}</div><section class="ai-setup" id="ai-setup" aria-label="Product setup" hidden></section><div class="ai-basket"><h3>Demo basket</h3><ul id="ai-basket-items"></ul><p id="ai-total">Nothing added. A financially sound decision.</p></div>`);
   let total = 0;
   let count = 0;
@@ -301,8 +301,10 @@ function renderAiStore({ stage, mode }) {
     total += Math.round((fixed ? product.price : product.plan) * 100);
     count++;
     stage.querySelector("#ai-total").textContent = `${count} object${count === 1 ? "" : "s"}: $${(total / 100).toFixed(2)}${fixed ? " one time" : " every month"}. Demo only; no checkout or charges.`;
-    say(fixed ? "Added to the demo basket. No account, prompt, or payment needed." : "You have subscribed to an object's basic function. Fictionally. No charges or real subscription.");
-    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    say(product.id === "umbrella"
+      ? fixed ? "Umbrella added for your rainy-day visit at a one-time price. No real purchase was made." : "Umbrella added for your rainy-day visit. The website forced a monthly demo plan just to keep you dry. No real subscription or purchase was made."
+      : `${product.name} added, but you still need an umbrella for your rainy-day visit.`);
+    if (product.id === "umbrella") stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   };
   stage.querySelectorAll("[data-ai-product]").forEach(button => button.addEventListener("click", () => {
     const product = products.find(item => item.id === button.dataset.aiProduct);
@@ -552,7 +554,7 @@ function renderPhysicsCart({ stage, mode }) {
   ];
   shell("THE MOMENTUM MARKET", fixed ? "A basket that waits for you." : "Caution: shopping on an incline.",
     fixed ? "Use the shopping basket as usual: add items, review the total, and choose Simulate checkout when you're ready. No order or payment is made."
-      : `An online basket normally waits while you decide what to buy. Here, adding a product starts a literal cart rolling downhill toward BUY NOW. More weight makes it faster. Brake, pull it back, or pause to stay in control; reaching 90% triggers a pretend checkout.${worse ? " A steeper hill and a speed bump halfway down make the trip less predictable." : ""} No real order or payment is made.`,
+      : `An online basket normally waits while you decide what to buy. Here, adding a product starts a literal cart rolling downhill toward BUY NOW. More weight makes it faster. Brake, pull it back, or pause to review your basket, then select Simulate checkout when you decide to buy. Reaching 90% triggers an unwanted demo checkout, not task completion; return to start to recover.${worse ? " A steeper hill and a speed bump halfway down make the trip less predictable." : ""} No real order or payment is made.`,
     `<section class="arcade-exhibit arcade-shop">
       <div class="arcade-products">${products.map((product, i) => `<article class="arcade-product"><h3>${product.name}</h3><p>${product.mass} pretend kg · ${product.price} demo credits</p><div class="arcade-quantity"><button class="plain-button" data-remove="${i}" aria-label="Remove one ${product.name}">−</button><output id="arcade-quantity-${i}" aria-label="${product.name} quantity">0</output><button class="plain-button" data-add="${i}" aria-label="Add one ${product.name}">+</button></div></article>`).join("")}</div>
       <p class="arcade-readout" id="arcade-basket-total"></p>
@@ -569,6 +571,7 @@ function renderPhysicsCart({ stage, mode }) {
   let autoStart = true;
   let brake = false;
   let arrived = false;
+  let completed = false;
   let bumpUsed = false;
   let bumpLift = 0;
   let bumpVelocity = 0;
@@ -597,10 +600,10 @@ function renderPhysicsCart({ stage, mode }) {
     cart.classList.toggle("arcade-cart-bumping", bumpPulse > 0);
     stage.querySelector(".arcade-speed-bump")?.classList.toggle("arcade-bump-hit", bumpPulse > 0);
     $("#arcade-cart-load").textContent = `${total.mass} kg`;
-    if (readout) $("#arcade-cart-state").textContent = `${bumpPulse > 0 ? "BUMP! " : ""}${arrived ? "Pretend checkout zone reached" : running ? "Rolling" : "Paused"} · position ${Math.round(x)}% · speed ${velocity.toFixed(1)}%/s · brake ${brake ? "ON" : "OFF"}.${motion.matches ? " Reduced motion: manual steps only." : ""}`;
+    if (readout) $("#arcade-cart-state").textContent = `${bumpPulse > 0 ? "BUMP! " : ""}${completed ? "Intentional checkout confirmed" : arrived ? "Accidental checkout — return to start to recover" : running ? "Rolling" : "Paused"} · position ${Math.round(x)}% · speed ${velocity.toFixed(1)}%/s · brake ${brake ? "ON" : "OFF"}.${motion.matches ? " Reduced motion: manual steps only." : ""}`;
     $("#arcade-start").textContent = running ? "Pause rolling" : "Start rolling";
-    $("#arcade-start").disabled = motion.matches || arrived || !total.count;
-    $("#arcade-step").disabled = running || arrived || !total.count;
+    $("#arcade-start").disabled = completed || motion.matches || arrived || !total.count;
+    $("#arcade-step").disabled = completed || running || arrived || !total.count;
     $("#arcade-brake").setAttribute("aria-pressed", String(brake));
     $("#arcade-brake").textContent = `Brake: ${brake ? "ON" : "OFF"}`;
   };
@@ -613,7 +616,7 @@ function renderPhysicsCart({ stage, mode }) {
     });
     $("#arcade-basket-total").textContent = `${total.count} items · ${total.mass} pretend kg · ${total.credits} demo credits. Limit: 9 of each item. No payments.`;
     if (!total.count) { stop(); velocity = 0; }
-    if (fixed) $("#arcade-checkout").disabled = !total.count;
+    $("#arcade-checkout").disabled = completed || !total.count;
     paint();
   };
   const advance = seconds => {
@@ -645,8 +648,7 @@ function renderPhysicsCart({ stage, mode }) {
         arrived = true;
         velocity = 0;
         stop();
-        say(`Pretend BUY NOW triggered for ${totals().credits} demo credits. This was deliberately bad design, not a purchase. Nothing was charged. Pull back or return to start to try again.`);
-        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+        say(`Accidental demo checkout for ${totals().credits} credits. This is not task completion: the cart bought before you decided. Nothing was charged. Pull back or return to start, review your basket, then choose Simulate checkout.`);
       }
       remaining -= dt;
     }
@@ -691,12 +693,20 @@ function renderPhysicsCart({ stage, mode }) {
       say(`${product.name} removed. ${totals().count ? "Basket updated." : "Empty basket; cart stopped."}`);
     });
   });
-  if (fixed) {
-    on($("#arcade-checkout"), "click", () => {
-      say(`Intentional demo checkout: ${totals().count} items, ${totals().credits} demo credits. No payment or order was made. Your basket remains available to edit.`);
-      if (totals().count) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
-    });
-  } else {
+  if (!fixed) stage.querySelector(".arcade-shop").insertAdjacentHTML("beforeend", '<button class="demo-button" id="arcade-checkout">Simulate checkout — no payment</button>');
+  on($("#arcade-checkout"), "click", () => {
+    if (completed) return;
+    if (!totals().count) { say("Add a product before checking out."); return; }
+    if (arrived) { say("That checkout was accidental. Return to start or pull back before choosing your own checkout."); return; }
+    completed = true;
+    stop();
+    velocity = 0;
+    paint();
+    stage.querySelectorAll("button").forEach(button => { button.disabled = true; });
+    say(`Intentional demo checkout confirmed: ${totals().count} items, ${totals().credits} credits. You chose when to buy. No payment or real order was made.`);
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+  });
+  if (!fixed) {
     on($("#arcade-start"), "click", () => {
       if (running) { autoStart = false; stop(); say("Paused. Items and position preserved."); }
       else if (!motion.matches && !arrived && totals().count) {
@@ -746,7 +756,7 @@ function renderCorporate({ stage, mode, shuffle }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { status, say } = createDemoStatus();
-  stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><p>${fixed ? "You wanted to try a product, not complete an endless setup. Open the sample task board below to see what it does." : `You sign up to try a service, then spend the whole visit answering setup questions. Select Unlock your potential and finish the original four steps. Each answer adds more steps; the vague sales pitch is part of the joke.${worse ? " Every answer adds three steps instead of two." : ""}`}</p><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;
+  stage.innerHTML = `<div class="corporate-demo"><div class="corporate-nav"><strong>◈ ${fixed ? "Clearboard" : "SYNERGIA"}</strong><span>${fixed ? "Project planning for small teams" : "VISION. VELOCITY. VAGUENESS."}</span></div><div class="corporate-content"><span class="demo-kicker">${fixed ? "LESS ADMIN. MORE MAKING." : "THE FUTURE IS AN ABSTRACT NOUN."}</span><p>${fixed ? "You wanted to try a product, not complete an endless setup. Open the sample task board below to see what it does." : `You sign up to try a service, then spend the whole visit answering setup questions. Try to open the sample task board by selecting Unlock your potential. After four setup steps, this demo ends with the product still blocked. Each answer adds more steps; the vague sales pitch is part of the joke.${worse ? " Every answer adds three steps instead of two." : ""}`}</p><h2>${fixed ? "Plan your team's work.<br>In one shared place." : worse ? "Hyper-synergize your<br>meta-potentiality." : "Tomorrow.<br>But more."}</h2><p>${fixed ? "Clearboard is a shared task board for small teams. Assign tasks, set due dates, and see what's ready to ship. $8 per person, per month." : worse ? "An AI-native, paradigm-agnostic ecosystem empowering the operationalization of your organization's next-generation potentiality at unprecedented scale." : "We empower forward-thinking innovators to unlock transformative possibilities through a next-generation ecosystem of purposeful synergy."}</p><button class="demo-button">${fixed ? "Try the sample task board →" : "Unlock your potential ↗"}</button>${status}</div><div class="corporate-orb" aria-hidden="true"></div></div>`;
   let onboardingStep = 1;
   let totalSteps = 4;
   const onboarding = document.createElement("div");
@@ -763,13 +773,16 @@ function renderCorporate({ stage, mode, shuffle }) {
       event.preventDefault();
       onboardingStep++;
       totalSteps += worse ? 3 : 2;
+      if (onboardingStep === 5) {
+        onboarding.innerHTML = `<h3>Product still unavailable</h3><p>You finished the original four steps, but the website added ${totalSteps - onboardingStep + 1} more. The demo ends here; the task board remains blocked. Fix it opens the product directly.</p>`;
+        const message = "Demo complete: onboarding blocked access to the task board. Four finished steps produced more setup instead of the product.";
+        say(message);
+        completeExhibit(stage, message, "blocked");
+        return;
+      }
       renderOnboarding();
       say(`Step completed, but more steps were added. ${totalSteps - onboardingStep} steps now remain.`);
       onboarding.querySelector("select").focus();
-      if (onboardingStep === 5) {
-        say("You finished the original four steps. Management has rewarded you with more onboarding.");
-        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
-      }
     });
     onboarding.querySelector("#onboarding-back").addEventListener("click", () => {
       onboardingStep = 1;
@@ -779,8 +792,10 @@ function renderCorporate({ stage, mode, shuffle }) {
     });
   };
   stage.querySelector("button").addEventListener("click", () => {
+    stage.querySelector(".corporate-content > button").disabled = true;
     if (fixed) {
-      document.querySelector("#demo-status").innerHTML = `Sample board <span class="sample-tasks"><span>To do: Draft homepage</span><span>In progress: Build navigation</span><span>Done: Choose readable fonts</span></span>`;
+      stage.querySelector("#demo-status").innerHTML = `Sample board <span class="sample-tasks"><span>To do: Draft homepage</span><span>In progress: Build navigation</span><span>Done: Choose readable fonts</span></span>`;
+      completeExhibit(stage, "Sample task board opened. You can see the product without an account or extra setup.");
     } else {
       stage.querySelector(".corporate-content").append(onboarding);
       renderOnboarding();
@@ -852,8 +867,8 @@ function renderFonts({ stage, mode }) {
   const worse = mode === "worse";
   const { shell, say } = createStageShell(stage);
   shell("ONE SENTENCE. SEVERAL CREATIVE DISAGREEMENTS.", fixed ? "Let the words do the work." : "Welcome to the font buffet.",
-    fixed ? "Edit the sample sentence. One consistent font and size keep the words readable; approve the design when you're ready." : `You've seen pages where too many fonts make the text hard to read. Here, ${worse ? "every letter" : "every word"} gets its own font, size, and angle. Edit the sample sentence, try Make fonts agree, and approve a design. The button actually picks more competing styles.`,
-    `<label class="type-label" for="type-input">Your sample sentence (maximum 100 characters)</label><input id="type-input" type="text" maxlength="100" value="A simple sentence should not need six fonts." autocomplete="off"><div class="new-actions"><button class="demo-button" id="type-remix">${fixed ? "Apply readable typography" : "Make fonts agree"}</button><button class="plain-button" id="type-approve">Approve this design</button></div><div class="type-output" id="type-output" aria-label="Typography preview"></div><p class="type-revision" id="type-revision"></p>`);
+    fixed ? "Prepare an event notice saying Library open until 9 pm. One consistent font and size keep the words readable; save your draft when it is ready." : `You've seen pages where too many fonts make the text hard to read. Here, ${worse ? "every letter" : "every word"} gets its own font, size, and angle. Write Library open until 9 pm, then select Save draft. Shuffle styles changes the preview but is not a required step. The button actually picks more competing styles.`,
+    `<label class="type-label" for="type-input">Event notice: Library open until 9 pm</label><input id="type-input" type="text" maxlength="100" placeholder="Library open until 9 pm" autocomplete="off"><div class="new-actions"><button class="demo-button" id="type-remix">${fixed ? "Apply readable typography" : "Shuffle styles"}</button><button class="plain-button" id="type-approve">Save draft</button></div><div class="type-output" id="type-output" aria-label="Typography preview"></div><p class="type-revision" id="type-revision"></p>`);
   const families = ["Georgia, serif", "'Courier New', monospace", "'Comic Sans MS', cursive", "Impact, fantasy", "'Trebuchet MS', sans-serif", "Arial, sans-serif"];
   const colors = ["#74305d", "#204e80", "#3d5e34", "#8b361c", "#443269", "#272d32"];
   const input = stage.querySelector("#type-input");
@@ -888,11 +903,15 @@ function renderFonts({ stage, mode }) {
   input.addEventListener("input", render);
   stage.querySelector("#type-remix").addEventListener("click", () => {
     render();
-    say(fixed ? "Readable type applied." : "We interpreted “agree” as “audition several more fonts.”");
+    say(fixed ? "Readable type applied." : "Styles shuffled. The words stayed the same; save the notice when it is ready.");
   });
   stage.querySelector("#type-approve").addEventListener("click", () => {
-    say(input.value.trim() ? fixed ? "Approved. Your reader's eyes thank you." : "Approved by all six art directors. None of them read it." : "Add a sample sentence before approving it.");
-    if (input.value.trim()) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    if (!matchesDemoText(input.value, "Library open until 9 pm")) { say("Write the event notice Library open until 9 pm before saving your draft."); return; }
+    input.readOnly = true;
+    stage.querySelector("#type-remix").disabled = true;
+    stage.querySelector("#type-approve").disabled = true;
+    say("Event notice saved in this demo: Library open until 9 pm. Nothing was stored outside this page.");
+    stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   render();
   return () => {};

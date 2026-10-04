@@ -6,7 +6,7 @@
 npm run check
 ```
 
-This checks the application, exhibit modules, build and server files, Worker, and primary browser-test scripts.
+This checks the application, exhibit modules, build and server files, Worker, and primary browser-test scripts, including the six UX regression suites.
 
 ## Browser checks
 
@@ -47,6 +47,22 @@ Set `MUSEUM_URL` to test another running origin:
 ```sh
 MUSEUM_URL=http://127.0.0.1:3019 npm run test:runaway
 ```
+
+## UX regression blocks
+
+Run `npm run test:ux` for the six logical blocks, or select one with `test:ux:shell`, `test:ux:forms`, `test:ux:interaction`, `test:ux:content`, `test:ux:commerce`, or `test:ux:website`.
+
+These cover mission visibility and scoped Escape; locked accepted forms and repeated explicit retries; formatted phone entry, touch birthday precision, explicit password acceptance, and consistent preference goals; reduced-motion recovery and volume boundaries; stable unlocked recipes and fictional receipt downloads; basket-aware shopping feedback and modal museum access; delivery summaries, registration locking, and delayed hover-help disclosure. Desktop and narrow mobile checks use browser emulation, not physical devices or screen-reader verification.
+
+The UX, goals, and shared experience suites support an existing Chromium-compatible executable when Playwright's bundled browser is unavailable:
+
+```sh
+MUSEUM_URL=http://127.0.0.1:3000 \
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH="/path/to/chromium-or-chrome" \
+npm run test:ux
+```
+
+On macOS, an installed Chrome executable is typically `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`. Without the override, these suites use Playwright's bundled Chromium. UX screenshots, when enabled, belong outside the repository; `test:ux:content` accepts `MUSEUM_CONTENT_ARTIFACTS` for its artifacts.
 
 ## Focused scripts
 

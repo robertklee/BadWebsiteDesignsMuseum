@@ -6,6 +6,8 @@ This catalog explains each experience and its major mode differences without dup
 
 Goals describe ordinary outcomes, not the obstacles: send a message, save a note, find a receipt, or choose a setting. Supplied text and dates give the character-entry and date puzzles a bounded mission. Text comparisons ignore capitalization and outer whitespace; dates and the supplied test-account password must match their stated targets.
 
+Accepted forms lock their values and editing controls. Explicit local retries clear the result and start a new tracked attempt; museum Restart and mode changes also clear progress. Dismissing feedback alone preserves completion.
+
 ## The CAT-PCHA
 
 **Route:** `/exhibit/cat-captcha`
@@ -28,7 +30,7 @@ Hard makes the target smaller and more sensitive and introduces decoys. Touch an
 
 Build a fictional password while new rules appear and all earlier rules remain in force. Easy contains 20 progressively revealed requirements and can be solved.
 
-Hard expands the workout to 32 rules and ends with a deliberate contradiction. Reaching it finishes the demo with **goal blocked**, not a successful password. Successful phrases and the blocked endpoint stop evaluation. Fix it uses one visible length requirement. Never enter a real password or reuse a puzzle answer for an account.
+Hard expands the workout to 32 rules and ends with a deliberate contradiction. Reaching it finishes the demo with **goal blocked**, not a successful password. Successful phrases and the blocked endpoint stop evaluation. Fix it uses one visible length requirement; meeting it keeps the phrase editable until **Create demo password** explicitly accepts it. Never enter a real password or reuse a puzzle answer for an account.
 
 ## The Self-Correcting Search Bar
 
@@ -36,7 +38,7 @@ Hard expands the workout to 32 rules and ends with a deliberate contradiction. R
 
 Find somewhere to meet a friend by searching for **quiet cafes**. Pause while typing and the search bar replaces a word with a plausible but unwanted alternative. It preserves punctuation and inflection where possible, highlights the correction, and lets the visitor reject suggestions to recover the original query.
 
-Hard offers more corrections and requires short explanations for rejection. Other queries remain editable, but the stated cafe search completes the mission. Fix it searches the required words directly. Suggestions and results are local; no external search is performed.
+Hard offers more corrections and requires short explanations for rejection. Other queries remain editable, but **quiet cafe** or **quiet cafes**, ignoring capitalization and extra whitespace, completes the mission when the cafe result is shown. Accepted results remain locked until Restart. Fix it searches the required words directly. Suggestions and results are local; no external search is performed.
 
 ## Your Button Has Moved
 
@@ -44,7 +46,7 @@ Hard offers more corrections and requires short explanations for rejection. Othe
 
 Complete a fictional checkout while promotional offers, recommendations, and sales copy compete with the intended action. The checkout remains a simulation and never accepts a real order or payment.
 
-Hard adds more personalized interruptions and less stable presentation. Fix it reserves space and keeps the checkout action predictable. Keyboard, touch, and reduced-motion alternatives remain available.
+Hard adds more personalized interruptions and less stable presentation. Offer dialogs contain keyboard focus and provide **Museum controls** to close the dialog and focus the toolbar without accepting an offer or losing checkout progress. Escape dismisses only the local offer, preserving the unresolved negotiation. Fix it reserves space and keeps the checkout action predictable. Keyboard, touch, and reduced-motion alternatives remain available.
 
 ## The Layout Earthquake
 
@@ -64,7 +66,7 @@ Hard buries the story deeper, intercepts more attempts, and adds more aggressive
 
 Choose a delivery option in a dialog where scrolling may move the checkout underneath instead. The deliberately poor offer compares very expensive two-day delivery with free three-day delivery.
 
-Hard adds a third shipping-speed dialog and lets each gesture affect different layers, sometimes in opposite directions. Native scrollbars and labeled controls remain reliable. Fix it uses one normally scrolling dialog over a stationary page.
+Hard adds a third shipping-speed dialog and lets each gesture affect different layers, sometimes in opposite directions. Native scrollbars and labeled controls remain reliable. Choosing **Standard** updates both the chooser and checkout summary. Fix it uses one normally scrolling dialog over a stationary page.
 
 ## The Validation Afterthought
 
@@ -72,7 +74,7 @@ Hard adds a third shipping-speed dialog and lets each gesture affect different l
 
 Register for a fictional open house using four fields. A failed submission reveals only the first unmet rule and clears the other answers, forcing requirements to be discovered one at a time.
 
-Hard makes the error message less specific. Fix it shows requirements before submission, validates next to each field, and preserves valid input. All modes accept the same reachable solution, and nothing is submitted or stored.
+Hard makes the error message less specific. Fix it shows requirements before submission, validates next to each field, and preserves valid input. All modes accept the same reachable solution; successful registration clears old errors and locks the accepted fields. Nothing is submitted or stored.
 
 ## The Hover Dependency
 
@@ -80,7 +82,7 @@ Hard makes the error message less specific. Fix it shows requirements before sub
 
 Navigate nested department menus to find a desk lamp's specifications. Pointer users must cross narrow safe corridors before the menus close; touch users work against submenu deadlines.
 
-Hard adds another submenu and twisting paths. Repeated failures reveal a hold-open option, while keyboard navigation has no deadline and reduced motion enables the bypass automatically. Fix it uses persistent click-open menus.
+Hard adds another submenu and twisting paths. The instructions disclose that two failed crossings reveal a hold-open option, and its arrival is announced. Keyboard navigation has no deadline and reduced motion enables the bypass automatically. Fix it uses persistent click-open menus.
 
 ## The Notification Fly Swatter
 
@@ -94,7 +96,7 @@ Hard spawns alerts faster and creates more after misses. Completion and navigati
 
 **Route:** `/exhibit/tetris-volume`
 
-Set a fictional video player's volume to **60%**, with **58-62%** accepted in every mode. Move, rotate, and drop tetrominoes on a compact board. Settled cells control the value, while completed rows disappear and can lower it again. Reaching the target pauses the game and explicitly records success; Resume allows further experimentation without erasing that achievement.
+Set a fictional video player's volume to **60%**, with **58-62%** accepted in every mode. Move, rotate, and drop tetrominoes on a compact board. Settled cells control the value, while completed rows disappear and can lower it again. Reaching the target pauses the game and explicitly records success. Resume starts a fresh tracked attempt while retaining the stack; Empty speaker starts again with an empty board.
 
 Hard accelerates gravity. The game can be paused, supports keyboard controls, and uses manual drops for reduced motion. Fix it restores a normal slider; the exhibit never plays audio or changes device volume.
 
@@ -102,9 +104,9 @@ Hard accelerates gravity. The game can be paused, supports keyboard controls, an
 
 **Route:** `/exhibit/phone`
 
-Roll and lock ten independent digits until they form the fictional target number `2025550107`. Progress depends on repeated chance rather than ordinary text entry.
+Roll ten independent digits until they form the fictional target number `2025550107`, then confirm. Locking digits is optional help, not an extra success requirement. Progress depends on repeated chance rather than ordinary text entry.
 
-Hard also rerolls and unlocks the digit to the left, making a right-to-left strategy more effective. Fix it provides conventional phone-number input.
+Hard also rerolls and unlocks the digit to the left, making a right-to-left strategy more effective. Fix it provides conventional phone-number input and accepts spaces, hyphens, and parentheses without truncating formatted entry.
 
 ## Terms & Conditions: The Game
 
@@ -126,9 +128,9 @@ Hard styles every character independently. Fix it uses consistent typography and
 
 **Route:** `/exhibit/unix-birthday`
 
-Set Alex's fictional profile birthday to **July 16, 1992**. Instead of choosing it from a calendar, move through Unix timestamps: numbers counting milliseconds from January 1, 1970. A millisecond is one thousandth of a second. A live calendar preview translates the number using UTC, the standard world time, and an alignment control snaps the value to midnight. Every mode requires confirming the stated date; another valid date is not a win.
+Set Alex's fictional profile birthday to **July 16, 1992**. Instead of choosing it from a calendar, move through Unix timestamps: numbers counting milliseconds from January 1, 1970. A millisecond is one thousandth of a second. A live calendar preview translates the number using UTC, the standard world time. Hour/day adjustment buttons provide touch-friendly precision after a coarse slider move, and an alignment control snaps the value to midnight. Every mode requires confirming the stated date; another valid date is not a win.
 
-Hard removes the slider and expects a timestamp to be entered manually, while still explaining whether it represents a valid birthday. Fix it uses a native date field.
+Hard removes the slider and expects a timestamp to be entered manually, while still explaining whether it represents a valid birthday. Fix it uses a native date field and gives date-specific range errors rather than timestamp-unit advice.
 
 ## The Cancellation Labyrinth
 
@@ -142,7 +144,7 @@ Hard adds checkpoints, more confusing language, shuffled button positions, and a
 
 **Route:** `/exhibit/recipe`
 
-Find the ingredients and method for buttered toast. The website obstructs that simple goal with a personal story and six comprehension questions before making the recipe available. The fake skip action leads to an advertisement instead.
+Find the ingredients and method for buttered toast. The website obstructs that simple goal with a personal story and six comprehension questions before making the recipe available. Before completion, the fake skip action leads to an advertisement instead. Once unlocked, the shortcut reliably reveals and focuses the recipe without relocking it or recording another completion.
 
 Hard resets reading progress after wrong answers or skip attempts. Fix it presents the short recipe and records **Recipe ready** immediately, without adding a contrived acknowledgment button.
 
@@ -152,7 +154,7 @@ Hard resets reading progress after wrong answers or skip attempts. Fix it presen
 
 Send a support message using an ordinary contact form whose spacing grows exponentially with every character. Longer answers move later fields—and especially the submit button—farther away. Reaching Send is not enough: submitting the valid form completes the task.
 
-Hard makes the growth faster, raises its limits, and folds long sections of the form. Compress temporarily removes the gaps without deleting answers. Fix it keeps conventional spacing.
+Hard makes the growth faster, raises its limits, and folds long sections of the form. Compress temporarily removes the gaps without deleting answers. Name, subject, and message must be nonempty; a valid demo email is required. One-character text answers are allowed, and errors identify the field without clearing other answers. Fix it keeps conventional spacing.
 
 ## The Radio Text Receiver
 
@@ -176,9 +178,9 @@ Completion requires explicitly reserving exactly two tickets with no updates pen
 
 **Route:** `/exhibit/seismic-editor`
 
-Write the reminder **Bring a notebook**, then select **Save draft**. Every edit shakes the writing area and adds stress. Rapid typing, pastes, and punctuation increase the risk that the note will collapse into letter tiles, though the exact input remains preserved. Rebuild restores that text before saving.
+Write the reminder **Bring a notebook**, then select **Save draft**. Harmless terminal punctuation is accepted. Every edit shakes the writing area and adds stress. Rapid typing, pastes, and punctuation increase the risk that the note will collapse into letter tiles, though the exact input remains preserved. Rebuild restores that text before saving.
 
-Hard builds stress faster and shakes more strongly. Rebuild restores editing, reduced motion disables shaking and collapse, and Fix it behaves like a stable editor.
+Hard builds stress faster and shakes more strongly. Rebuild restores editing, reduced motion disables shaking and collapse even when enabled during a session, and Fix it behaves like a stable editor. Start over clears the result and begins a fresh draft.
 
 ## The Volume Seesaw
 
@@ -186,7 +188,7 @@ Hard builds stress faster and shakes more strongly. Rebuild restores editing, re
 
 Set a fictional video player's volume to **65%**, required in every mode. Place pebbles, bricks, and anvils on a wobbling beam whose angle controls the slider, then select **Hold this volume**. Holding another level gives explicit guidance but does not count as success.
 
-Hard introduces buoyant balloons and occasionally moves a weight to the opposite side. Reduced motion settles the beam immediately, and Fix it uses a normal slider. No audio or device setting is changed.
+Hard introduces buoyant balloons; every third addition moves the oldest weight on that side to the opposite side. Release starts a new tracked attempt with the weights retained, while Clear weights starts empty. Reduced motion settles the beam immediately, and Fix it uses a normal slider. No audio or device setting is changed.
 
 ## The Windswept Volume Slider
 
@@ -200,7 +202,7 @@ Hard brings stronger gusts and may turn the control upside down. Keyboard input 
 
 **Route:** `/exhibit/checkbox-ecosystem`
 
-Selected preferences behave like living creatures: they lose health, wander around their habitat, and uncheck themselves if they are not fed. Save succeeds only when the requested combination is alive and selected.
+Selected preferences behave like living creatures: they lose health, wander around their habitat, and uncheck themselves if they are not fed. Save succeeds only when **Security alerts, Delivery updates, and Dark mode** are selected, with all other preferences off. Fix it keeps exactly the same objective.
 
 Hard increases decay and lets fed preferences produce checked offspring. Pause freezes the habitat, reduced motion stops wandering, and Fix it provides stable independent checkboxes.
 
@@ -258,7 +260,7 @@ Hard reshuffles each menu after every edit. Fix it restores ordinary text entry.
 
 Reject four optional cookie categories using coupled switches: changing one preference may change another. The puzzle remains solvable in every mode.
 
-Hard changes several switches at once and uses negated labels. Fix it provides independent controls. The exhibit does not set real cookies.
+Hard changes several switches at once and uses negated labels. The current-settings summary updates after every change, including coupled changes. Fix it provides independent controls. The exhibit does not set real cookies.
 
 ## The Address Jigsaw
 
@@ -282,7 +284,7 @@ Hard replaces vowels, rearranges CAPTCHA tiles after each choice, and requires a
 
 Get an umbrella for a rainy-day visit. The shop forces unnecessary scripted AI onboarding and a fictional monthly plan before adding it to the basket. Other products remain browsable but do not complete the umbrella mission.
 
-Hard requires additional calibration rounds. Fix it sells the same objects with clear one-time prices. Responses are local scripts rather than output from an AI service.
+Hard requires additional calibration rounds. Each product retains its own setup draft when reopened or switched away from; the crude script matches the letters in its keyword, even inside another word, as disclosed in the instructions. After buying an umbrella, optional shopping remains available without claiming the umbrella is still missing or recording duplicate wins. Fix it sells the same objects with clear one-time prices. Responses are local scripts rather than output from an AI service.
 
 ## The Mystery Meat Menu
 
@@ -314,7 +316,7 @@ After four completed steps, Easy and Hard reach a finite **goal blocked** endpoi
 
 Open a fictional booking confirmation showing the time of a museum visit. Wait through ten fake progress stages—including backward progress near completion—to reveal that one sentence. Loading can be cancelled, and timers stop on reset or navigation.
 
-Hard interrupts the wait with approval prompts. Fix it reveals the sentence immediately.
+Hard interrupts the wait with approval prompts. Opening the confirmation again starts a fresh tracked attempt. Fix it reveals the sentence immediately.
 
 ## Shared behavior
 
@@ -322,6 +324,6 @@ Every exhibit has a labeled simulation frame, a visitor mission, a collapsible c
 
 Completing a task records its actual outcome in the task frame and shows a dismissible, on-screen result notification without moving focus. The notification links to the full result and manual next options; dismissing it does not erase the completed marker. Deliberately impossible endpoints say **Demo complete — goal blocked**, not **Task complete**. Initially available content such as the fixed recipe can complete during rendering because completion listeners are installed first.
 
-The inline result offers **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience and its outcome without changing the mode. The unconditional frame footer says **Simulation only**, not **End of the demo**.
+The inline result offers **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience and its outcome without changing the mode; switching modes starts a fresh demo and also clears progress. The unconditional frame footer says **Simulation only**, not **End of the demo**.
 
-The museum's Exit, Reset, and Fix it controls remain trustworthy even when the exhibit is not. Tasks support keyboard operation and provide touch and reduced-motion behavior where relevant. Simulated orders, payments, subscriptions, messages, and personal details never leave the browser; use invented information in form-based exhibits.
+The museum's Exit, Restart, and Fix it controls remain trustworthy even when the exhibit is not. Jump keeps the mission visible below the toolbar while focusing the simulation. Escape exits only from the museum toolbar; inside an exhibit it belongs to the current input or pop-up. Tasks support keyboard operation and provide touch and reduced-motion behavior where relevant. Simulated orders, payments, subscriptions, messages, and personal details never leave the browser; use invented information in form-based exhibits.

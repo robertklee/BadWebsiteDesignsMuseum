@@ -231,9 +231,144 @@ async function checkoutOrder(mode, width, refuse = false) {
   }
 }
 
+async function cancellation(mode, width) {
+  const { page, context } = await open("cancel", mode, width);
+  const total = mode === "hard" ? 9 : 5;
+  const openingQuestion = "Do you want to cancel your subscription?";
+  const answers = new Map([
+    [openingQuestion, "Yes, cancel my subscription"],
+    ["Do you want to stop not cancelling?", "Yes, stop not cancelling"],
+    ["Should we disable renewal prevention?", "No, keep renewal prevention"],
+    ["Would you decline the option to remain?", "Yes, decline remaining"],
+    ["Do not undo your cancellation?", "Correct, do not undo it"],
+    ["Do you decline to refuse our offer not to cancel?", "No, I refuse the offer not to cancel"],
+    ["Should we not prevent your request to stop renewal?", "Yes, do not prevent stopping renewal"],
+    ["Would you refuse to reject the decision not to renew?", "Yes, I refuse to reject not renewing"],
+    ["Should we undo the reversal of your decision to cancel?", "Yes, undo the reversal of cancelling"],
+  ]);
+  const question = page.locator("#cancel-question");
+  const progress = page.locator("#cancel-progress");
+  const feedback = page.locator("#cancel-feedback");
+  const choose = locator => width === 320 ? locator.tap() : locator.press("Enter");
+  const assertFits = async () => {
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  };
+  const unobscured = async locator => {
+    assert.equal(await locator.evaluate(element => {
+      const bounds = element.getBoundingClientRect();
+      const toolbar = document.querySelector(".exhibit-toolbar").getBoundingClientRect();
+      return bounds.top >= Math.max(0, toolbar.bottom) && bounds.bottom <= innerHeight;
+    }), true, "The current question or error explanation must be visible below the museum toolbar");
+  };
+  const correctAnswer = async () => {
+    const text = await question.textContent();
+    const answer = answers.get(text);
+    assert.ok(answer, `Known, logically cancellable question: ${text}`);
+    const button = page.locator(".cancel-options").getByRole("button", { name: answer, exact: true });
+    assert.equal(await button.getAttribute("data-cancel-correct"), "true");
+    return { text, answer, button };
+  };
+  const wrongTurn = async checkpoint => {
+    const { text, answer } = await correctAnswer();
+    const wrong = page.locator('.cancel-options button[data-cancel-correct="false"]');
+    const chosen = await wrong.textContent();
+    await choose(wrong);
+    assert.equal(await question.textContent(), text, "A wrong choice must not replace the question before its explanation is read");
+    assert.equal(await feedback.isVisible(), true);
+    assert.equal(await page.locator("#cancel-feedback-title").evaluate(element => element === document.activeElement), true);
+    await unobscured(page.locator("#cancel-feedback-title"));
+    await unobscured(feedback.locator("p").first());
+    assert.equal(await page.locator(".cancel-options button:disabled").count(), 2);
+    const explanation = await feedback.textContent();
+    assert.ok(explanation.includes(chosen), "Feedback identifies the selected answer");
+    assert.ok(explanation.includes(answer), "Feedback identifies the cancellation answer");
+    assert.match(explanation, /keeps you subscribed/);
+    assert.match(await page.locator("#extra-status").textContent(), /Not cancelled/);
+    const retry = page.getByRole("button", { name: `Return to checkpoint ${checkpoint}`, exact: true });
+    assert.equal(await retry.isVisible(), true);
+    await completionCount(page, 0);
+    await assertFits();
+    await choose(retry);
+    assert.equal(await feedback.isVisible(), false);
+    assert.equal(await question.evaluate(element => element === document.activeElement), true);
+    await unobscured(question);
+    assert.match(await progress.textContent(), new RegExp(`CHECKPOINT ${checkpoint} / ${total}`));
+    if (checkpoint === 1) assert.equal(await question.textContent(), openingQuestion, "Retries start with the simple opening question, even when the remaining questions are shuffled");
+    assert.equal(await page.locator(".cancel-options button:disabled").count(), 0);
+  };
+  try {
+    assert.match(await page.locator(".cancel-plan-status").textContent(), /ACTIVE.*not cancelled/);
+    if (mode === "fixed") {
+      assert.equal(await question.count(), 0);
+      assert.equal(await page.locator(".cancel-help").count(), 0);
+      await choose(page.getByRole("button", { name: "Cancel subscription", exact: true }));
+    } else {
+      assert.match(await page.locator(".new-demo-intro").textContent(), /goal is to end.*Translate this question.*CANCELLED/);
+      assert.match(await page.locator(".new-demo-intro").textContent(), /Cancelling a subscription seems to get harder these days/);
+      assert.equal(await question.textContent(), openingQuestion, "Both maze modes begin with a straightforward confirmation");
+      assert.equal(await page.locator(".cancel-help").getAttribute("open"), null, "Translations are optional, not automatic spoilers");
+      await wrongTurn(1);
+      assert.match(await progress.textContent(), /WRONG TURNS: 1/);
+      for (let step = 0; step < 2; step++) {
+        await choose((await correctAnswer()).button);
+        await completionCount(page, 0);
+        assert.equal(await question.evaluate(element => element === document.activeElement), true);
+        await unobscured(question);
+        assert.match(await page.locator("#extra-status").textContent(), new RegExp(`${step + 1} of ${total} checkpoints cleared.*still active`));
+      }
+      await wrongTurn(mode === "hard" ? 1 : 2);
+      assert.match(await progress.textContent(), /WRONG TURNS: 2/);
+      const seen = new Set();
+      const remaining = mode === "hard" ? total : total - 1;
+      for (let step = 0; step < remaining; step++) {
+        const { text, answer, button } = await correctAnswer();
+        seen.add(text);
+        await choose(page.locator(".cancel-help summary"));
+        assert.equal(await page.locator(".cancel-help").getAttribute("open"), "");
+        const help = await page.locator(".cancel-help").textContent();
+        assert.ok(help.includes(answer), "Translation offers the exact cancellation label");
+        assert.match(help, /To continue cancellation/);
+        await completionCount(page, 0);
+        await assertFits();
+        await choose(button);
+        await completionCount(page, step === remaining - 1 ? 1 : 0);
+      }
+      assert.equal(seen.size, remaining, "Every remaining checkpoint is distinct and reachable");
+    }
+    await completionCount(page, 1);
+    assert.equal(await page.locator("#stage").getAttribute("data-outcome"), "success");
+    assert.equal(await page.locator(".cancelled-stamp").textContent(), "CANCELLED");
+    assert.match(await page.locator("#difficulty-progress p").textContent(), /Subscription cancelled\. Renewal is off/);
+    assert.equal(await page.locator("#cancel-maze button").count(), 0, "Completed cancellation cannot be contradicted by another answer");
+    await assertFits();
+
+    await choose(page.locator(".reset-button"));
+    assert.equal(await page.locator("#stage").getAttribute("data-outcome"), null);
+    assert.equal(await page.locator("#difficulty-progress").isVisible(), false);
+    assert.match(await page.locator(".cancel-plan-status").textContent(), /ACTIVE/);
+    if (mode !== "fixed") {
+      assert.match(await progress.textContent(), /CHECKPOINT 1.*WRONG TURNS: 0/);
+      assert.equal(await question.textContent(), openingQuestion, "Restart preserves the simple first checkpoint");
+      assert.equal(await page.locator(".cancel-help").getAttribute("open"), null);
+      assert.equal(await feedback.isVisible(), false);
+      await page.locator('.cancel-options button[data-cancel-correct="false"]').press("Enter");
+      assert.equal(await feedback.isVisible(), true);
+      await choose(page.locator('[data-mode="fixed"]'));
+      assert.equal(await page.locator(".cancel-help").count(), 0);
+      assert.equal(await feedback.isVisible(), false, "Switching modes clears the failed attempt");
+    }
+    await choose(page.getByRole("button", { name: "Cancel subscription", exact: true }));
+    await completionCount(page, 2);
+    console.log(`Passed cancellation ${mode} at ${width}px: translations, persistent errors, explicit recovery, progress, completion and reset.`);
+  } finally {
+    await context.close();
+  }
+}
+
 try {
   for (const width of [1280, 320]) {
     for (const mode of ["easy", "hard", "fixed"]) {
+      await cancellation(mode, width);
       await store(mode, width);
       await checkoutOrder(mode, width);
       if (mode !== "fixed") {

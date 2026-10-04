@@ -859,51 +859,115 @@ function renderCancel({ stage, mode, shuffle }) {
   const worse = mode === "worse";
   const { shell, say } = createStageShell(stage);
   shell("YOUR SUBSCRIPTION TO NOTHING", fixed ? "Leaving should be easy." : "Are you sure you're not unsure?",
-    fixed ? "You want to cancel. Select Cancel subscription to end the plan; there are no extra confirmations." : "Ending a subscription often means confirming your choice. These questions aren't quite as straightforward as your decision. Choose the answers that continue cancellation.",
+    fixed ? "You want to cancel. Select Cancel subscription to end the plan; there are no extra confirmations." : "Cancelling a subscription seems to get harder these days, even when signing up takes seconds. Your goal is to end the subscription, not keep it. At each checkpoint, choose the answer that stops renewal or keeps cancellation going. If the wording ties you in knots, open Translate this question. Finish every checkpoint to reach CANCELLED.",
     `<div class="cancellation-machine" id="cancel-maze"></div>`);
   const maze = stage.querySelector("#cancel-maze");
+  const openingQuestion = {
+    question: "Do you want to cancel your subscription?",
+    cancel: "Yes, cancel my subscription", keep: "No, keep my subscription",
+    translation: "Do you want to end the subscription?",
+    explanation: 'Cancelling means ending the subscription. Choosing yes continues cancellation; choosing no keeps you subscribed.',
+  };
   const baseQuestions = [
-    { question: "Do you want to stop not cancelling?", yes: "Yes, stop not cancelling", no: "No, continue not cancelling" },
-    { question: "Should we disable renewal prevention?", yes: "No, keep renewal prevention", no: "Yes, disable renewal prevention" },
-    { question: "Would you decline the option to remain?", yes: "Yes, decline remaining", no: "No, do not decline remaining" },
-    { question: "Do not undo your cancellation?", yes: "Correct, do not undo it", no: "Incorrect, undo the cancellation" },
+    {
+      question: "Do you want to stop not cancelling?",
+      cancel: "Yes, stop not cancelling", keep: "No, continue not cancelling",
+      translation: "Do you want to cancel?",
+      explanation: '"Not cancelling" means keeping the subscription. Stopping that means cancelling it.',
+    },
+    {
+      question: "Should we disable renewal prevention?",
+      cancel: "No, keep renewal prevention", keep: "Yes, disable renewal prevention",
+      translation: "Should we turn automatic renewal back on?",
+      explanation: '"Renewal prevention" stops the next renewal. Keeping it continues cancellation; disabling it lets the subscription renew.',
+    },
+    {
+      question: "Would you decline the option to remain?",
+      cancel: "Yes, decline remaining", keep: "No, do not decline remaining",
+      translation: "Do you want to turn down staying subscribed?",
+      explanation: '"Remain" means stay subscribed. Declining that option means leaving.',
+    },
+    {
+      question: "Do not undo your cancellation?",
+      cancel: "Correct, do not undo it", keep: "Incorrect, undo the cancellation",
+      translation: "Should we leave your cancellation in place?",
+      explanation: 'Undoing cancellation keeps the subscription. "Do not undo it" keeps cancellation going.',
+    },
   ];
   const hardQuestions = [
-    { question: "Must we not avoid declining your refusal to reject cancellation?", yes: "Don't avoid declining the refusal to reject it", no: "Avoid not declining my unrefusal" },
-    { question: "Final provisional confirmation: do not fail to prevent us from not ceasing to discontinue renewal?", yes: "Confirmed: don't fail to prevent not discontinuing it", no: "Unconfirmed: cease preventing the failure not to continue" },
-    { question: "Would you object if we didn't refuse not to disregard your request to stop staying?", yes: "Yes, I object to not refusing to disregard it", no: "No, don't not disregard my continued staying" },
-    { question: "Should the Department of Uncancellation refrain from not reversing your non-renewal reversal?", yes: "Yes, refrain from not reversing the reversal", no: "No, reverse the refusal not to unrefrain" },
+    {
+      question: "Do you decline to refuse our offer not to cancel?",
+      cancel: "No, I refuse the offer not to cancel", keep: "Yes, I decline to refuse it",
+      translation: "Do you accept our offer to stay subscribed?",
+      explanation: 'The offer is to keep the subscription. Refusing it continues cancellation; declining to refuse it accepts staying.',
+    },
+    {
+      question: "Should we not prevent your request to stop renewal?",
+      cancel: "Yes, do not prevent stopping renewal", keep: "No, prevent stopping renewal",
+      translation: "Should we let your request to stop renewal go ahead?",
+      explanation: 'Preventing the request keeps renewal active. Not preventing it lets cancellation continue.',
+    },
+    {
+      question: "Would you refuse to reject the decision not to renew?",
+      cancel: "Yes, I refuse to reject not renewing", keep: "No, I reject the decision not to renew",
+      translation: "Do you stand by your decision to stop renewal?",
+      explanation: '"Not to renew" means ending the subscription. Refusing to reject that decision keeps cancellation going; rejecting it keeps renewal active.',
+    },
+    {
+      question: "Should we undo the reversal of your decision to cancel?",
+      cancel: "Yes, undo the reversal of cancelling", keep: "No, keep the reversal of cancelling",
+      translation: "Should we restore your decision to cancel?",
+      explanation: 'Reversing cancellation means staying subscribed. Undoing that reversal restores cancellation.',
+    },
   ];
-  let questions = worse ? shuffle([...baseQuestions, ...hardQuestions]) : baseQuestions;
+  let questions = [openingQuestion, ...(worse ? shuffle([...baseQuestions, ...hardQuestions]) : baseQuestions)];
   let step = 0;
   let mistakes = 0;
-  const visits = new Map();
   const total = fixed ? 1 : questions.length;
   const render = () => {
     if (step === total) {
-      maze.innerHTML = `<div class="cancelled-stamp">CANCELLED</div><p>Subscription ended. We have stopped not cancelling it.</p>`;
-      say(`You escaped${fixed ? "." : ` after ${total} confirmations and ${mistakes} wrong turns.`}`);
-      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      maze.innerHTML = `<div class="cancelled-stamp">CANCELLED</div><p>Subscription ended. Renewal is off. No more confirmations.</p>`;
+      const message = `Subscription cancelled. Renewal is off.${fixed ? "" : ` You escaped after ${total} checkpoints and ${mistakes} wrong turns.`}`;
+      say(message);
+      completeExhibit(stage, message);
       return;
     }
     const question = questions[step];
-    visits.set(question, (visits.get(question) || 0) + 1);
     const options = fixed ? [{ text: "Cancel subscription", correct: true }] : [
-      { text: question.yes, correct: true }, { text: question.no, correct: false },
+      { text: question.cancel, correct: true }, { text: question.keep, correct: false },
     ];
-    maze.innerHTML = `${fixed ? "" : `<span class="demo-kicker">RETENTION CHECKPOINT ${step + 1} / ${total}</span><h3>${question.question}</h3>`}<div class="cancel-options">${(!fixed ? shuffle(options) : options).map(option => `<button class="demo-button${!fixed && visits.get(question) > 1 && option.correct ? " cancel-answer-hint" : ""}" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div>`;
+    maze.innerHTML = `<p class="cancel-plan-status">Subscription: ACTIVE &mdash; not cancelled yet.</p>${fixed ? "" : `<span class="demo-kicker" id="cancel-progress">CHECKPOINT ${step + 1} / ${total} &middot; WRONG TURNS: ${mistakes}</span><h3 id="cancel-question" tabindex="-1" aria-describedby="cancel-progress">${question.question}</h3><details class="cancel-help"><summary>Translate this question</summary><p>${question.translation}</p><p>${question.explanation}</p><p>To continue cancellation, choose <strong>&ldquo;${question.cancel}&rdquo;</strong></p></details>`}<div class="cancel-options">${(!fixed ? shuffle(options) : options).map(option => `<button type="button" class="demo-button" data-cancel-correct="${option.correct}">${option.text}</button>`).join("")}</div><div class="cancel-feedback" id="cancel-feedback" hidden></div>`;
     maze.querySelectorAll("button").forEach(button => button.addEventListener("click", () => {
       if (button.dataset.cancelCorrect === "true") {
         step++;
-        say(worse ? "That answer continues cancellation. Another confusing question is waiting." : "Cancellation confirmed for this step. There is another question before you can leave.");
+        render();
+        if (step < total) {
+          say(`That answer continues cancellation. ${step} of ${total} checkpoints cleared; the subscription is still active. Choose an answer at checkpoint ${step + 1}.`);
+          maze.querySelector("#cancel-question").focus({ preventScroll: true });
+          maze.scrollIntoView({ block: "start", behavior: "instant" });
+        }
       } else {
         mistakes++;
-        step = worse ? 0 : Math.max(0, step - 1);
-        if (worse) questions = shuffle(questions);
-        say(worse ? "That answer kept the subscription active. Cancellation restarts from step one." : "Wrong turn. You have successfully remained subscribed to nothing. Back one checkpoint.");
+        maze.querySelector("#cancel-progress").textContent = `CHECKPOINT ${step + 1} / ${total} \u00b7 WRONG TURNS: ${mistakes}`;
+        const nextStep = worse ? 0 : Math.max(0, step - 1);
+        const penalty = worse ? "All checkpoint progress is lost, and the questions will be reshuffled."
+          : step === 0 ? "You are still at the first checkpoint." : "You go back one checkpoint.";
+        maze.querySelectorAll(".cancel-options button").forEach(option => { option.disabled = true; });
+        const feedback = maze.querySelector("#cancel-feedback");
+        feedback.innerHTML = `<h4 id="cancel-feedback-title" tabindex="-1">This choice keeps you subscribed.</h4><p>You chose <strong>&ldquo;${question.keep}&rdquo;</strong></p><p>${question.explanation}</p><p>To continue cancellation, choose <strong>&ldquo;${question.cancel}&rdquo;</strong> when this question appears again.</p><p>${penalty} Select Return to checkpoint ${nextStep + 1} to try again.</p><button type="button" class="demo-button" id="cancel-retry">Return to checkpoint ${nextStep + 1}</button>`;
+        feedback.hidden = false;
+        say(`Not cancelled. ${penalty} Read the explanation, then select Return to checkpoint ${nextStep + 1}.`);
+        feedback.querySelector("#cancel-retry").addEventListener("click", () => {
+          step = nextStep;
+          if (worse) questions = [openingQuestion, ...shuffle(questions.slice(1))];
+          render();
+          say(`Try checkpoint ${step + 1} of ${total}. Choose the answer that continues cancellation, or open Translate this question for help.`);
+          maze.querySelector("#cancel-question").focus({ preventScroll: true });
+          maze.scrollIntoView({ block: "start", behavior: "instant" });
+        });
+        feedback.querySelector("h4").focus({ preventScroll: true });
+        feedback.scrollIntoView({ block: "start", behavior: "instant" });
       }
-      render();
-      if (step < total) maze.querySelector("button").focus();
     }));
   };
   render();

@@ -52,7 +52,7 @@ MUSEUM_URL=http://127.0.0.1:3019 npm run test:runaway
 
 Run `npm run test:ux` for the six logical blocks, or select one with `test:ux:shell`, `test:ux:forms`, `test:ux:interaction`, `test:ux:content`, `test:ux:commerce`, or `test:ux:website`.
 
-These cover mission visibility and scoped Escape; locked accepted forms and repeated explicit retries; formatted phone entry, touch birthday precision, explicit password acceptance, and consistent preference goals; reduced-motion recovery and volume boundaries; stable unlocked recipes and fictional receipt downloads; basket-aware shopping feedback and modal museum access; delivery summaries, registration locking, and delayed hover-help disclosure. Desktop and narrow mobile checks use browser emulation, not physical devices or screen-reader verification.
+These cover mission visibility and scoped Escape; locked accepted forms and repeated explicit retries; formatted phone entry, touch birthday precision, explicit password acceptance, and consistent preference goals; reduced-motion recovery and volume boundaries; stable unlocked recipes and fictional receipt downloads; basket-aware shopping feedback and modal museum access; cancellation translations, persistent wrong-answer explanations, explicit checkpoint recovery, progress and completion; delivery summaries, registration locking, and delayed hover-help disclosure. Desktop and narrow mobile checks use browser emulation, not physical devices or screen-reader verification.
 
 The UX, goals, and shared experience suites support an existing Chromium-compatible executable when Playwright's bundled browser is unavailable:
 

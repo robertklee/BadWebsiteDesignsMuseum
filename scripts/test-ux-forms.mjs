@@ -46,13 +46,13 @@ async function pending(page, previousWins = 0) {
   assert.equal(await page.locator("#difficulty-progress").isVisible(), false);
   assert.equal(await page.locator("#exhibit-outcome").isVisible(), false);
   assert.equal(await page.locator("#exhibit-task > span").textContent(), "YOUR TASK");
-  assert.equal(await page.locator(".exhibit-frame-footer > span").first().textContent(), "SIMULATION ONLY");
+  assert.equal(await page.locator(".exhibit-frame-footer > span").first().textContent(), "EXHIBIT IN PROGRESS");
 }
 
 async function finished(page, message, count = 1, outcome = "success") {
   assert.equal(await page.evaluate(() => window.formEvents.completed), count, "One completion per accepted attempt");
   assert.equal(await page.locator("#stage").getAttribute("data-outcome"), outcome);
-  assert.equal(await page.locator("#completion-title").textContent(), outcome === "blocked" ? "Demo complete — goal blocked" : "Task complete");
+  assert.equal(await page.locator("#completion-title").textContent(), outcome === "blocked" ? "Goal blocked" : "Task complete");
   assert.match(await page.locator("#difficulty-progress p").textContent(), message);
   assert.equal(await page.locator("#difficulty-progress").isVisible(), true);
   assert.equal(await page.locator("#exhibit-outcome").isVisible(), true);
@@ -132,7 +132,7 @@ try {
       if (mode === "fixed") await page.locator("#word-text").pressSequentially("Meet at six");
       else for (const [index, letter] of [..."Meet at six"].entries()) await page.locator(`[data-character="${index}"]`).selectOption(letter);
       await page.locator("#word-finish").click();
-      await finished(page, /draft saved/i);
+      await finished(page, /draft ready/i);
       await frozen(page, "#stage");
       if (mode === "fixed") {
         await page.locator("#word-text").pressSequentially("changed");
@@ -166,7 +166,7 @@ try {
 
     await visit("unix-birthday", mode, async page => {
       const input = page.locator("#epoch-input");
-      const confirm = page.getByRole("button", { name: "Confirm demo birthday", exact: true });
+      const confirm = page.getByRole("button", { name: "Confirm birthday", exact: true });
       if (mode === "fixed") {
         await input.fill("1899-12-31");
         await confirm.click();
@@ -295,7 +295,7 @@ try {
           assert.equal(await page.locator("#arcade-password").textContent(), "Claw_M00n!42");
         }
         await frozen(page, ".arcade-crane", "#arcade-crane-reset");
-      }, "#arcade-crane-reset", mode === "fixed" ? /Test-account phrase accepted/ : /Success.*Claw_M00n!42/);
+      }, "#arcade-crane-reset", mode === "fixed" ? /Phrase accepted/ : /Success.*Claw_M00n!42/);
     });
 
     await visit("email-auction", mode, async page => {
@@ -333,7 +333,7 @@ try {
         await pending(page);
         await page.locator("#jigsaw-input").fill(`  ${addressPieces.join("   ")}  `);
         await page.locator("#jigsaw-simple button").click();
-        await finished(page, /Demo address accepted/);
+        await finished(page, /Address accepted/);
         await frozen(page, "#jigsaw-simple");
         return;
       }
@@ -360,7 +360,7 @@ try {
       for (const [index, value] of ["A", "not-an-email", "Q", "?"].entries()) await page.locator(`#expanding-field-${index}`).fill(value);
       await send();
       await pending(page);
-      assert.match(await page.locator("#extra-status").textContent(), /valid demo email address.*other answers are preserved/);
+      assert.match(await page.locator("#extra-status").textContent(), /valid email address.*other answers are preserved/);
       assert.equal(await page.locator("#expanding-field-2").inputValue(), "Q");
       assert.equal(await page.locator("#expanding-field-3").inputValue(), "?");
       await page.locator("#expanding-field-1").fill("a@example.test");
@@ -375,7 +375,7 @@ try {
       assert.match(await page.locator("#extra-status").textContent(), /Enter message.*other answers are preserved/);
       await page.locator("#expanding-field-3").fill("?");
       await send();
-      await finished(page, /Demo form complete/);
+      await finished(page, /Message complete/);
       await frozen(page, "#expanding-form");
     });
 
@@ -387,7 +387,7 @@ try {
       await page.locator("#correcting-input").fill("quiet cafes");
       await defendSearch(page, mode);
       await page.locator("#correcting-submit").click();
-      await finished(page, /quiet cafes.*local demo results/);
+      await finished(page, /quiet cafes.*results/);
       await frozen(page, ".correcting-machine");
       await page.locator("#correcting-input").pressSequentially(" weather");
       assert.equal(await page.locator("#correcting-input").inputValue(), "quiet cafes");
@@ -398,7 +398,7 @@ try {
       if (mode === "fixed") {
         await page.locator("#cat-simple-check").check();
         await page.locator("#cat-simple-form button").click();
-        await finished(page, /Demo verified/);
+        await finished(page, /Verified/);
         await frozen(page, "#cat-simple-form");
         return;
       }
@@ -406,7 +406,7 @@ try {
         assert.equal(await page.locator("#cat-verdict").textContent(), "UNVERIFIED");
         const keys = { R: "ArrowRight", L: "ArrowLeft", U: "ArrowUp", D: "ArrowDown" };
         for (const step of catRoutes[mode].split(" ")) await page.locator("#cat-board").press(keys[step]);
-        assert.equal(await page.locator("#cat-verdict").textContent(), "DEMO VERIFIED");
+        assert.equal(await page.locator("#cat-verdict").textContent(), "VERIFIED");
       }, "#cat-retry", /escaped with all the cheese/);
     });
   }
@@ -427,7 +427,7 @@ try {
       await page.locator("#phone-number").fill(value);
       await page.locator("#phone-form button").click();
       await pending(page);
-      assert.match(await page.locator("#extra-status").textContent(), /fictional demo number 2025550107/);
+      assert.match(await page.locator("#extra-status").textContent(), /supplied number 2025550107/);
     }
   });
   for (const mode of ["easy", "hard"]) {
@@ -457,7 +457,7 @@ try {
       }
       await page.locator("#correcting-input").fill(query);
       await page.locator("#correcting-submit").click();
-      await finished(page, /local demo results/);
+      await finished(page, /Searched.*results/);
       assert.match(await page.locator("#correcting-results").textContent(), /Quiet cafes/);
       await frozen(page, ".correcting-machine");
     });
@@ -473,7 +473,7 @@ try {
     await page.locator("#gym-phrase").pressSequentially("123456789012");
     await pending(page);
     await page.locator("#gym-create").click();
-    await finished(page, /phrase accepted/);
+    await finished(page, /phrase accepted/i);
     assert.equal(await page.locator("#gym-phrase").inputValue(), "123456789012");
   });
 
@@ -495,7 +495,7 @@ try {
     }
     await page.getByRole("button", { name: "Increase timestamp by one hour", exact: true }).tap();
     assert.equal(Number(await input.inputValue()), target + 3600000);
-    await page.getByRole("button", { name: "Confirm demo birthday", exact: true }).tap();
+    await page.getByRole("button", { name: "Confirm birthday", exact: true }).tap();
     await pending(page);
     assert.match(await page.locator("#extra-status").textContent(), /not midnight UTC/);
     await page.getByRole("button", { name: "Decrease timestamp by one hour", exact: true }).tap();
@@ -503,7 +503,7 @@ try {
     await page.getByRole("button", { name: "Increase timestamp by one day", exact: true }).tap();
     assert.equal(Number(await input.inputValue()), target);
     assert.match(await page.locator("#epoch-readout").textContent(), /1992-07-16 00:00:00.*Aligned to midnight/);
-    await page.getByRole("button", { name: "Confirm demo birthday", exact: true }).tap();
+    await page.getByRole("button", { name: "Confirm birthday", exact: true }).tap();
     await finished(page, /Alex.*1992-07-16/);
     await frozen(page, "#epoch-form");
   }, 320);

@@ -89,7 +89,7 @@ try {
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${origin}/exhibit/validation-afterthought?mode=fixed`);
   await page.getByRole("textbox", { name: "Guest name", exact: true }).fill("Alex Example");
-  await page.getByRole("textbox", { name: "Demo email", exact: true }).fill("alex@example.test");
+  await page.getByRole("textbox", { name: "Email address", exact: true }).fill("alex@example.test");
   const reference = page.getByRole("textbox", { name: "Booking reference", exact: true });
   await reference.fill("EVT-2048");
   await reference.press("Escape");

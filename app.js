@@ -162,12 +162,12 @@ function renderHome(anchor) {
       <div class="hero-fine">${exhibits.length} things to try <span>·</span> Deliberately bad design <span>·</span> Free to explore</div></div>
       <div class="hero-sculpture" aria-hidden="true"><div class="orbit-label">EXCEPTIONALLY BAD. INTENTIONALLY SO.</div><div class="sculpture-window"><div class="window-top"><span>● ● ●</span><span>oops.website</span><span>×</span></div><div class="sculpture-body"><span class="error-tag">DESIGN ERROR 404</span><div class="face"><span>×</span><span>×</span><i></i></div><strong>Looks wrong.<br>Feels right.</strong><span class="window-button">please don't click</span></div></div><div class="award-seal">100%<span>BAD<br>BY DESIGN</span></div><span class="floating-star">✳</span><span class="sculpture-caption">FIG. 001 — A BEAUTIFUL MISTAKE</span></div>
     </section>
-    <div class="manifesto-strip"><span>FAMILIAR TASKS. UNFAMILIAR OBSTACLES.</span><span aria-hidden="true">✳</span><span>CLICK. TYPE. TRY AGAIN.</span><span aria-hidden="true">✳</span><span>ALL THE FRUSTRATION. NONE OF THE CONSEQUENCES.</span><span aria-hidden="true">✳</span></div>
+    <div class="manifesto-strip"><span>FAMILIAR TASKS. UNFAMILIAR OBSTACLES.</span><span aria-hidden="true">✳</span><span>CLICK. TYPE. TRY AGAIN.</span><span aria-hidden="true">✳</span><span>A QUICK TASK. ALLEGEDLY.</span><span aria-hidden="true">✳</span></div>
     <section class="collection section-wrap" id="collection" aria-labelledby="collection-title"><div class="section-heading"><div><div class="eyebrow">THE PERMANENT COLLECTION</div><h2 id="collection-title">${exhibits.length} simple tasks, made difficult<span> (on purpose).</span></h2></div><p>Pick something you'd normally do online.<br>See how much worse it could be.</p></div>
     <div class="filters" role="group" aria-label="Filter exhibits">${["All exhibits", ...new Set(exhibits.map(exhibit => exhibit.category))].map(label => `<button class="filter" aria-pressed="${activeFilter === label}" data-filter="${label}">${label}${label === "All exhibits" ? ` <span>${String(exhibits.length).padStart(2, "0")}</span>` : ""}</button>`).join("")}</div>
     <div class="card-grid" id="exhibit-grid">${exhibits.filter(e => activeFilter === "All exhibits" || e.category === activeFilter).map(card).join("")}</div>
-    <p class="collection-footnote"><span>↳</span> These are working demos, not screenshots. Try the task yourself; the bad design is deliberate.</p></section>
-    <section id="about" class="about section-wrap"><div class="about-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">WHY THIS WEBSITE EXISTS</div><h2>You've had a frustrating<br>experience online. So have we.</h2><p>You came to do one small thing online. The website had other plans. This collection takes familiar frustrations somewhere they probably should never have gone. No design or programming knowledge required.</p><p>Each exhibit gives you a familiar task and an unnecessarily difficult way to do it. Choose <strong>“Make it even worse”</strong> to take the joke further, or the smaller “Fix it” option for a break. Nothing you buy, send, or sign up for here is real, and you can always leave an exhibit.</p><span class="about-signoff">INSPIRED BY REAL FRUSTRATIONS. EXAGGERATED FOR YOUR ENJOYMENT. ↗</span></div></section>`;
+    <p class="collection-footnote"><span>↳</span> Every exhibit is interactive. Pick a task and see how far you get.</p></section>
+    <section id="about" class="about section-wrap"><div class="about-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">WHY THIS WEBSITE EXISTS</div><h2>You've had a frustrating<br>experience online. So have we.</h2><p>You came to do one small thing online. The website had other plans. This collection takes familiar frustrations somewhere they probably should never have gone. No design or programming knowledge required.</p><p>Each exhibit gives you a familiar task and an unnecessarily difficult way to do it. Choose <strong>“Make it even worse”</strong> to take the joke further, or the smaller “Fix it” option for a break. Restart for another attempt, or head back to the collection whenever you've had enough.</p><span class="about-signoff">INSPIRED BY REAL FRUSTRATIONS. EXAGGERATED FOR YOUR ENJOYMENT. ↗</span></div></section>`;
   document.title = "Really Bad Design Museum — Good taste. Bad examples.";
   const scrollPreviews = setupScrollPreviews(main.querySelector("#exhibit-grid"));
   cleanup = scrollPreviews.dispose;
@@ -200,23 +200,23 @@ function renderExhibit(id, focus = false) {
     ? "This version removes the unnecessary obstacles. Switch back whenever you'd like."
     : mode === "worse"
       ? exhibit.worseChange
-      : "Try the task below. The obstacles are deliberate; Restart and Exit always work.";
+      : "Try the task below. Restart for a fresh attempt, or Exit to return to the collection.";
   main.innerHTML = `<section class="exhibit-page section-wrap">
     <a class="escape" href="/#collection">← Back to the collection</a>
-    <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">TRY IT YOURSELF.<br>IT REALLY WORKS. ↙</span></div>
+    <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">A SMALL TASK.<br>A BAD IDEA. ↙</span></div>
     <details class="exhibit-guide"${guideOpen ? " open" : ""}>
       <summary>New here? Here's how this works <span aria-hidden="true">↓</span></summary>
       <div class="guide-body"><p class="guide-intro">This website collects the worst ways to do simple tasks online. Each exhibit starts with something familiar, then makes it far more difficult than it needs to be.</p>
-      <ol class="guide-steps"><li><strong>Try a familiar task.</strong><span>Click, type, or scroll in the demo below. The instructions tell you what you're trying to do.</span></li><li><strong>Make it even worse.</strong><span>Choose the more frustrating version whenever you like. You don't have to finish first. Switching modes starts a fresh demo and clears progress.</span></li><li><strong>Stay in control.</strong><span>Restart begins the current demo again. Exit returns to the collection. “Fix it” removes the obstacles. Escape exits only when focus is on the museum controls; inside the demo, it belongs to the current control or pop-up.</span></li></ol>
-      <div class="guide-footer"><p>These are demos, not real services. Use made-up details, never real passwords or payment information.</p><button type="button" class="guide-dismiss">Got it — let's try it</button></div></div>
+      <ol class="guide-steps"><li><strong>Try a familiar task.</strong><span>Click, type, or scroll in the exhibit below. The instructions tell you what you're trying to do.</span></li><li><strong>Make it even worse.</strong><span>Choose the more frustrating version whenever you like. You don't have to finish first. Switching modes starts a fresh attempt and clears progress.</span></li><li><strong>Stay in control.</strong><span>Restart begins the current exhibit again. Exit returns to the collection. “Fix it” removes the obstacles. Escape exits only when focus is on the museum controls; inside the exhibit, it belongs to the current control or pop-up.</span></li></ol>
+      <div class="guide-footer"><p>Use made-up details. Keep your passwords and payment information to yourself.</p><button type="button" class="guide-dismiss">Got it — let's try it</button></div></div>
     </details>
-    <div class="exhibit-toolbar"><span class="museum-controls-label">MUSEUM CONTROLS <span>These actually work.</span></span><div class="mode-controls" role="group" aria-label="Exhibit mode"><button type="button" data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button type="button" data-mode="worse" aria-pressed="${mode === "worse"}">Make it even worse ↗</button><button type="button" class="mode-fix" data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button type="button" class="reset-button" aria-label="Restart in the current mode">↻ Restart</button><a class="toolbar-exit" href="/#collection">Exit ↗</a></div></div>
-    <p class="mode-note" role="status"><strong>${modeLabel}.</strong> ${modeNote} Switching modes starts a fresh demo and clears progress.</p>
+    <div class="exhibit-toolbar"><span class="museum-controls-label">MUSEUM CONTROLS <span>Take a breather.</span></span><div class="mode-controls" role="group" aria-label="Exhibit mode"><button type="button" data-mode="bad" aria-pressed="${mode === "bad"}">Original disaster</button><button type="button" data-mode="worse" aria-pressed="${mode === "worse"}">Make it even worse ↗</button><button type="button" class="mode-fix" data-mode="fixed" aria-pressed="${mode === "fixed"}">Fix it ✓</button></div><div class="toolbar-actions"><button type="button" class="reset-button" aria-label="Restart in the current mode">↻ Restart</button><a class="toolbar-exit" href="/#collection">Exit ↗</a></div></div>
+    <p class="mode-note" role="status"><strong>${modeLabel}.</strong> ${modeNote} Switching modes starts a fresh attempt and clears progress.</p>
     <section class="exhibit-frame" aria-labelledby="simulation-title">
-      <div class="exhibit-frame-heading"><div><span class="eyebrow" id="simulation-title">INTERACTIVE DEMO</span><p>Try the task here. No real-world consequences.</p></div><button type="button" class="start-exhibit">Jump into exhibit ↓</button></div>
+      <div class="exhibit-frame-heading"><div><span class="eyebrow" id="simulation-title">THE EXHIBIT</span><p>One simple task. A few questionable decisions.</p></div><button type="button" class="start-exhibit">Jump into exhibit ↓</button></div>
       <div class="exhibit-task" id="exhibit-task"><span>YOUR TASK</span><p>${mode === "fixed" ? exhibit.fixedTask : exhibit.task}</p></div>
-      <div class="exhibit-stage ${id}-stage ${mode}" id="stage" role="region" aria-label="${exhibit.name} simulation" aria-describedby="exhibit-task" tabindex="-1"></div>
-      <div class="exhibit-frame-footer"><span>SIMULATION ONLY</span><span>No real orders, accounts, or submissions.</span></div>
+      <div class="exhibit-stage ${id}-stage ${mode}" id="stage" role="region" aria-label="${exhibit.name} exhibit" aria-describedby="exhibit-task" tabindex="-1"></div>
+      <div class="exhibit-frame-footer"><span>EXHIBIT IN PROGRESS</span><span>Restart for a fresh attempt.</span></div>
     </section>
     <aside class="exhibit-outcome" id="exhibit-outcome" aria-label="Exhibit result" aria-live="polite" aria-atomic="true" hidden><a href="#difficulty-progress"><strong></strong><span></span><small>View result and next options →</small></a><button type="button" aria-label="Hide result notification" title="Hide result notification">×</button></aside>
     <section class="difficulty-progress" id="difficulty-progress" aria-labelledby="completion-title" hidden><div><div class="eyebrow">YOUR RESULT</div><h2 id="completion-title" tabindex="-1">Task complete</h2><p></p></div><div class="difficulty-transition-actions">${mode === "worse" ? `<a class="completion-primary" href="/exhibit/${nextExhibit.id}">Next questionable idea →</a>` : '<button type="button" class="completion-primary" data-difficulty-action="advance">Make it even worse ↗</button>'}${mode !== "fixed" ? '<button type="button" class="completion-fix" data-difficulty-action="fix">Fix it ✓</button>' : ""}<button type="button" class="completion-stay" data-difficulty-action="stay">Keep admiring this mess</button></div></section>
@@ -282,10 +282,10 @@ function setupCompletionActions(changeMode) {
     if (disposed || completed) return;
     completed = true;
     const blocked = event.detail?.outcome === "blocked";
-    const title = blocked ? "Demo complete — goal blocked" : "Task complete";
+    const title = blocked ? "Goal blocked" : "Task complete";
     const result = event.detail?.message || stage.querySelector(".demo-status")?.textContent.trim() || "Your task is complete.";
     stage.dataset.outcome = blocked ? "blocked" : "success";
-    main.querySelector("#exhibit-task > span").textContent = blocked ? "DEMO COMPLETE" : "TASK COMPLETE";
+    main.querySelector("#exhibit-task > span").textContent = blocked ? "GOAL BLOCKED" : "TASK COMPLETE";
     main.querySelector(".exhibit-frame-footer > span").textContent = blocked ? "GOAL BLOCKED BY THE WEBSITE" : "TASK COMPLETE";
     notice.hidden = false;
     notice.querySelector("h2").textContent = title;
@@ -300,7 +300,7 @@ function setupCompletionActions(changeMode) {
     completed = false;
     delete stage.dataset.outcome;
     main.querySelector("#exhibit-task > span").textContent = "YOUR TASK";
-    main.querySelector(".exhibit-frame-footer > span").textContent = "SIMULATION ONLY";
+    main.querySelector(".exhibit-frame-footer > span").textContent = "EXHIBIT IN PROGRESS";
     notice.hidden = true;
     notice.querySelector("h2").textContent = "Task complete";
     notice.querySelector("p").textContent = "";

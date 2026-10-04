@@ -35,6 +35,6 @@ npm run preview
 npm run deploy
 ```
 
-All exhibit interactions are local and ephemeral. Purchases, subscriptions, messages, credentials, and personal details are simulations and are not submitted or stored. A short first-visit guide and labeled simulation frames keep the museum separate from the joke; only guide dismissal is remembered for the current tab. **Make it even worse** turns up the satire without automatic mode changes, while a smaller **Fix it** option provides a sensible escape hatch. The collection supports keyboard and touch input and reduced-motion preferences.
+All exhibit interactions are local and ephemeral. Purchases, subscriptions, messages, credentials, and personal details are simulations and are not submitted or stored. The museum framing establishes the satire without repeating disclaimers in every task, button, and result. A short first-visit guide recommends made-up details; password exhibits retain local safety guidance, and downloaded tickets and receipts identify their limitations. Only guide dismissal is remembered for the current tab. **Make it even worse** turns up the satire without automatic mode changes, while a smaller **Fix it** option provides a sensible escape hatch. The collection supports keyboard and touch input and reduced-motion preferences.
 
 Accepted forms lock their results. Explicit retries start fresh tracked attempts; restarting or switching modes clears progress. Escape exits only from the museum toolbar, leaving draft inputs and exhibit pop-ups to handle it locally.

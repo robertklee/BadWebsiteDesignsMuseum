@@ -265,6 +265,11 @@ try {
   assert.equal(Object.keys(familiarContext).length, getCatalog().length, "Every exhibit has contextual-copy coverage");
   for (const exhibit of getCatalog()) {
     assert.match(exhibit.description, familiarContext[exhibit.id], `${exhibit.id} introduces familiar context on its collection card`);
+    assert.doesNotMatch(
+      [exhibit.tagline, exhibit.description, exhibit.task, exhibit.fixedTask, exhibit.worseChange, exhibit.preview.replace(/<[^>]*>/g, " ")].join("\n"),
+      /\b(?:demo|fictional|pretend|simulation)\b/i,
+      `${exhibit.id} lets the museum context carry the satire instead of labeling every action as fictional`,
+    );
     const spoiler = protectedSurprises[exhibit.id];
     if (spoiler) {
       assert.doesNotMatch([exhibit.tagline, exhibit.description, exhibit.task, exhibit.worseChange, exhibit.preview].join("\n"), spoiler, `${exhibit.id} hints at its premise without explaining the surprise in cards, tasks, modes, or share artwork`);
@@ -273,6 +278,8 @@ try {
       await catalog.goto(`${origin}/exhibit/${exhibit.id}?mode=${mode}`);
       assert.equal(await catalog.locator('meta[name="description"]').getAttribute("content"), `${exhibit.tagline} ${exhibit.description}`, `${exhibit.id}/${mode} shares the same contextual, spoiler-light copy`);
       assert.equal(await catalog.locator("#stage").getAttribute("aria-describedby"), "exhibit-task");
+      assert.equal(await catalog.locator(".exhibit-frame-heading .eyebrow").textContent(), "THE EXHIBIT");
+      assert.equal(await catalog.locator("#stage .simulation-note").count(), 0, "Exhibits do not repeat the shared safety guidance");
       assert.equal(await catalog.locator("#exhibit-task p").textContent(), mode === "fixed" ? exhibit.fixedTask : exhibit.task);
       assert.equal(await catalog.locator("#stage").evaluate(element => element.children.length > 0), true, `${exhibit.id}/${mode} renders inside the frame`);
       const introduction = await catalog.locator("#stage .new-demo-intro, #stage .form-demo > p, #stage .word-editor-intro > p, #stage .demo-centered > p, #stage .recipe-intro > p, #stage .retro-subtitle, #stage .corporate-content > p").first().textContent();

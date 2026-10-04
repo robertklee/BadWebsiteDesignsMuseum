@@ -265,22 +265,22 @@ async function downloadReceipt(page, mode, profile, attempt) {
 
 async function testReceipt(page, mode, profile) {
   assert.match(await page.locator(".exhibit-heading p").textContent(), /receipt/i);
-  assert.match(await page.locator("#exhibit-task p").textContent(), /receipt.*demo expense claim|demo expense claim.*receipt/i);
+  assert.match(await page.locator("#exhibit-task p").textContent(), /receipt.*expense claim|expense claim.*receipt/i);
   assert.match(await page.locator("#exhibit-task p").textContent(), /Download receipt/);
-  assert.match(await page.locator(".new-demo-intro").textContent(), /fictional receipt for a demo expense claim/);
+  assert.match(await page.locator(".new-demo-intro").textContent(), /your receipt for an expense claim/);
   await activate(page, page.locator(".curator-note summary"), profile);
   assert.match(await page.locator(".curator-note p").textContent(), /receipt/);
   assert.doesNotMatch(await page.locator(".exhibit-heading p, #exhibit-task p, .new-demo-intro, .curator-note p").allTextContents().then(items => items.join("\n")), /shipping/i);
   await unfinished(page);
   await findReceipt(page, mode, profile, 0, true);
-  assert.match(await page.locator("#mystery-destination").textContent(), /fictional receipt/);
+  assert.match(await page.locator("#mystery-destination").textContent(), /Your receipt is ready/);
   assert.match(await page.locator("#mystery-task").textContent(), /Receipt not yet downloaded/);
   await unfinished(page);
   await fits(page);
   await downloadReceipt(page, mode, profile, "first");
   await finished(page);
   assert.match(await page.locator("#mystery-task").textContent(), /^Receipt downloaded/);
-  assert.match(await page.locator("#difficulty-progress p").textContent(), /Fictional receipt downloaded.*Not valid for a real expense claim/);
+  assert.match(await page.locator("#difficulty-progress p").textContent(), /Receipt downloaded/);
   if (artifacts) await page.screenshot({ path: join(artifacts, `mystery-menu-${mode}-${profile.name}.png`) });
   await activate(page, page.getByRole("button", { name: "Hide result notification" }), profile);
   await downloadReceipt(page, mode, profile, "repeat");

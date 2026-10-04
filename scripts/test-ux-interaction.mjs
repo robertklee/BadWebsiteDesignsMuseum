@@ -34,7 +34,7 @@ async function withExhibit(id, mode, width, run, reducedMotion = "reduce") {
 async function fresh(page) {
   assert.equal(await page.locator("#stage").getAttribute("data-outcome"), null, "Local retry clears outcome");
   assert.equal(await page.locator("#exhibit-task > span").textContent(), "YOUR TASK");
-  assert.equal(await page.locator(".exhibit-frame-footer > span").first().textContent(), "SIMULATION ONLY");
+  assert.equal(await page.locator(".exhibit-frame-footer > span").first().textContent(), "EXHIBIT IN PROGRESS");
   assert.equal(await page.locator("#difficulty-progress").isVisible(), false);
   assert.equal(await page.locator("#difficulty-progress p").textContent(), "");
   assert.equal(await page.locator("#exhibit-outcome").isVisible(), false);
@@ -180,7 +180,7 @@ try {
         assert.equal(await page.locator("#stage").evaluate(element => element.getAnimations({ subtree: true }).length), 0);
         await page.locator("#quake-input").fill("Bring a notebook.");
         await page.locator("#quake-finish").click();
-        await won(page, /Draft saved in this demo: Bring a notebook/);
+        await won(page, /Draft ready: Bring a notebook/);
         assert.equal(await page.locator("#quake-input").getAttribute("readonly"), "");
         assert.equal(await page.locator("#quake-finish").isDisabled(), true);
         await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -194,7 +194,7 @@ try {
         assert.equal(await page.locator("#quake-finish").isDisabled(), false);
         await page.locator("#quake-input").fill("Bring a notebook!");
         await page.locator("#quake-finish").click();
-        await won(page, /Draft saved in this demo: Bring a notebook/);
+        await won(page, /Draft ready: Bring a notebook/);
       });
 
       await withExhibit("notification-swatter", mode, width, async page => {
@@ -215,7 +215,7 @@ try {
         assert.equal(await page.locator("#fly-company").inputValue(), "");
         await page.locator("#fly-finish").focus();
         await page.keyboard.press("Enter");
-        await won(page, /Support request sent in the demo/);
+        await won(page, /Support request complete/);
         assert.equal(await page.locator(".fly-notification").count(), 0, "Submitting, not swatting every alert, ends the swarm");
         assert.equal(await page.locator("#fly-finish").isDisabled(), true);
         for (const field of ["name", "email", "company", "subject", "message"]) {
@@ -255,7 +255,7 @@ try {
         await page.locator("#quake-input").fill("Bring a notebook?");
         await rebuildIfNeeded(page);
         await page.locator("#quake-finish").click();
-        await won(page, /Draft saved in this demo: Bring a notebook/);
+        await won(page, /Draft ready: Bring a notebook/);
       }, "no-preference");
 
       await withExhibit("tetris-volume", mode, width, tetrisRetry);

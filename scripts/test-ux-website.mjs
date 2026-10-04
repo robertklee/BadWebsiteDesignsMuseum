@@ -208,7 +208,7 @@ async function checkRejectedForm(page, mode, id, value, completions = 0) {
     const banner = await page.locator("#registration-error").textContent();
     assert.match(banner, /Other answers have been cleared/);
     assert.match(banner, mode === "hard" ? /^Registration unsuccessful\./ : /rejected\./);
-    if (mode === "hard") assert.doesNotMatch(banner, /Guest name|Demo email|Booking reference|Seats rejected/);
+    if (mode === "hard") assert.doesNotMatch(banner, /Guest name|Email address|Booking reference|Seats rejected/);
   }
 }
 
@@ -216,7 +216,7 @@ async function checkLockedForm(page, values, completions) {
   await finished(page, completions);
   const submit = page.locator("#afterthought-form button");
   assert.equal(await submit.isDisabled(), true);
-  assert.equal(await submit.textContent(), "Demo place reserved");
+  assert.equal(await submit.textContent(), "Place reserved");
   assert.equal(await page.locator("#registration-error").isVisible(), false);
   const status = await page.locator("#extra-status").textContent();
   assert.match(status, /place is reserved.*answers are locked.*Restart/);
@@ -249,7 +249,7 @@ async function checkRegistration(mode, width) {
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     await activate(page, page.locator(".reset-button"));
     await unfinished(page, 1);
-    assert.equal(await page.locator("#afterthought-form button").textContent(), "Reserve demo place");
+    assert.equal(await page.locator("#afterthought-form button").textContent(), "Reserve place");
     assert.equal(await page.locator("#afterthought-form button").isEnabled(), true);
     assert.equal(await page.locator("#extra-status").textContent(), "");
     assert.equal(await page.locator(`[data-mode="${mode === "easy" ? "bad" : mode === "hard" ? "worse" : "fixed"}"]`).getAttribute("aria-pressed"), "true");

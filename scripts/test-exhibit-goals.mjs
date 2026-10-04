@@ -32,7 +32,7 @@ async function unfinished(page) {
 async function finished(page, message, outcome = "success") {
   assert.equal(await page.evaluate(() => window.completions), 1, "Completion fires once");
   assert.equal(await page.locator("#stage").getAttribute("data-outcome"), outcome);
-  assert.equal(await page.locator("#completion-title").textContent(), outcome === "blocked" ? "Demo complete — goal blocked" : "Task complete");
+  assert.equal(await page.locator("#completion-title").textContent(), outcome === "blocked" ? "Goal blocked" : "Task complete");
   assert.match(await page.locator("#difficulty-progress p").textContent(), message);
   assert.equal(await page.locator("#exhibit-outcome").isVisible(), true);
   assert.equal(await page.evaluate(() => {
@@ -65,7 +65,7 @@ try {
         for (let index = 1; index < target.length; index++) await page.locator(`[data-character="${index}"]`).selectOption(target[index]);
       } else await write(target);
       await page.locator(action).click();
-      await finished(page, /draft|notice saved/i);
+      await finished(page, /draft|notice ready/i);
       await page.close();
     }
 
@@ -105,7 +105,7 @@ try {
         }
       }
       await form.locator('button[type="submit"], button:not([type])').click();
-      await finished(page, /message sent/i);
+      await finished(page, /message complete/i);
       await page.close();
     }
 
@@ -122,7 +122,7 @@ try {
       }
     }
     await search.locator("#correcting-submit").click();
-    await finished(search, /quiet cafes.*local demo results/i);
+    await finished(search, /quiet cafes.*results/i);
     assert.match(await search.locator("#correcting-results").textContent(), /Quiet cafes/);
     await search.close();
 
@@ -170,7 +170,7 @@ try {
     if (mode !== "fixed") assert((await notifications.locator(".fly-notification").count()) > 0);
     await notifications.locator("#fly-finish").focus();
     await notifications.keyboard.press("Enter");
-    await finished(notifications, /Support request sent/i);
+    await finished(notifications, /Support request complete/i);
     assert.equal(await notifications.locator(".fly-notification").count(), 0);
     await notifications.close();
 
@@ -227,7 +227,7 @@ try {
       await cart.locator("#arcade-park").click();
     }
     await cart.locator("#arcade-checkout").click();
-    await finished(cart, /Intentional demo checkout confirmed/);
+    await finished(cart, /Checkout confirmed/);
     await cart.close();
 
     const corporate = await open("corporate", mode);
@@ -241,7 +241,7 @@ try {
       }
       assert.equal(await corporate.locator("#paradigm").count(), 0);
     }
-    await finished(corporate, mode === "fixed" ? /task board opened/ : /onboarding blocked/, mode === "fixed" ? "success" : "blocked");
+    await finished(corporate, mode === "fixed" ? /task board opened/ : /onboarding blocked/i, mode === "fixed" ? "success" : "blocked");
     await corporate.close();
 
     const gym = await open("password-gym", mode);
@@ -268,7 +268,7 @@ try {
 
     const terms = await open("terms-game", mode);
     await terms.locator("#terms-decline").click();
-    await finished(terms, /terms declined/);
+    await finished(terms, /terms declined/i);
     await terms.close();
 
     for (const id of ["runaway", "mystery-menu"]) {
@@ -315,7 +315,7 @@ try {
     for (const [index, value] of ["Alex Example", "alex@example.test", "Opening hours", "Please confirm the hours."].entries()) await expanding.locator(`#expanding-field-${index}`).fill(value);
     if (mode !== "fixed") await expanding.locator("#expanding-compress").click();
     await expanding.locator("#expanding-submit").click();
-    await finished(expanding, /form complete/i);
+    await finished(expanding, /Message complete/i);
     await expanding.close();
 
     const wind = await open("wind-volume", mode, 1280, true);
@@ -335,7 +335,7 @@ try {
       await unfinished(crane);
       await crane.locator("#arcade-phrase").fill("Claw_M00n!42");
       await crane.locator("#arcade-phrase-form button").click();
-      await finished(crane, /Test-account phrase accepted/);
+      await finished(crane, /Phrase accepted/);
       await crane.close();
     }
     console.log(`Passed realistic missions and explicit outcomes in ${mode} mode.`);

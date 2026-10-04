@@ -30,7 +30,7 @@ Hard makes the target smaller and more sensitive and introduces decoys. Touch an
 
 Build a fictional password while new rules appear and all earlier rules remain in force. Easy contains 20 progressively revealed requirements and can be solved.
 
-Hard expands the workout to 32 rules and ends with a deliberate contradiction. Reaching it finishes the demo with **goal blocked**, not a successful password. Successful phrases and the blocked endpoint stop evaluation. Fix it uses one visible length requirement; meeting it keeps the phrase editable until **Create demo password** explicitly accepts it. Never enter a real password or reuse a puzzle answer for an account.
+Hard expands the workout to 32 rules and ends with a deliberate contradiction. Reaching it finishes the exhibit with **Goal blocked**, not a successful password. Successful phrases and the blocked endpoint stop evaluation. Fix it uses one visible length requirement; meeting it keeps the phrase editable until **Create password** explicitly accepts it. Never enter a real password or reuse a puzzle answer for an account.
 
 ## The Self-Correcting Search Bar
 
@@ -218,7 +218,7 @@ Hard occasionally grabs a neighboring character. Keyboard controls cover movemen
 
 **Route:** `/exhibit/physics-cart`
 
-Add products, review the basket, and choose **Simulate checkout** when ready. Adding a fictional product starts a wheeled cart rolling downhill toward a pretend Buy now zone. More weight increases its cartoon acceleration, while braking, pulling back, pausing, and returning to the start preserve the basket. Reaching Buy now accidentally is an unwanted outcome, not success; return or pull back before checking out intentionally.
+Add products, review the basket, and choose **Checkout** when ready. Adding a fictional product starts a wheeled cart rolling downhill toward a pretend Buy now zone. More weight increases its cartoon acceleration, while braking, pulling back, pausing, and returning to the start preserve the basket. Reaching Buy now accidentally is an unwanted outcome, not success; return or pull back before checking out intentionally.
 
 Hard steepens the slope and adds a speed bump that disrupts the cart. Reduced motion keeps the gameplay consequence without the jump animation. Fix it uses a stationary basket and explicit simulated checkout.
 
@@ -320,10 +320,10 @@ Hard interrupts the wait with approval prompts. Opening the confirmation again s
 
 ## Shared behavior
 
-Every exhibit has a labeled simulation frame, a visitor mission, a collapsible curator's note, and a sticky museum toolbar outside the fake website. A short first-visit guide explains the setup and can be reopened at any time; its dismissal is remembered only for the current tab.
+Every exhibit has a labeled exhibit frame, a visitor mission, a collapsible curator's note, and a sticky museum toolbar outside the exhibit website. A short first-visit guide explains the setup and can be reopened at any time; its dismissal is remembered only for the current tab. Public copy relies on the museum context rather than repeating simulation disclaimers. Credential safety guidance and limitations in downloaded documents remain explicit.
 
-Completing a task records its actual outcome in the task frame and shows a dismissible, on-screen result notification without moving focus. The notification links to the full result and manual next options; dismissing it does not erase the completed marker. Deliberately impossible endpoints say **Demo complete — goal blocked**, not **Task complete**. Initially available content such as the fixed recipe can complete during rendering because completion listeners are installed first.
+Completing a task records its actual outcome in the task frame and shows a dismissible, on-screen result notification without moving focus. The notification links to the full result and manual next options; dismissing it does not erase the completed marker. Deliberately impossible endpoints say **Goal blocked**, not **Task complete**. Initially available content such as the fixed recipe can complete during rendering because completion listeners are installed first.
 
-The inline result offers **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience and its outcome without changing the mode; switching modes starts a fresh demo and also clears progress. The unconditional frame footer says **Simulation only**, not **End of the demo**.
+The inline result offers **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience and its outcome without changing the mode; switching modes starts a fresh attempt and also clears progress. The frame footer begins with **Exhibit in progress**, changes to **Task complete** or **Goal blocked by the website** for a result, and resets when a new attempt starts.
 
 The museum's Exit, Restart, and Fix it controls remain trustworthy even when the exhibit is not. Jump keeps the mission visible below the toolbar while focusing the simulation. Escape exits only from the museum toolbar; inside an exhibit it belongs to the current input or pop-up. Tasks support keyboard operation and provide touch and reduced-motion behavior where relevant. Simulated orders, payments, subscriptions, messages, and personal details never leave the browser; use invented information in form-based exhibits.

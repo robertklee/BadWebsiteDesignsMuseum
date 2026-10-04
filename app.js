@@ -216,9 +216,10 @@ function renderExhibit(id, focus = false) {
       <div class="exhibit-frame-heading"><div><span class="eyebrow" id="simulation-title">INTERACTIVE DEMO</span><p>Try the task here. No real-world consequences.</p></div><button type="button" class="start-exhibit">Jump into exhibit ↓</button></div>
       <div class="exhibit-task" id="exhibit-task"><span>YOUR TASK</span><p>${mode === "fixed" ? exhibit.fixedTask : exhibit.task}</p></div>
       <div class="exhibit-stage ${id}-stage ${mode}" id="stage" role="region" aria-label="${exhibit.name} simulation" aria-describedby="exhibit-task" tabindex="-1"></div>
-      <div class="exhibit-frame-footer"><span>END OF THE DEMO</span><span>No real orders, accounts, or submissions.</span></div>
+      <div class="exhibit-frame-footer"><span>SIMULATION ONLY</span><span>No real orders, accounts, or submissions.</span></div>
     </section>
-    <section class="difficulty-progress" id="difficulty-progress" aria-labelledby="completion-title" hidden><div><div class="eyebrow">EXHIBIT SURVIVED</div><h2 id="completion-title">${mode === "worse" ? "You survived the sequel." : mode === "fixed" ? "Suspiciously cooperative." : "Against all reasonable odds."}</h2><p role="status"></p></div><div class="difficulty-transition-actions">${mode === "worse" ? `<a class="completion-primary" href="/exhibit/${nextExhibit.id}">Next questionable idea →</a>` : '<button type="button" class="completion-primary" data-difficulty-action="advance">Make it even worse ↗</button>'}${mode !== "fixed" ? '<button type="button" class="completion-fix" data-difficulty-action="fix">Fix it ✓</button>' : ""}<button type="button" class="completion-stay" data-difficulty-action="stay">Keep admiring this mess</button></div></section>
+    <aside class="exhibit-outcome" id="exhibit-outcome" aria-label="Exhibit result" aria-live="polite" aria-atomic="true" hidden><a href="#difficulty-progress"><strong></strong><span></span><small>View result and next options →</small></a><button type="button" aria-label="Hide result notification" title="Hide result notification">×</button></aside>
+    <section class="difficulty-progress" id="difficulty-progress" aria-labelledby="completion-title" hidden><div><div class="eyebrow">YOUR RESULT</div><h2 id="completion-title" tabindex="-1">Task complete</h2><p></p></div><div class="difficulty-transition-actions">${mode === "worse" ? `<a class="completion-primary" href="/exhibit/${nextExhibit.id}">Next questionable idea →</a>` : '<button type="button" class="completion-primary" data-difficulty-action="advance">Make it even worse ↗</button>'}${mode !== "fixed" ? '<button type="button" class="completion-fix" data-difficulty-action="fix">Fix it ✓</button>' : ""}<button type="button" class="completion-stay" data-difficulty-action="stay">Keep admiring this mess</button></div></section>
     <details class="curator-note"><summary>${mode === "fixed" ? "What's different in this version?" : "What's the idea behind this exhibit?"}</summary><p>${mode === "fixed" ? exhibit.fix : exhibit.lesson}</p></details>
     <div class="exhibit-bottom"><a href="/#collection">← All exhibits</a><a href="/exhibit/${nextExhibit.id}">Next questionable idea →</a></div>
   </section>`;
@@ -253,39 +254,57 @@ function renderExhibit(id, focus = false) {
     renderExhibit(id);
     main.querySelector(".reset-button").focus({ preventScroll: true });
   });
+  const completionCleanup = setupCompletionActions(changeMode);
   renderStage(id);
-  setupCompletionActions(changeMode);
+  const stageCleanup = cleanup;
+  cleanup = () => { completionCleanup(); stageCleanup(); };
   if (focus) main.focus({ preventScroll: true });
 }
 
 function setupCompletionActions(changeMode) {
   const stage = main.querySelector("#stage");
   const notice = main.querySelector("#difficulty-progress");
-  const initialMode = mode;
-  const stageCleanup = cleanup;
+  const notification = main.querySelector("#exhibit-outcome");
   let completed = false;
   let disposed = false;
-  const complete = () => {
+  const complete = event => {
     if (disposed || completed) return;
     completed = true;
+    const blocked = event.detail?.outcome === "blocked";
+    const title = blocked ? "Demo complete — goal blocked" : "Task complete";
+    const result = event.detail?.message || stage.querySelector(".demo-status")?.textContent.trim() || "Your task is complete.";
+    stage.dataset.outcome = blocked ? "blocked" : "success";
+    main.querySelector("#exhibit-task > span").textContent = blocked ? "DEMO COMPLETE" : "TASK COMPLETE";
+    main.querySelector(".exhibit-frame-footer > span").textContent = blocked ? "GOAL BLOCKED BY THE WEBSITE" : "TASK COMPLETE";
     notice.hidden = false;
-    notice.querySelector("p").textContent = initialMode === "worse"
-      ? "Task complete, even with the extra obstacles. Try another exhibit whenever you're ready."
-      : initialMode === "fixed"
-        ? "Task complete without the obstacles. Ready to try a more frustrating version?"
-        : "Task complete. Want an even more frustrating version? Nothing changes until you choose.";
+    notice.querySelector("h2").textContent = title;
+    notice.querySelector("p").textContent = result;
+    notification.querySelector("strong").textContent = title;
+    notification.querySelector("span").textContent = result;
+    notification.hidden = false;
   };
   stage.addEventListener("exhibit-complete", complete);
   notice.querySelector("[data-difficulty-action='stay']").addEventListener("click", () => {
     notice.hidden = true;
+    notification.hidden = true;
     stage.focus({ preventScroll: true });
+  });
+  notification.querySelector("button").addEventListener("click", () => {
+    notification.hidden = true;
+    stage.focus({ preventScroll: true });
+  });
+  notification.querySelector("a").addEventListener("click", event => {
+    event.preventDefault();
+    notice.hidden = false;
+    notification.hidden = true;
+    notice.scrollIntoView({ block: "center", behavior: "instant" });
+    notice.querySelector("h2").focus({ preventScroll: true });
   });
   notice.querySelector("[data-difficulty-action='advance']")?.addEventListener("click", () => changeMode("worse"));
   notice.querySelector("[data-difficulty-action='fix']")?.addEventListener("click", () => changeMode("fixed"));
-  cleanup = () => {
+  return () => {
     disposed = true;
     stage.removeEventListener("exhibit-complete", complete);
-    stageCleanup();
   };
 }
 

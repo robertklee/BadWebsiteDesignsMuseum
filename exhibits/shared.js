@@ -12,3 +12,10 @@ export function createDemoStatus() {
   const say = text => { document.querySelector("#demo-status").textContent = text; };
   return { status, say };
 }
+
+export function completeExhibit(stage, message, outcome = "success") {
+  stage.dispatchEvent(new CustomEvent("exhibit-complete", {
+    bubbles: true,
+    detail: { message, outcome },
+  }));
+}

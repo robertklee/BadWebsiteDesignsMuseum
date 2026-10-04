@@ -318,6 +318,8 @@ Hard interrupts the wait with approval prompts. Fix it reveals the sentence imme
 
 Every exhibit has a labeled simulation frame, a visitor mission, a collapsible curator's note, and a sticky museum toolbar outside the fake website. A short first-visit guide explains the setup and can be reopened at any time; its dismissal is remembered only for the current tab.
 
-Completing a task preserves the result and shows an inline invitation to **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience without changing its mode.
+Completing a task records its actual outcome in the task frame and shows a dismissible, on-screen result notification without moving focus. The notification links to the full result and manual next options; dismissing it does not erase the completed marker. Deliberately impossible endpoints say **Demo complete — goal blocked**, not **Task complete**. Initially available content such as the fixed recipe can complete during rendering because completion listeners are installed first.
+
+The inline result offers **Make it even worse**, with a smaller **Fix it** option. Nothing advances automatically, and modes never require completion to unlock. Completing Hard offers the next exhibit. **Restart** clears the current experience and its outcome without changing the mode. The unconditional frame footer says **Simulation only**, not **End of the demo**.
 
 The museum's Exit, Reset, and Fix it controls remain trustworthy even when the exhibit is not. Tasks support keyboard operation and provide touch and reduced-motion behavior where relevant. Simulated orders, payments, subscriptions, messages, and personal details never leave the browser; use invented information in form-based exhibits.

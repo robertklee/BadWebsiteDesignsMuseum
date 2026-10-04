@@ -1,5 +1,5 @@
 // Interaction & simulation: physical, timed, or game-like controls.
-import { createStageShell, createDemoStatus, matchesDemoText, downloadDemoFile } from "./shared.js";
+import { createStageShell, createDemoStatus, matchesDemoText, downloadDemoFile, resetExhibit } from "./shared.js";
 
 export const exhibits = [
   { id: "unresponsive-buttons", task: "Set the quantity to exactly 2, wait for any pending clicks, then select Reserve tickets.", fixedTask: "Set the quantity to 2 and select Reserve tickets.", name: "The Eventually Responsive Buttons", category: "Interaction", color: "green", tagline: "You click again because nothing happened. Now you've booked twelve.", description: "Reserve two tickets with buttons that respond late and only in the right spot. Every impatient retry still counts.", lesson: "A button gives no feedback, so you click again. Then all the clicks arrive at once. This ticket form turns that familiar uncertainty into an accidental group booking.", fix: "The entire button responds immediately, so you can see the effect of each click before clicking again.", worseChange: "The working part of each button is smaller, changes sides after each batch, and takes longer to respond.", preview: '<div class="thumb-scene thumb-eventually"><span class="thumb-kicker">JUST TWO TICKETS, PLEASE</span><div class="thumb-eventually-label">GENERAL ADMISSION</div><div class="thumb-eventually-stepper"><span>−</span><strong>12</strong><span class="thumb-eventually-plus">+</span></div><div class="thumb-eventually-receipt">Group booking detected.</div><small class="thumb-footer">Oh. Those clicks did count.</small></div>', render: renderUnresponsiveButtons },
@@ -8,7 +8,7 @@ export const exhibits = [
   { id: "seismic-editor", task: "Write the reminder Bring a notebook and select Save draft. Rebuild my text restores collapsed letters.", fixedTask: "Write Bring a notebook and select Save draft.", name: "The Seismic Text Editor", category: "Interaction", color: "pink", tagline: "You're writing a sentence. The letters start falling apart.", description: "Typing should keep your words in place. This editor shakes with every change and can collapse the sentence into scattered letters.", lesson: "Losing your place while writing is frustrating enough. This editor turns every edit into a small earthquake. Your words are preserved, but keeping them on the page becomes extra work.", fix: "The editor stays still and keeps the letters in place as you type.", worseChange: "Typing builds stress faster and makes the editor shake more strongly.", preview: `<div class="thumb-scene thumb-collapse"><span class="thumb-kicker">JUST TRY TO WRITE A SENTENCE</span><div class="thumb-collapse-page"><span>UNTITLED / UNSAVED / UNSTABLE</span><div class="thumb-broken-baseline"><i></i><b>!</b></div><div class="thumb-letter-rubble"><b>T</b><b>Y</b><b>P</b><b>E</b></div></div><small class="thumb-footer">One more letter. What could go wrong?</small></div>`, render: renderSeismicEditor },
   { id: "wind-volume", task: "Set the video player volume to 37% (35-39% counts), then select Save volume.", fixedTask: "Set the video player volume to 37% (35-39% counts), then select Save volume.", name: "The Windswept Volume Slider", category: "Interaction", color: "blue", tagline: "Set the volume before a gust changes it again.", description: "Try to drag a volume slider while wind rotates it and pushes the setting around, even after you let go.", lesson: "A slider should stay where you put it. This one behaves as if it's outdoors in bad weather: the control turns, the number drifts, and choosing a volume becomes a race against the next gust.", fix: "The slider stays upright and the value stays put until you change it.", worseChange: "Stronger gusts move the value more aggressively and can turn the slider upside down.", preview: `<div class="thumb-scene thumb-wind"><span class="thumb-kicker">VOLUME WITH A CHANCE OF WIND</span><div class="thumb-weather"><div class="thumb-gusts" aria-hidden="true"><i></i><i></i><i></i></div><div class="thumb-wind-track"><b>+</b><i></i><b>−</b></div><div class="thumb-weather-reading"><span>WANTED</span><s>37%</s><strong>82%</strong><span>GUST HAPPENED.</span></div></div><small class="thumb-footer">Your volume is now weather-dependent.</small></div>`, render: renderWindVolume },
   { id: "tetris-volume", task: "Set the video player volume to 60% (58-62% counts). Settled blocks control the volume.", fixedTask: "Set the video player volume to 60% (58-62% counts) using the slider.", name: "The Tetris Volume Control", category: "Interaction", color: "blue", tagline: "Want it louder? Build a bigger stack of blocks.", description: "Instead of dragging a volume slider, play a falling-block game. More stacked blocks mean more volume; clearing a row turns it down.", lesson: "Adjusting sound usually takes one quick movement. Here it requires a game of Tetris-style falling blocks. A good move that clears a row is, inconveniently, a bad move for volume.", fix: "An ordinary slider replaces the game. It changes only the demo number, not your device's volume.", worseChange: "Blocks fall faster, giving you less time to build the volume you want.", preview: `<div class="thumb-scene thumb-tetris"><span class="thumb-kicker">JUST TURN IT UP A LITTLE</span><div class="thumb-tetris-console"><div class="thumb-block-board" aria-hidden="true"><i class="thumb-block-falling"></i><i class="thumb-block-left"></i><i class="thumb-block-right"></i><i class="thumb-block-row"></i></div><div class="thumb-volume-reading"><span>VOLUME</span><strong>40%</strong><span>ROW CLEARED</span><b>↓ 28%</b></div></div><small class="thumb-footer">Great move. Quieter now.</small></div>`, render: renderTetrisVolume },
-  { id: "volume-seesaw", task: "Set the video player volume to 65%, then select Hold this volume. Balance the weights to reach the required level.", fixedTask: "Set the video player volume to 65% using the slider.", category: "Interaction", color: "blue", name: "The Volume Seesaw", tagline: "Turn the volume up by putting a brick on a seesaw.", description: "A sound setting becomes a balancing act. Add weights to a seesaw instead of moving a slider.", lesson: "You know how quickly you can turn sound up or down with a slider. Here the same setting depends on balancing pebbles, bricks, and anvils. Your listening level now has a weight limit.", fix: "A normal slider replaces the seesaw and weights. Your device's actual volume is unchanged.", worseChange: "Balloons pull upward, and every third added weight moves to the opposite side.", preview: '<div class="thumb-scene thumb-seesaw"><span class="thumb-kicker">VOLUME: SOME ASSEMBLY REQUIRED</span><div class="thumb-balance"><span class="thumb-balance-value">73<span>%</span></span><div class="thumb-beam"><i class="thumb-pebble"></i><i class="thumb-brick"></i><i class="thumb-brick thumb-brick-top"></i></div><div class="thumb-fulcrum"></div><span class="thumb-balance-minus">−</span><span class="thumb-balance-plus">+</span></div><small class="thumb-footer">Could you turn it down one brick?</small></div>', render: renderVolumeSeesaw },
+  { id: "volume-seesaw", task: "Set the video player volume to 65%, then select Hold this volume. Balance the weights to reach the required level.", fixedTask: "Set the video player volume to 65% using the slider.", category: "Interaction", color: "blue", name: "The Volume Seesaw", tagline: "Turn the volume up by putting a brick on a seesaw.", description: "A sound setting becomes a balancing act. Add weights to a seesaw instead of moving a slider.", lesson: "You know how quickly you can turn sound up or down with a slider. Here the same setting depends on balancing pebbles, bricks, and anvils. Your listening level now has a weight limit.", fix: "A normal slider replaces the seesaw and weights. Your device's actual volume is unchanged.", worseChange: "Balloons pull upward, and every third addition makes the oldest weight on that side roll across to the opposite side.", preview: '<div class="thumb-scene thumb-seesaw"><span class="thumb-kicker">VOLUME: SOME ASSEMBLY REQUIRED</span><div class="thumb-balance"><span class="thumb-balance-value">73<span>%</span></span><div class="thumb-beam"><i class="thumb-pebble"></i><i class="thumb-brick"></i><i class="thumb-brick thumb-brick-top"></i></div><div class="thumb-fulcrum"></div><span class="thumb-balance-minus">−</span><span class="thumb-balance-plus">+</span></div><small class="thumb-footer">Could you turn it down one brick?</small></div>', render: renderVolumeSeesaw },
   { id: "notification-swatter", task: "Send a support request using made-up contact details. Dismiss or pause alerts if they get in your way.", fixedTask: "Fill in the support form with made-up details and select Send request.", category: "Interaction", color: "yellow", name: "The Notification Fly Swatter", tagline: "You're filling in a form. The alerts won't leave you alone.", description: "Send a support request while notification boxes multiply over the form. Closing one barely makes room for the next.", lesson: "An update, a reminder, another update about the reminder. You came to complete a form, but dismissing notifications becomes a second job. Here they even cover the answers you're typing.", fix: "The notifications are removed, leaving you free to complete the form.", worseChange: "Alerts arrive faster, and missed clicks create more alerts.", preview: '<div class="thumb-scene thumb-swatter"><span class="thumb-kicker">WE VALUE YOUR FOCUS</span><div class="thumb-alert-stack"><div class="thumb-form-under"><span>YOUR MESSAGE</span><b>Hello, I would like to</b><div class="fake-lines"></div></div><div class="thumb-alert thumb-alert-back"><b>A quick update</b><span>×</span><small>You have updates.</small></div><div class="thumb-alert thumb-alert-front"><b>One more thing</b><span>×</span><small>About that update.</small></div></div><small class="thumb-footer">There was a form here a moment ago.</small></div>', render: renderNotificationSwatter },
 ];
 
@@ -579,6 +579,8 @@ function renderLoading({ stage, mode }) {
   };
   start.addEventListener("click", () => {
     stop();
+    resetExhibit(stage);
+    say("");
     step = 0;
     approvals.clear();
     setProgress(0);
@@ -623,7 +625,7 @@ function renderSeismicEditor({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("THIS SENTENCE HAS NOT PASSED A BUILDING INSPECTION", fixed ? "Words on solid ground." : "Please type without causing a landslide.",
-    fixed ? "Write the reminder Bring a notebook and select Save draft. The editor stays still while you write." : `Imagine a text editor that shakes every time you type. Write the reminder Bring a notebook and save the draft before the letters collapse.${worse ? " Each edit builds stress faster in this version." : ""} If they fall, Rebuild my text restores the same words so you can continue. Your original text stays in the field. Reduced-motion settings disable the shaking and collapse.`,
+    fixed ? "Write the reminder Bring a notebook and select Save draft. A final period, question mark, or exclamation mark is fine. The editor stays still while you write." : `Imagine a text editor that shakes every time you type. Write the reminder Bring a notebook and save the draft before the letters collapse. A final period, question mark, or exclamation mark is fine.${worse ? " Each edit builds stress faster in this version." : ""} If they fall, Rebuild my text restores the same words so you can continue. Your original text stays in the field. Reduced-motion settings disable the shaking and collapse.`,
     `<div class="quake-world"><label for="quake-input">Your sentence (maximum 80 characters)</label><input id="quake-input" type="text" maxlength="80" autocomplete="off" spellcheck="false" placeholder="${fixed ? "Type normally. The ground is stable." : "Type a sentence and watch the letters"}"><div class="quake-dashboard"><label for="quake-stress">Structural stress <output id="quake-stress-value">0%</output></label><meter id="quake-stress" min="0" max="100" value="0"></meter><span id="quake-risk">Collapse risk: 0%</span><span id="quake-count">0 / 80 characters</span></div><div class="quake-chamber" id="quake-chamber" role="img" aria-label="Empty letter platform"><div id="quake-letters" aria-hidden="true"></div><span class="quake-empty" id="quake-empty">Your letters will stand here. Probably.</span><span class="quake-floor" aria-hidden="true">LOAD-BEARING PUNCTUATION</span></div><div class="new-actions"><button type="button" class="demo-button" id="quake-finish">Save draft</button><button type="button" class="demo-button" id="quake-rebuild" hidden>Rebuild my text</button><button type="button" class="plain-button" id="quake-clear">Start over</button></div><p class="quake-safety">A collapse scatters the letters, not your data. Your original text stays in the field and can be rebuilt. Nothing is saved outside this page.</p></div>`);
   const input = stage.querySelector("#quake-input");
   const chamber = stage.querySelector("#quake-chamber");
@@ -711,7 +713,7 @@ function renderSeismicEditor({ stage, mode }) {
   const paint = () => {
     stage.querySelector("#quake-stress").value = stress;
     stage.querySelector("#quake-stress-value").textContent = `${stress}%`;
-    stage.querySelector("#quake-risk").textContent = fixed ? "Collapse risk: none" : `Last edit collapse risk: ${risk}%`;
+    stage.querySelector("#quake-risk").textContent = fixed || motion.matches ? "Collapse risk: none" : `Last edit collapse risk: ${risk}%`;
     stage.querySelector("#quake-count").textContent = `${[...input.value].length} / 80 characters`;
     stage.querySelector("#quake-rebuild").hidden = !collapsed;
     stage.querySelector("#quake-finish").disabled = collapsed || finished;
@@ -742,7 +744,7 @@ function renderSeismicEditor({ stage, mode }) {
       say("The sentence is empty. The foundation is relieved.");
       return;
     }
-    if (!fixed) {
+    if (!fixed && !motion.matches) {
       stress = Math.min(100, stress + added * stressPerCharacter);
       risk = chance(stress);
       collapsed = Math.random() * 100 < risk;
@@ -750,7 +752,7 @@ function renderSeismicEditor({ stage, mode }) {
     }
     renderLetters(collapsed);
     paint();
-    say(collapsed ? "Structural failure! Every letter has tumbled. Your exact text is preserved above. Rebuild it to keep editing." : fixed ? "Text updated. No earthquakes required." : `It held. Stress is ${stress}%. The next edit is another gamble.`);
+    say(collapsed ? "Structural failure! Every letter has tumbled. Your exact text is preserved above. Rebuild it to keep editing." : fixed || motion.matches ? "Text updated. No earthquakes required." : `It held. Stress is ${stress}%. The next edit is another gamble.`);
   };
   input.addEventListener("input", event => {
     if (!event.isComposing) evaluateEdit();
@@ -771,6 +773,7 @@ function renderSeismicEditor({ stage, mode }) {
   });
   stage.querySelector("#quake-clear").addEventListener("click", () => {
     cancelAnimations();
+    resetExhibit(stage);
     input.value = "";
     lastText = "";
     lastEditTime = null;
@@ -785,7 +788,7 @@ function renderSeismicEditor({ stage, mode }) {
     input.focus({ preventScroll: true });
   });
   stage.querySelector("#quake-finish").addEventListener("click", () => {
-    if (!matchesDemoText(input.value, "Bring a notebook")) { say("Write the reminder Bring a notebook before saving. Your draft is preserved."); return; }
+    if (!matchesDemoText(input.value.trim().replace(/[.!?…]+$/u, ""), "Bring a notebook")) { say("Write the reminder Bring a notebook before saving. A final period, question mark, or exclamation mark is fine. Your draft is preserved."); return; }
     cancelAnimations();
     finished = true;
     paint();
@@ -802,7 +805,16 @@ function renderSeismicEditor({ stage, mode }) {
   resize.observe(chamber);
   const handleMotionChange = () => {
     cancelAnimations();
+    if (motion.matches) {
+      collapsed = false;
+      debris = [];
+      lastEditTime = null;
+      stress = 0;
+      risk = 0;
+      if (!finished) say("Reduced motion enabled. Your text is intact; shaking and collapse are disabled.");
+    }
     renderLetters();
+    paint();
   };
   motion.addEventListener("change", handleMotionChange);
   renderLetters();
@@ -1024,7 +1036,7 @@ function renderTetrisVolume({ stage, mode, shuffle }) {
       jammed = true;
       playing = false;
       stopTimer();
-      say(achieved ? "Stack jammed. Your earlier target achievement is recorded. Empty speaker to experiment again." : "Stack jammed before reaching the target. Empty speaker to try again; the goal is 60% (58-62% counts).");
+      say(achieved ? "Stack jammed. Empty speaker to start a new attempt." : "Stack jammed before reaching the target. Empty speaker to try again; the goal is 60% (58-62% counts).");
     }
   };
   const clearCompletedRows = () => {
@@ -1045,7 +1057,7 @@ function renderTetrisVolume({ stage, mode, shuffle }) {
       playing = false;
       stopTimer();
       paint();
-      say(`Video player volume set to ${volume.value}%. Target reached; game paused. Resume to experiment, or restart for a new task. No real sound played.`);
+      say(`Video player volume set to ${volume.value}%. Target reached; game paused. Resume starts a new attempt with this stack; Empty speaker starts fresh. No real sound played.`);
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     }
   };
@@ -1086,6 +1098,10 @@ function renderTetrisVolume({ stage, mode, shuffle }) {
   };
   play.addEventListener("click", () => {
     if (playing) { pause(); return; }
+    if (achieved) {
+      achieved = false;
+      resetExhibit(stage);
+    }
     playing = true;
     started = true;
     runTimer();
@@ -1110,6 +1126,8 @@ function renderTetrisVolume({ stage, mode, shuffle }) {
   });
   stage.querySelector("#tetris-empty").addEventListener("click", () => {
     stopTimer();
+    resetExhibit(stage);
+    achieved = false;
     playing = false;
     started = false;
     jammed = false;
@@ -1138,7 +1156,7 @@ function renderVolumeSeesaw({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("A BALANCING ACT FOR YOUR EARS", fixed ? "Volume without a counterweight." : "Please balance the pretend volume.",
-    fixed ? "Set the video player volume to 65% using the slider. No sound plays or device settings change." : `You want to turn the sound up or down, but the slider has been replaced by a seesaw. Add weights to the right to raise the volume or to the left to lower it. Let the beam settle, then select Hold this volume. The required level is 65%.${worse ? " Every third weight moves to the opposite side, and balloons pull upward instead of weighing down." : ""} Only the demo number changes; no sound plays.`,
+    fixed ? "Set the video player volume to 65% using the slider. No sound plays or device settings change." : `You want to turn the sound up or down, but the slider has been replaced by a seesaw. Add weights to the right to raise the volume or to the left to lower it. Let the beam settle, then select Hold this volume. The required level is 65%.${worse ? " Every third addition makes the oldest weight on that side roll across to the opposite side, and balloons pull upward instead of weighing down." : ""} Release a completed volume to begin a new attempt, or Clear weights to start fresh. Only the demo number changes; no sound plays.`,
     `<div class="seesaw-machine"><label for="seesaw-volume">Video player volume</label><output id="seesaw-value">50%</output><input type="range" id="seesaw-volume" min="0" max="100" value="50" ${fixed ? "" : "disabled"}>${fixed ? "" : `<div class="seesaw-scene"><div class="seesaw-pivot" aria-hidden="true"></div><div class="seesaw-beam" id="seesaw-beam"><div class="seesaw-pan seesaw-left" id="seesaw-left" aria-label="Left weight tray"></div><div class="seesaw-pan seesaw-right" id="seesaw-right" aria-label="Right weight tray"></div></div></div><p class="seesaw-masses" id="seesaw-masses"></p><label for="seesaw-weight">Choose a weight</label><select id="seesaw-weight"><option value="0">Pebble: +1</option><option value="1">Brick: +3</option><option value="2">Anvil: +5</option>${worse ? '<option value="3">Balloon: -2 (pulls upward)</option>' : ""}</select><div class="seesaw-controls"><button type="button" class="plain-button" id="seesaw-add-left">Add to left</button><button type="button" class="plain-button" id="seesaw-add-right">Add to right</button><button type="button" class="plain-button" id="seesaw-remove-left">Remove left weight</button><button type="button" class="plain-button" id="seesaw-remove-right">Remove right weight</button></div><div class="new-actions"><button type="button" class="demo-button" id="seesaw-hold">Hold this volume</button><button type="button" class="plain-button" id="seesaw-reset">Clear weights</button></div><p class="seesaw-note">Maximum 12 weights. Reduced motion settles immediately. Holding freezes the number and weights until released.</p>`}</div>`);
   const output = stage.querySelector("#seesaw-value");
   const slider = stage.querySelector("#seesaw-volume");
@@ -1229,7 +1247,7 @@ function renderVolumeSeesaw({ stage, mode }) {
       additions++;
       if (worse && additions % 3 === 0) {
         weights[side === "left" ? "right" : "left"].push(weights[side].shift());
-        say("A loose weight rolled across to the other end! The balance has changed.");
+        say("The oldest weight on that side rolled across to the other end! The balance has changed.");
       } else say(`${types[type].name} added to the ${side}. Only the pretend volume changes.`);
       paintWeights();
       settle();
@@ -1243,6 +1261,10 @@ function renderVolumeSeesaw({ stage, mode }) {
   }
   stage.querySelector("#seesaw-hold").addEventListener("click", () => {
     held = !held;
+    if (!held && achieved) {
+      achieved = false;
+      resetExhibit(stage);
+    }
     cancel();
     velocity = 0;
     paintWeights();
@@ -1255,6 +1277,8 @@ function renderVolumeSeesaw({ stage, mode }) {
   });
   stage.querySelector("#seesaw-reset").addEventListener("click", () => {
     cancel();
+    resetExhibit(stage);
+    achieved = false;
     weights.left.length = 0;
     weights.right.length = 0;
     held = false;
@@ -1368,7 +1392,7 @@ function renderNotificationSwatter({ stage, mode }) {
         spawn();
       }, worse ? 750 : 1700);
       paint();
-      say("Your typing woke the swarm. Complete the six fields and swat the alerts, or pause whenever you need.");
+      say("Your typing woke the swarm. Complete the required fields; swat alerts that obstruct the form, or pause whenever you need. Organization is optional; you do not have to clear every alert to send.");
     };
     inputs.forEach(input => input.addEventListener("input", () => {
       if (!started && !finished) start();

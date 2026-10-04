@@ -33,7 +33,7 @@
 .thumb-eventually-stepper>strong:before{content:"1";position:absolute;inset:0;color:#214d41;opacity:0;pointer-events:none}
 .thumb-eventually-stepper>.thumb-eventually-plus{background:linear-gradient(to right,#e5ede7 50%,#adc5b5 50%)}
 .thumb-eventually-receipt{background:#f3dce2;color:#743448;padding:.55em .7em;font:600 .95em var(--body);border-left:3px solid #a3344a}
-@keyframes thumb-eventually-count{0%,55%{content:"1";opacity:1}56%,62%{content:"2";opacity:1}63%,69%{content:"5";opacity:1}70%,77%{content:"9";opacity:1}78%,84%{content:"12";opacity:1}85%,100%{content:"12";opacity:0}}
+@keyframes thumb-eventually-count{0%,62%{content:"1";opacity:1}63%,84%{content:"2";opacity:1}85%,100%{content:"2";opacity:0}}
 @keyframes thumb-eventually-final{0%,84%{color:transparent}85%,100%{color:#214d41}}
 @keyframes thumb-eventually-retries{0%,12%,26%,40%,54%,100%{scale:1}18%,32%,46%{scale:.94}}
 @keyframes thumb-eventually-group{0%,77%{opacity:0}85%,100%{opacity:1}}

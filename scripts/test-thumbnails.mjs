@@ -99,12 +99,19 @@ try {
         const stillSelectors = [".scroll-preview-front", ".scroll-preview-back", ".earthquake-preview-pointer", ".thumb-birthday-calendar"];
         const stillBounds = stillSelectors.map(selector => element.querySelector(selector)?.getBoundingClientRect().toJSON());
         const sample = [];
+        let previousLoadingWidth = 0;
         for (const progress of [0, .25, .5, .6, .75, 1]) {
           for (const animation of animations) {
             animation.pause();
             animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
           }
           const art = element.querySelector(".card-art").getBoundingClientRect();
+          const loadingBar = element.querySelector(".thumb-backward-bar>i");
+          if (loadingBar) {
+            const width = loadingBar.getBoundingClientRect().width;
+            if (width + .1 < previousLoadingWidth) return { error: "Loading preview reveals backward progress before the exhibit" };
+            previousLoadingWidth = width;
+          }
           for (const [index, selector] of stillSelectors.entries()) {
             const bounds = element.querySelector(selector)?.getBoundingClientRect().toJSON();
             if (JSON.stringify(bounds) !== JSON.stringify(stillBounds[index])) return { error: `${selector} must remain stationary` };

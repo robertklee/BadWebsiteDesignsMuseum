@@ -157,7 +157,7 @@ button{border-radius:0}
 .thumb-progress-numbers{display:flex;gap:.6em;justify-content:center;align-items:center;margin-top:.5em}
 .thumb-progress-numbers>s{font:2.4em var(--heading);color:#796689}.thumb-progress-numbers>span{font:1.8em monospace}.thumb-progress-numbers>strong{font:700 3.8em/1.2 var(--heading)}
 .thumb-backward-bar{height:1.8em;border:2px solid #625171;background:#f5edff;position:relative}
-.thumb-backward-bar>i{display:block;width:12%;height:100%;background:#846292}.thumb-backward-bar>b{position:absolute;right:10%;top:-.05em;font:700 1.6em/1 monospace;color:#846292}
+.thumb-backward-bar>i{display:block;width:99%;height:100%;background:#846292}.thumb-backward-bar>b{position:absolute;right:10%;top:-.05em;font:700 1.6em/1 monospace;color:#846292}
 .thumb-loading-status{font:.8em monospace;text-align:center;padding:.5em 0}
 .thumb-balance{position:relative;height:10em;border-bottom:1px solid #7292a1}
 .thumb-balance-value{position:absolute;top:0;left:0;right:0;text-align:center;font:700 3em/1 var(--heading)}.thumb-balance-value>span{font-size:.5em}
@@ -302,7 +302,7 @@ button{border-radius:0}
 @keyframes thumb-claw-travel{0%{translate:-2.5em 0}55%{translate:0 .4em}100%{translate:0 0}}
 @keyframes thumb-cart-roll{from{translate:-1.4em -.35em}to{translate:0 0}}
 @keyframes thumb-alert-arrive{0%,25%{scale:.85;opacity:0}100%{scale:1;opacity:1}}
-@keyframes thumb-progress-retreat{from{width:99%}to{width:12%}}
+@keyframes thumb-progress-prepare{0%{width:12%}65%,100%{width:99%}}
 @keyframes thumb-preference-wilt{from{width:85%}to{width:17%}}
 @keyframes thumb-exit-shrink{from{scale:1.8}to{scale:1}}
 @keyframes thumb-block-drop{from{translate:0 -.6em}to{translate:0 0}}
@@ -367,7 +367,7 @@ button{border-radius:0}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-rolling-cart{animation:thumb-cart-roll .9s ease-in both}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-alert-back{animation:thumb-alert-arrive .55s ease-out both}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-alert-front{animation:thumb-alert-arrive 1s ease-out both}
-	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-backward-bar>i{animation:thumb-progress-retreat 1.1s ease-in-out both}
+	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-backward-bar>i{animation:thumb-progress-prepare 1.1s ease-in-out both}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-health>i{animation:thumb-preference-wilt 1.2s ease-in both}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-exit-tiny{animation:thumb-exit-shrink .9s ease-out both;transform-origin:bottom right}
 	.exhibit-card:is(:hover,:focus-visible,.thumb-scroll-active) .thumb-block-falling{animation:thumb-block-drop .7s steps(3,end) both}

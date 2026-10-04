@@ -140,7 +140,7 @@ try {
   assert.deepEqual(await eventually.evaluate(element => {
     const animations = element.getAnimations({ subtree: true }).filter(animation => animation.animationName?.startsWith("thumb-eventually-"));
     if (animations.length !== 4) throw new Error("Ticket preview needs count, final value, presses, and receipt animations");
-    return [0, .5, .6, .75, 1].map(progress => {
+    return [0, .25, .5, .6, .65, .7, .75, .85, 1].map(progress => {
       for (const animation of animations) {
         animation.pause();
         animation.currentTime = Number(animation.effect.getTiming().duration) * progress;
@@ -149,7 +149,7 @@ try {
       const overlay = getComputedStyle(count, "::before");
       return overlay.opacity === "0" ? count.textContent : JSON.parse(overlay.content);
     });
-  }), ["1", "1", "2", "9", "12"], "Quantity must lag behind presses, then overshoot");
+  }), ["1", "1", "1", "1", "2", "2", "2", "2", "2"], "Quantity hints at delayed feedback without revealing the group-booking surprise");
   await mkdir("/tmp/museum-thumbnails", { recursive: true });
   await page.screenshot({ path: "/tmp/museum-thumbnails/mobile-scroll-activation.png" });
 

@@ -19,7 +19,7 @@ try {
       await mobile.locator(".news-viewport").focus();
       const stageHeight = await mobile.locator("#stage").evaluate(element => element.offsetHeight);
       const viewportHeight = await mobile.locator(".news-viewport").evaluate(element => element.clientHeight);
-      for (const selector of ['[data-article="library"]', ".news-story-copy>h3", "#news-bookmark"]) {
+      for (const selector of ['[data-article="library"]', ".news-story-copy>h3", "#news-hours"]) {
         if (selector === ".news-story-copy>h3") {
           for (let attempt = 0; attempt <= (mode === "fixed" ? 0 : mode === "hard" ? 4 : 2); attempt++) {
             await mobile.locator('[data-article="library"]').click();
@@ -51,8 +51,11 @@ try {
         await mobile.locator("#edition-step").evaluate(button => { button.click(); button.click(); });
         assert.equal((await sponsor.evaluate(element => element.clientHeight)) > 0, mode === "hard", "Only hard mode brings dismissed ads back");
       }
-      await mobile.locator("#news-bookmark").click();
+      await mobile.locator("#news-hours").click();
       assert.equal(await mobile.evaluate(() => window.completions), 1);
+      assert.equal(await mobile.locator("#news-library-hours").isVisible(), true);
+      assert.match(await mobile.locator("#news-library-hours dl>div").first().textContent(), /Monday to Friday.*9 am to 9 pm/);
+      assert.equal(await mobile.locator("#news-hours").getAttribute("aria-expanded"), "true");
       assert.equal(await mobile.locator("#edition-state").textContent(), "Edition settled");
       assert.equal(await mobile.locator("#stage").evaluate(element => element.offsetHeight), stageHeight);
       assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);

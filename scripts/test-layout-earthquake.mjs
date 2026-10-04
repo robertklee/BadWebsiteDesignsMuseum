@@ -9,6 +9,7 @@ const browser = await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
 const errors = [];
 async function openLibrary(page, mode, capture = false) {
   const target = page.locator('[data-article="library"]');
+  const completionsBefore = await page.evaluate(() => window.completions);
   for (let attempt = 0; attempt < (mode === "fixed" ? 0 : mode === "hard" ? 4 : 2); attempt++) {
     await target.scrollIntoViewIfNeeded();
     const bounds = await target.boundingBox();
@@ -17,7 +18,7 @@ async function openLibrary(page, mode, capture = false) {
     assert.equal(await page.locator("#news-story").isVisible(), false);
     assert.equal(await page.locator(".news-click-intrusion").count(), attempt + 1);
     assert.equal(await page.evaluate(({ x, y }) => Boolean(document.elementFromPoint(x, y)?.closest(".news-click-intrusion")), point), true, "Intrusion covers the activated link position");
-    assert.equal(await page.evaluate(() => window.completions), 0);
+    assert.equal(await page.evaluate(() => window.completions), completionsBefore);
     if (capture && attempt === 0) await page.locator("#stage").screenshot({ path: `${output}/intercept-${mode}-${page.viewportSize().width}.png` });
   }
   await target.click();
@@ -30,6 +31,9 @@ try {
       page.on("pageerror", error => errors.push(error.message));
       await page.goto(`${origin}/exhibit/layout-earthquake?mode=${mode}`);
       await page.locator(".news-front").waitFor();
+      assert.match(await page.locator("#exhibit-task").textContent(), /after.work.*View library opening hours|View library opening hours.*after.work/);
+      assert.match(await page.locator(".new-demo-intro").textContent(), /finish work at 6 pm.*weekday/);
+      assert.doesNotMatch(await page.locator("#stage").textContent(), /bookmark/i);
       const stageBounds = await page.locator("#stage").boundingBox();
       assert(stageBounds.width >= width * .94, "Exhibit uses nearly the full page width");
       if (width <= 720) {
@@ -84,10 +88,23 @@ try {
       assert.equal(dismissed > 0, mode === "fixed");
       await page.locator("#edition-step").click();
       assert.equal(await page.locator('#news-feed [data-dismiss="0"]').count(), mode === "hard" && width > 700 ? 1 : 0);
+      await page.locator('[data-article="museum"]').click();
+      assert.match(await page.locator(".news-story-copy>h3").textContent(), /museum/);
+      assert.equal(await page.locator("#news-hours").count(), 0, "Unrelated stories do not offer library hours");
+      assert.equal(await page.evaluate(() => window.completions), 0);
+      if (mode === "hard" && width > 700) {
+        await page.locator('#news-story [data-dismiss="1"]').click();
+        assert.equal(await page.locator("#news-return").evaluate(button => button === document.activeElement), true, "Closing an ad on another story focuses its return control");
+      }
+      await page.locator("#news-return").click();
+      assert.equal(await page.locator("#news-feed").isVisible(), true);
       await openLibrary(page, mode, true);
-      const bookmarkBefore = await position("#news-bookmark");
+      assert.equal(await page.locator("#news-library-hours").isVisible(), false);
+      assert.equal(await page.locator("#news-hours").getAttribute("aria-expanded"), "false");
+      assert.equal(await page.evaluate(() => window.completions), 0, "Opening the story alone does not complete the visit task");
+      const hoursBefore = await position("#news-hours");
       for (let index = 2; index < 5; index++) await page.locator("#edition-step").click();
-      assert.equal((await position("#news-bookmark")) === bookmarkBefore, mode === "fixed");
+      assert.equal((await position("#news-hours")) === hoursBefore, mode === "fixed");
       await page.locator("#edition-pause").click();
       assert.equal(await page.locator("#edition-step").isDisabled(), true);
       await page.locator("#edition-pause").click();
@@ -114,9 +131,34 @@ try {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
       await page.locator(".news-viewport").evaluate(element => { element.scrollTop = 200; });
       await page.locator("#stage").screenshot({ path: `${output}/article-${mode}-${width}.png` });
-      await page.locator("#news-bookmark").click();
+      await page.locator("#news-hours").click();
       assert.equal(await page.evaluate(() => window.completions), 1);
-      if (mode === "easy") await page.locator('[data-difficulty-action="stay"]').click();
+      assert.equal(await page.locator("#news-library-hours").isVisible(), true);
+      assert.match(await page.locator("#news-library-hours dl>div").first().textContent(), /Monday to Friday.*9 am to 9 pm/);
+      assert.equal(await page.locator("#news-hours").getAttribute("aria-expanded"), "true");
+      assert.equal(await page.locator("#news-hours-title").evaluate(element => element === document.activeElement), true);
+      assert.match(await page.locator("#extra-status").textContent(), /closes at 9 pm on weekdays.*visit after work/);
+      assert.equal(await page.locator("#edition-state").textContent(), "Edition settled");
+      assert.equal(await page.locator("#edition-pause").isDisabled(), true);
+      assert.equal(await page.locator("#edition-step").isDisabled(), true);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      await page.locator("#stage").screenshot({ path: `${output}/hours-${mode}-${width}.png` });
+      await page.locator('[data-difficulty-action="stay"]').click();
+      await page.locator("#news-hours").click();
+      assert.equal(await page.evaluate(() => window.completions), 1, "Viewing hours again does not complete twice");
+      await page.locator("#news-back").click();
+      await page.locator('[data-article="library"]').click();
+      assert.equal(await page.locator("#news-library-hours").isVisible(), true, "The hours remain available when revisiting the story");
+      assert.equal(await page.locator("#news-hours").getAttribute("aria-expanded"), "true");
+      await page.locator(".reset-button").click();
+      await page.evaluate(() => {
+        document.querySelector("#stage").addEventListener("exhibit-complete", () => { window.completions++; });
+      });
+      await openLibrary(page, mode);
+      assert.equal(await page.locator("#news-library-hours").isVisible(), false, "Restart resets the hours reveal");
+      await page.locator("#news-hours").focus();
+      await page.keyboard.press("Enter");
+      assert.equal(await page.evaluate(() => window.completions), 2, "The restarted task can be completed by keyboard");
       await page.close();
       console.log(`Passed ${mode} at ${width}px: auto-start, repeated cycles, extra placements, completion, stable outer layout.`);
     }
@@ -141,6 +183,11 @@ try {
   assert.equal(await page.locator("#edition-state").textContent(), `Live update ${initialUpdate + 2}`);
   await page.clock.runFor(23000);
   assert.equal(await page.locator("#edition-state").textContent(), `Live update ${initialUpdate + 22}`);
+  await page.locator("#edition-pause").click();
+  await page.locator("#news-hours").click();
+  await page.locator('[data-difficulty-action="stay"]').click();
+  await page.clock.runFor(5000);
+  assert.equal(await page.locator("#edition-state").textContent(), "Edition settled", "Completion stops automatic loading");
   await page.locator('[data-mode="fixed"]').click();
   await page.clock.runFor(5000);
   assert.equal(await page.locator("#edition-state").textContent(), "Edition ready");
@@ -159,6 +206,9 @@ try {
   }
   await touch.locator('[data-article="library"]').tap();
   assert.equal(await touch.locator("#news-story").isVisible(), true);
+  await touch.locator("#news-hours").tap();
+  assert.equal(await touch.locator("#news-library-hours").isVisible(), true, "Touch readers can reveal opening hours");
+  await touch.locator('[data-difficulty-action="stay"]').tap();
   await touch.locator(".reset-button").click();
   await touch.locator('[data-article="library"]').focus();
   await touch.keyboard.press("Enter");

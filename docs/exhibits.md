@@ -48,7 +48,9 @@ Hard adds more personalized interruptions and less stable presentation. Fix it r
 
 **Route:** `/exhibit/layout-earthquake`
 
-Find and open a library story in a newspaper layout while ads expand into its position. Early attempts insert sponsored blocks instead of opening the link, and live updates continue to shift the article.
+You're planning a weekday library visit after finishing work at 6 pm. Find and open "The public library opens late" in a newspaper layout, then select **View library opening hours** at the end of the story. This reveals the weekday and weekend schedule and confirms that the library closes at 9 pm on weekdays. Viewing the hours completes the task and stops live updates; opening an unrelated story does not.
+
+Ads expand into the story's position. Early attempts insert sponsored blocks instead of opening the link, and live updates continue to shift the article and its opening-hours control.
 
 On narrow screens, live placements expand and collapse together at viewport-scaled sizes, so their movements do not cancel out. The newspaper retains its scrollable height during updates to keep shrinking ads from silently holding the reader in place at the bottom. Reduced-motion users advance these changes manually.
 

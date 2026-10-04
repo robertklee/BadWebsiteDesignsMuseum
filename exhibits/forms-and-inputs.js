@@ -1,16 +1,23 @@
 // Forms & inputs: text entry, dial, dropdown, and puzzle-style controls.
-import { createStageShell, createDemoStatus, completeExhibit, matchesDemoText } from "./shared.js";
+import { createStageShell, createDemoStatus, completeExhibit, resetExhibit, matchesDemoText } from "./shared.js";
+
+function lockAcceptedControls(container) {
+  container.querySelectorAll("button, input, select, textarea").forEach(control => {
+    if (control.matches('textarea, input:not([type="range"]):not([type="checkbox"]):not([type="radio"])')) control.readOnly = true;
+    else control.disabled = true;
+  });
+}
 
 export const exhibits = [
   { id: "dropdown", task: "Tell your friend ON MY WAY, then select Send message. The radio dial replaces typing.", fixedTask: "Type ON MY WAY and select Send message.", name: "The Radio Text Receiver", category: "Forms", color: "pink", tagline: "Write a message by tuning a radio to every letter.", description: "Instead of typing a message, find the station for each letter on a radio dial. One letter at a time, with painfully exact tuning.", lesson: "A message box normally lets you type whatever you want. This one replaces your keyboard with a radio dial: every letter has a station, and being almost on the right number is not enough.", fix: "An ordinary text box replaces the radio, so you can type or paste a whole message.", worseChange: "Every received letter changes the station numbers, so the next letter needs a fresh search.", preview: `<div class="thumb-scene thumb-radio"><span class="thumb-kicker">NOW RECEIVING: ONE LETTER</span><div class="thumb-radio-face"><div class="thumb-radio-readout"><strong>H</strong><div><b>2496 Hz</b><span>TEXT / MONO</span></div></div><div class="thumb-radio-scale"><i></i></div><div class="thumb-radio-message">MESSAGE: H<span>_</span></div></div><small class="thumb-footer">One hertz off. Nothing but static.</small></div>`, render: renderRadioText },
   { id: "word-editor", task: "Write the note Meet at six and select Save draft. Each character comes from a letter menu.", fixedTask: "Type Meet at six and select Save draft.", name: "The Dropdown Word Processor", category: "Forms", color: "orange", tagline: "Write a sentence. Select every letter from a menu.", description: "Imagine writing a document without a keyboard. Each letter, space, and line break must be chosen from its own dropdown menu.", lesson: "You use dropdown menus to choose from a few options. This editor uses one for every character in your document. Writing 'hello' is now five separate menu decisions.", fix: "A normal text area restores typing, pasting, and editing.", worseChange: "The choices in every letter menu reshuffle after each edit.", preview: `<div class="thumb-scene thumb-word"><span class="thumb-kicker">UNTITLED DOCUMENT</span><div class="thumb-word-page"><div class="thumb-word-chrome">File &nbsp; Edit &nbsp; Suffer</div><div class="thumb-letter-selects"><span>H⌄</span><span>e⌄</span><span>l⌄</span><span>l⌄</span><div class="thumb-open-letter"><span>o⌄</span><div><span>n</span><b>o ✓</b><span>p</span></div></div></div><div class="thumb-word-paper-lines"></div></div><small class="thumb-footer">5 letters. 5 dropdowns.</small></div>`, render: renderWordEditor },
   { id: "alphabet", task: "Send your friend the message HELLO. The shuffled slider replaces typing.", fixedTask: "Type HELLO and select Send demo message.", name: "The Alphabet Shuffle", category: "Forms", color: "pink", tagline: "Find a letter. Add it. Now the alphabet has moved.", description: "Write a message with a slider instead of a keyboard. The letters change places after each choice, so yesterday's A is today's guess.", lesson: "A keyboard works partly because its letters stay in familiar places. This message box replaces that stability with a shuffled slider. Every new letter starts the search again.", fix: "A normal text box lets you type or paste the message.", worseChange: "The letters also reshuffle when you finish adjusting the slider, before you add a character.", preview: `<div class="thumb-scene thumb-alphabet"><span class="thumb-kicker">WRITING WITHOUT A KEYBOARD</span><div class="thumb-shuffle-step"><span>FOUND A.</span><div class="thumb-shuffle-letters"><span>Q</span><b>A</b><span>Z</span><span>M</span><span>B</span></div><div class="thumb-shuffle-track"><i></i></div></div><div class="thumb-shuffle-step"><span>ADDED A. NOW FIND IT AGAIN.</span><div class="thumb-shuffle-letters thumb-shuffled"><span>M</span><span>Z</span><span>B</span><b>A</b><span>Q</span></div><div class="thumb-shuffle-track"><i></i></div></div><small class="thumb-footer">Same slider. New alphabet.</small></div>`, render: renderAlphabet },
-  { id: "phone", task: "Roll and lock each digit to match 2025550107, then confirm the demo number.", fixedTask: "Type 2025550107 and confirm the demo number.", name: "The Phone Number Casino", category: "Forms", color: "orange", tagline: "Enter your phone number. One lucky digit at a time.", description: "Typing a phone number is too straightforward. Roll each digit like a slot machine and lock it when the right number appears.", lesson: "A form asks for your phone number, and you already know every digit. This one makes finding them a game of chance. Knowing the answer is not the same as being allowed to enter it.", fix: "You can type or paste the whole demo number into one field.", worseChange: "Rolling a digit also changes and unlocks the digit to its left.", preview: `<div class="thumb-scene thumb-phone"><span class="thumb-kicker">PLEASE GAMBLE YOUR NUMBER</span><div class="thumb-phone-machine"><span>PHONE NUMBER</span><div class="thumb-phone-digits"><div><b>(202) 555-</b><div class="thumb-locked-digits"><span>0<small>✓</small></span><span>1<small>✓</small></span><span>0<small>✓</small></span></div></div><div class="thumb-last-reel"><div class="thumb-reel-strip"><span>6</span><b>7</b><span>8</span></div></div></div><div class="thumb-phone-state"><span>9 DIGITS LOCKED</span><b>↻</b></div></div><small class="thumb-footer">Your number is somewhere in these odds.</small></div>`, render: renderPhone },
+  { id: "phone", task: "Roll each digit to match 2025550107, then confirm the demo number. Locking digits is optional help.", fixedTask: "Type 2025550107 and confirm the demo number.", name: "The Phone Number Casino", category: "Forms", color: "orange", tagline: "Enter your phone number. One lucky digit at a time.", description: "Typing a phone number is too straightforward. Roll each digit like a slot machine and lock it when the right number appears.", lesson: "A form asks for your phone number, and you already know every digit. This one makes finding them a game of chance. Knowing the answer is not the same as being allowed to enter it.", fix: "You can type or paste the whole demo number into one field.", worseChange: "Rolling a digit also changes and unlocks the digit to its left.", preview: `<div class="thumb-scene thumb-phone"><span class="thumb-kicker">PLEASE GAMBLE YOUR NUMBER</span><div class="thumb-phone-machine"><span>PHONE NUMBER</span><div class="thumb-phone-digits"><div><b>(202) 555-</b><div class="thumb-locked-digits"><span>0<small>✓</small></span><span>1<small>✓</small></span><span>0<small>✓</small></span></div></div><div class="thumb-last-reel"><div class="thumb-reel-strip"><span>6</span><b>7</b><span>8</span></div></div></div><div class="thumb-phone-state"><span>9 DIGITS LOCKED</span><b>↻</b></div></div><small class="thumb-footer">Your number is somewhere in these odds.</small></div>`, render: renderPhone },
   { id: "cookies", task: "Turn off all four optional cookie categories, then save your preferences.", fixedTask: "Select Reject all optional cookies, or choose preferences individually and save them.", name: "The Cookie Switchboard", category: "Forms", color: "yellow", tagline: "Reject tracking. Another switch turns it back on.", description: "You've seen cookie pop-ups asking for your preferences. Here, turning one category off changes the others, too.", lesson: "Cookie pop-ups often make rejecting tracking harder than accepting it. This one ties the switches together, so changing one choice changes another. Your preferences become a puzzle.", fix: "Each switch controls only its own setting, and one button rejects all optional categories. No real cookies are set.", worseChange: "Each switch changes two others. Labels say Disable, so ON means that category is rejected.", preview: `<div class="thumb-scene thumb-cookie"><span class="thumb-kicker">WE RESPECT YOUR CHOICES*</span><div class="thumb-cookie-panel"><div class="thumb-cookie-row"><b>Analytics</b><span>OFF ←</span><i class="thumb-switch thumb-switch-off"></i></div><div class="thumb-cookie-wire"><i></i><span>ONE CLICK LATER</span></div><div class="thumb-cookie-row"><b>Marketing</b><span>→ ON</span><i class="thumb-switch thumb-switch-on"></i></div></div><small class="thumb-footer">*Not independently.</small></div>`, render: renderCookies },
   { id: "unix-birthday", task: "Set Alex's fictional profile birthday to July 16, 1992, then confirm it. Use the calendar preview to check the timestamp.", fixedTask: "Set Alex's fictional profile birthday to July 16, 1992, then confirm it.", name: "The Unix Birthday Picker", category: "Forms", color: "green", tagline: "Your birthday, in a format only a computer would ask for.", description: "You know your birthday as a date. This form wants the number of milliseconds since January 1, 1970 instead.", lesson: "Entering a birthday should not require knowing how computers store dates. A Unix timestamp counts time from January 1, 1970. This form makes you work with that number instead of the date you already know.", fix: "A normal date field lets you choose the year, month, and day directly.", worseChange: "The slider is removed. You have to enter the timestamp as a number yourself.", preview: `<div class="thumb-scene thumb-birthday"><span class="thumb-kicker">WHEN WERE YOU BORN?</span><div class="thumb-birthday-greeting"><strong>Happy<br>birthday!</strong><div class="thumb-birthday-calendar"><span>JAN</span><b>1</b><small>1990</small></div></div><div class="thumb-timestamp"><span>DATE OF BIRTH / MILLISECONDS</span><b>631152000000</b></div><small class="thumb-footer">January 1, 1990. In milliseconds.</small></div>`, render: renderUnixBirthday },
-  { id: "password-gym", task: "Make up a demo password and satisfy the rules as they appear. Never enter a real password.", fixedTask: "Make up a demo password with at least 12 characters. Never reuse it for a real account.", name: "The Password Gym", category: "Forms", color: "orange", tagline: "Create a password. Now meet one more requirement.", description: "We've all seen password rules about numbers and capital letters. These keep appearing as you type, and each is less reasonable than the last.", lesson: "Signing up often means editing a password to satisfy a list of requirements. Here, meeting one requirement reveals another. The account can wait; your password apparently needs a complete personality.", fix: "One visible length requirement replaces the expanding rule list. This is still a demo, not advice about password security.", worseChange: "The list grows to 32 rules. The final rule contradicts earlier ones, so this version deliberately cannot be completed.", preview: `<div class="thumb-scene thumb-gym"><span class="thumb-kicker">RULE 8 OF ALMOST FINISHED</span><div class="thumb-gym-field">••••••••</div><div class="thumb-gym-passed">✓ Has a number &nbsp; ✓ Long enough</div><div class="thumb-gym-error"><span>✕</span><div><strong>Has not<br>apologized</strong><small>Try adding “sorry.”</small></div></div></div>`, render: renderPasswordGym },
+  { id: "password-gym", task: "Make up a demo password and satisfy the rules as they appear. Never enter a real password.", fixedTask: "Make up a demo password with at least 12 characters, then select Create demo password. Never reuse it for a real account.", name: "The Password Gym", category: "Forms", color: "orange", tagline: "Create a password. Now meet one more requirement.", description: "We've all seen password rules about numbers and capital letters. These keep appearing as you type, and each is less reasonable than the last.", lesson: "Signing up often means editing a password to satisfy a list of requirements. Here, meeting one requirement reveals another. The account can wait; your password apparently needs a complete personality.", fix: "One visible length requirement replaces the expanding rule list. This is still a demo, not advice about password security.", worseChange: "The list grows to 32 rules. The final rule contradicts earlier ones, so this version deliberately cannot be completed.", preview: `<div class="thumb-scene thumb-gym"><span class="thumb-kicker">RULE 8 OF ALMOST FINISHED</span><div class="thumb-gym-field">••••••••</div><div class="thumb-gym-passed">✓ Has a number &nbsp; ✓ Long enough</div><div class="thumb-gym-error"><span>✕</span><div><strong>Has not<br>apologized</strong><small>Try adding “sorry.”</small></div></div></div>`, render: renderPasswordGym },
   { id: "cat-captcha", task: "Complete the human check: collect every piece of cheese, then reach the mouse hole without getting caught.", fixedTask: "Tick the checkbox and select Verify demo to complete the human check.", name: "The CAT-PCHA", category: "Forms", color: "yellow", tagline: "The familiar human check, with a cat-and-mouse twist.", description: "You know the check that asks you to prove you're human? This one makes you play a mouse escaping a cat before you can continue.", lesson: "A CAPTCHA is the check a website uses to tell people apart from automated programs, often with a checkbox or picture puzzle. Here, that small interruption becomes a whole cat-and-mouse game. All this just to continue.", fix: "The human check is back to a single checkbox. No cat chase required, and no real identity check takes place.", worseChange: "There is more cheese to collect, the cat sometimes moves twice, and the first exit sends you looking for another.", preview: `<div class="thumb-scene thumb-cat"><span class="thumb-kicker">THE HUMAN CHECK, NOW A CHASE</span><div class="thumb-cat-board"><span class="thumb-cat-hunter">🐈</span><i class="thumb-maze-wall"></i><span class="thumb-cat-player">🐭</span><span class="thumb-cat-cheese">🧀</span><span class="thumb-cat-exit">EXIT</span><i class="thumb-maze-route"></i></div><small class="thumb-footer">Pass the game to continue.</small></div>`, render: renderCatCaptcha },
-  { id: "checkbox-ecosystem", task: "Turn on Security alerts, Delivery updates, and Dark mode only. Keep them fed, then save your preferences.", fixedTask: "Choose any demo preferences and select Save demo preferences.", name: "The Checkbox Ecosystem", category: "Forms", color: "green", tagline: "Choose your settings. Now keep them alive.", description: "Checked boxes usually stay checked. These need feeding, wander around, and turn themselves off if you neglect them.", lesson: "You set your preferences and expect the website to remember them. Here your choices behave like pets. Keeping a box checked takes ongoing care, not just one click.", fix: "Each checkbox stays where it is and keeps your selection without feeding or supervision.", worseChange: "Checked boxes lose health faster, and every third feeding creates another checked box to manage.", preview: `<div class="thumb-scene thumb-ecosystem"><span class="thumb-kicker">YOUR SETTINGS NEED A SNACK</span><div class="thumb-preference"><span class="thumb-preference-title">☑ Dark mode <span>🌱</span></span><div class="thumb-health"><i></i></div><div class="thumb-preference-status"><b>HUNGRY</b><span>Feed preference</span></div></div><small class="thumb-footer">You checked it. It depends on you now.</small></div>`, render: renderCheckboxEcosystem },
+  { id: "checkbox-ecosystem", task: "Turn on Security alerts, Delivery updates, and Dark mode only. Keep them fed, then save your preferences.", fixedTask: "Turn on Security alerts, Delivery updates, and Dark mode only, then select Save demo preferences.", name: "The Checkbox Ecosystem", category: "Forms", color: "green", tagline: "Choose your settings. Now keep them alive.", description: "Checked boxes usually stay checked. These need feeding, wander around, and turn themselves off if you neglect them.", lesson: "You set your preferences and expect the website to remember them. Here your choices behave like pets. Keeping a box checked takes ongoing care, not just one click.", fix: "Each checkbox stays where it is and keeps your selection without feeding or supervision.", worseChange: "Checked boxes lose health faster, and every third feeding creates another checked box to manage.", preview: `<div class="thumb-scene thumb-ecosystem"><span class="thumb-kicker">YOUR SETTINGS NEED A SNACK</span><div class="thumb-preference"><span class="thumb-preference-title">☑ Dark mode <span>🌱</span></span><div class="thumb-health"><i></i></div><div class="thumb-preference-status"><b>HUNGRY</b><span>Feed preference</span></div></div><small class="thumb-footer">You checked it. It depends on you now.</small></div>`, render: renderCheckboxEcosystem },
   { id: "elevator-date", task: "Set Alex's fictional profile birthday to July 16, 1992. Ride the year, month, and day elevators to select that date.", fixedTask: "Set Alex's fictional profile birthday to July 16, 1992, then confirm it.", name: "The Elevator Date Picker", category: "Forms", color: "lilac", tagline: "Picking a date shouldn't require changing elevators.", description: "Choose a year, month, and day by riding three elevators. Miss your stop and the date you wanted goes past.", lesson: "Selecting a date usually means clicking a calendar or typing a few numbers. Here every year, month, and day is a floor, and reaching the right one requires a separate journey.", fix: "A normal date field replaces the elevators and transfers.", worseChange: "Express service skips floors unless you request a stop before the next departure.", preview: `<div class="thumb-scene thumb-elevator"><span class="thumb-kicker">GOING DOWN. TO YOUR BIRTHDAY.</span><div class="thumb-lift"><div class="thumb-lift-display">↓ 1992</div><div class="thumb-lift-doors"><span>YOUR STOP<br><b>1990</b></span></div><div class="thumb-lift-buttons"><span>↑</span><span>↓</span></div></div><small class="thumb-footer">For February, change at the lobby.</small></div>`, render: renderElevatorDate },
   { id: "password-crane", task: "Enter Claw_M00n!42 for a fictional test account, then check it. The claw replaces typing; never use a real password.", fixedTask: "Type Claw_M00n!42 and select Use demo phrase. This is a supplied throwaway password, never a real credential.", category: "Forms", color: "lilac", name: "The Password Crane Game", tagline: "Creating a password, now with an arcade claw.", description: "Instead of typing a password, pick up each letter and symbol with a claw machine. Even the exclamation mark needs a good grip.", lesson: "Password forms often demand a special character. This one makes you win it like a prize in an arcade. A keyboard would have been suspiciously efficient.", fix: "A normal field accepts a made-up phrase without operating the claw.", worseChange: "Every third grab picks the neighboring character instead. Return it and try again without losing the rest of your password.", preview: '<div class="thumb-scene thumb-crane"><span class="thumb-kicker">PLEASE PICK A STRONG PASSWORD</span><div class="thumb-claw-cabinet"><span class="thumb-claw-rail"></span><div class="thumb-claw"><i></i><b>!</b></div><div class="thumb-character-bin"><b>A</b><b>a</b><b>9</b><b>?</b><b>#</b></div><div class="thumb-claw-output">PASSWORD: Claw_M00n<span>_</span></div></div><small class="thumb-footer">The special character is a prize.</small></div>', render: renderPasswordCrane },
   { id: "email-auction", task: "Bid imaginary coins for characters, assemble a made-up email address, and confirm it.", fixedTask: "Type a made-up email address such as mouse@example.test and select Use email in demo.", category: "Forms", color: "orange", name: "The Email Address Auction", tagline: "Enter an email address. First, bid for the @ sign.", description: "A form asks for your email address, but every letter and symbol must be won at an auction before you can use it.", lesson: "You've entered an email address into countless forms. This one turns each character into a separate purchase. Even the @ sign has a market price, and imaginary competitors want it too.", fix: "One field lets you type or paste the complete made-up address.", worseChange: "Characters cost more and attract more competing bids, especially the @ sign.", preview: '<div class="thumb-scene thumb-auction"><span class="thumb-kicker">GOING ONCE. GOING TWICE. GOING @.</span><div class="thumb-auction-lot"><strong>@</strong><div><span>CURRENT BID</span><b>12 coins</b><small>Imaginary money.<br>Essential punctuation.</small></div></div><div class="thumb-email-slot">hello<span>?</span>example.com</div><small class="thumb-footer">Your email has a missing bid.</small></div>', render: renderEmailAuction },
@@ -400,7 +407,7 @@ function renderWordEditor({ stage, mode, shuffle }) {
   });
   stage.querySelector("#word-finish").addEventListener("click", () => {
     if (!matchesDemoText(text, "Meet at six")) { say("Write the note Meet at six before saving your draft. Your work is preserved."); return; }
-    stage.querySelector("#word-finish").disabled = true;
+    lockAcceptedControls(stage);
     say("Draft saved in this demo: Meet at six. Nothing was sent or stored outside this page.");
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
@@ -475,13 +482,18 @@ function renderPhone({ stage, mode }) {
   const target = "2025550107";
   const formattedTarget = `${target.slice(0, 3)} ${target.slice(3, 6)} ${target.slice(6)}`;
   shell("DIAL BY CHANCE", fixed ? "Enter the demo number." : "Your phone number, probably.",
-    `${fixed ? "A normal phone-number field: type or paste" : "A form needs your phone number, but instead of typing it you have to roll the digits like a slot machine. Match"} the demo number ${target}.${fixed ? "" : ` Roll each digit until it matches, lock it, then confirm the number.${worse ? " Each roll also changes and unlocks the digit to its left. Working from right to left helps." : ""}`}`,
-    `<div class="task-target">DEMO NUMBER: <strong>${formattedTarget}</strong></div>${fixed ? `<form id="phone-form"><label for="phone-number">${target.length}-digit demo phone number</label><input id="phone-number" type="tel" inputmode="numeric" pattern="[0-9]{${target.length}}" maxlength="${target.length}" required autocomplete="off"><button class="demo-button">Confirm demo number</button></form>` : `<div class="phone-reels">${[...target].map((_, index) => `<div class="phone-reel"><label>Digit ${index + 1}</label><output id="phone-digit-${index}">?</output><button class="plain-button" data-roll="${index}" aria-label="Roll digit ${index + 1}">↻ Roll</button><button class="demo-button" data-lock="${index}" aria-label="Lock digit ${index + 1}" aria-pressed="false">Lock</button></div>`).join("")}</div><button class="demo-button" id="confirm-phone">Confirm this unlikely number</button>`}`);
+    `${fixed ? "A normal phone-number field: type or paste" : "A form needs your phone number, but instead of typing it you have to roll the digits like a slot machine. Match"} the demo number ${target}.${fixed ? " Spaces, hyphens, and parentheses are welcome." : ` Roll each digit until it matches, then confirm the number. Locking is optional help to preserve a digit against its own Roll button.${worse ? " Each roll also changes and unlocks the digit to its left, even if locked. Working from right to left helps." : ""}`}`,
+    `<div class="task-target">DEMO NUMBER: <strong>${formattedTarget}</strong></div>${fixed ? `<form id="phone-form" novalidate><label for="phone-number">${target.length}-digit demo phone number (spaces, hyphens, and parentheses allowed)</label><input id="phone-number" type="tel" inputmode="tel" required autocomplete="off"><button class="demo-button">Confirm demo number</button></form>` : `<div class="phone-reels">${[...target].map((_, index) => `<div class="phone-reel"><label>Digit ${index + 1}</label><output id="phone-digit-${index}">?</output><button class="plain-button" data-roll="${index}" aria-label="Roll digit ${index + 1}">↻ Roll</button><button class="demo-button" data-lock="${index}" aria-label="Lock digit ${index + 1}" aria-pressed="false">Lock</button></div>`).join("")}</div><button class="demo-button" id="confirm-phone">Confirm this unlikely number</button>`}`);
   if (fixed) {
     stage.querySelector("form").addEventListener("submit", event => {
       event.preventDefault();
-      say(stage.querySelector("#phone-number").value === target ? "Number accepted. No call or message will be sent." : `Use the fictional demo number ${target}, not your real number.`);
-      if (stage.querySelector("#phone-number").value === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      const value = stage.querySelector("#phone-number").value.trim();
+      const correct = /^[\d\s()-]+$/.test(value) && value.replace(/[\s()-]/g, "") === target;
+      say(correct ? "Number accepted. No call or message will be sent." : `Use the fictional demo number ${target}, not your real number. Spaces, hyphens, and parentheses are allowed; letters and other numbers are not.`);
+      if (correct) {
+        lockAcceptedControls(stage);
+        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      }
     });
   } else {
     const digits = Array(target.length).fill(null);
@@ -516,7 +528,10 @@ function renderPhone({ stage, mode }) {
     }));
     stage.querySelector("#confirm-phone").addEventListener("click", () => {
       say(digits.every(digit => digit !== null) && digits.join("") === target ? `Number accepted after ${rolls} rolls. No call or message will be sent.` : `That is not ${target}. Keep rolling. You are not allowed to type.`);
-      if (digits.every(digit => digit !== null) && digits.join("") === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      if (digits.every(digit => digit !== null) && digits.join("") === target) {
+        lockAcceptedControls(stage);
+        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      }
     });
     paint();
   }
@@ -540,6 +555,7 @@ function renderCookies({ stage, mode }) {
       button.setAttribute("aria-checked", String(on));
       button.textContent = on ? "ON" : "OFF";
     });
+    stage.querySelector("#cookie-summary").textContent = "Current optional settings: " + names.map((name, index) => `${name}: ${enabled[index] ? "enabled" : "disabled"}`).join("; ") + ".";
   };
   stage.querySelectorAll("[data-cookie]").forEach(button => button.addEventListener("click", () => {
     const index = Number(button.dataset.cookie);
@@ -551,9 +567,11 @@ function renderCookies({ stage, mode }) {
     say(fixed ? "Only that preference changed." : `One click changed ${worse ? 3 : 2} preferences. Perfectly normal.`);
   }));
   const save = () => {
-    stage.querySelector("#cookie-summary").textContent = "Actual optional settings: " + names.map((name, index) => `${name}: ${enabled[index] ? "enabled" : "disabled"}`).join("; ") + ".";
     say(enabled.every(value => !value) ? "All optional cookies rejected. Puzzle solved. No actual cookies were set." : fixed ? "Your selected preferences are shown below. No actual cookies were set." : "Some optional categories are still enabled. The goal is to reject all four.");
-    if (fixed || enabled.every(value => !value)) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    if (fixed || enabled.every(value => !value)) {
+      lockAcceptedControls(stage);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    }
   };
   stage.querySelector("#save-cookies").addEventListener("click", save);
   stage.querySelector("#reject-all")?.addEventListener("click", () => { enabled = enabled.map(() => false); paint(); save(); });
@@ -571,8 +589,8 @@ function renderUnixBirthday({ stage, mode }) {
   const earliest = Date.UTC(1900, 0, 1);
   const isoToday = new Date(latest).toISOString().slice(0, 10);
   shell("A BIRTHDAY FORM WITH COMPUTER PRIORITIES", fixed ? "When is your birthday?" : "Your birthday, as one very large number.",
-    `A birthday form usually asks for a day, month, and year.${fixed ? " This version does exactly that. Set Alex's fictional profile birthday to July 16, 1992 and confirm it." : ` This one asks for a Unix timestamp: the number of milliseconds counted from January 1, 1970. A millisecond is one thousandth of a second.${worse ? " Type a whole number and use the calendar preview to check it. The time must be midnight UTC, the standard world time; confirm the required birthday when the preview shows July 16, 1992." : " Move the slider and watch the calendar preview, then use Align to UTC midnight before confirming. Arrow keys move one hour at a time."}`} Enter Alex's fictional birthday, July 16, 1992, not your own.`,
-    `<form class="epoch-form" id="epoch-form" novalidate><label for="epoch-input">${fixed ? "Birthday" : "Birthday as a Unix timestamp in milliseconds"}</label><input id="epoch-input" type="${fixed ? "date" : worse ? "text" : "range"}" ${fixed ? `min="1900-01-01" max="${isoToday}"` : worse ? 'inputmode="text" maxlength="17" spellcheck="false" autocomplete="off" placeholder="631152000000" aria-describedby="epoch-readout"' : `min="${earliest}" max="${latest}" step="3600000" value="631152000000" aria-describedby="epoch-readout"`} required>${!fixed && !worse ? '<button type="button" class="plain-button epoch-align" id="epoch-align">Align to UTC midnight</button>' : ""}<div class="epoch-readout" id="epoch-readout">${fixed ? "Your birthday doesn't need a calculator." : "Calendar preview will appear here."}</div><button class="demo-button">Confirm demo birthday</button></form>${fixed ? "" : `<details class="epoch-help"><summary>How do these numbers become dates?</summary><p>One day = 86,400,000 milliseconds. January 1, 1990 = 631152000000. Dates before 1970 use negative timestamps. Seconds are not milliseconds.</p><p>Supported range: January 1, 1900 through today. All dates use UTC so they do not shift with your computer's timezone.</p></details>`}`);
+    `A birthday form usually asks for a day, month, and year.${fixed ? " This version does exactly that. Set Alex's fictional profile birthday to July 16, 1992 and confirm it." : ` This one asks for a Unix timestamp: the number of milliseconds counted from January 1, 1970. A millisecond is one thousandth of a second.${worse ? " Type a whole number and use the calendar preview to check it. The time must be midnight UTC, the standard world time; confirm the required birthday when the preview shows July 16, 1992." : " Move the slider and watch the calendar preview. The hour/day buttons let you adjust precisely on touchscreens; arrow keys move one hour at a time too. Use Align to UTC midnight before confirming."}`} Enter Alex's fictional birthday, July 16, 1992, not your own.`,
+    `<form class="epoch-form" id="epoch-form" novalidate><label for="epoch-input">${fixed ? "Birthday" : "Birthday as a Unix timestamp in milliseconds"}</label><input id="epoch-input" type="${fixed ? "date" : worse ? "text" : "range"}" ${fixed ? `min="1900-01-01" max="${isoToday}"` : worse ? 'inputmode="text" maxlength="17" spellcheck="false" autocomplete="off" placeholder="631152000000" aria-describedby="epoch-readout"' : `min="${earliest}" max="${latest}" step="3600000" value="631152000000" aria-describedby="epoch-readout"`} required>${!fixed && !worse ? `<div class="new-actions" role="group" aria-label="Precise birthday adjustment">${[[-86400000, "−1 day", "Decrease timestamp by one day"], [-3600000, "−1 hour", "Decrease timestamp by one hour"], [3600000, "+1 hour", "Increase timestamp by one hour"], [86400000, "+1 day", "Increase timestamp by one day"]].map(([delta, label, name]) => `<button type="button" class="plain-button" data-epoch-adjust="${delta}" aria-label="${name}">${label}</button>`).join("")}</div><button type="button" class="plain-button epoch-align" id="epoch-align">Align to UTC midnight</button>` : ""}<div class="epoch-readout" id="epoch-readout">${fixed ? "Your birthday doesn't need a calculator." : "Calendar preview will appear here."}</div><button class="demo-button">Confirm demo birthday</button></form>${fixed ? "" : `<details class="epoch-help"><summary>How do these numbers become dates?</summary><p>One day = 86,400,000 milliseconds. January 1, 1990 = 631152000000. Dates before 1970 use negative timestamps. Seconds are not milliseconds.</p><p>Supported range: January 1, 1900 through today. All dates use UTC so they do not shift with your computer's timezone.</p></details>`}`);
   const input = stage.querySelector("#epoch-input");
   const parse = (requireMidnight = true) => {
     const value = input.value.trim();
@@ -580,7 +598,7 @@ function renderUnixBirthday({ stage, mode }) {
     if (!fixed && !/^-?\d+$/.test(value)) return { error: "Use a signed whole number of milliseconds. No dates, decimals, commas, or scientific notation." };
     const timestamp = fixed ? Date.parse(`${value}T00:00:00Z`) : Number(value);
     if (!Number.isSafeInteger(timestamp) || Math.abs(timestamp) > 8640000000000000) return { error: "That timestamp is outside the supported calendar range." };
-    if (requireMidnight && (timestamp < earliest || timestamp > latest)) return { error: "Choose a birthday from January 1, 1900 through today. Check your units: milliseconds, not seconds." };
+    if (requireMidnight && (timestamp < earliest || timestamp > latest)) return { error: `Choose a birthday from January 1, 1900 through today.${fixed ? "" : " Check your units: milliseconds, not seconds."}` };
     if (requireMidnight && timestamp % 86400000 !== 0) return { error: `That is not midnight UTC. ${worse ? "Use milliseconds (not seconds) for the start of your birthday." : "Use Align to UTC midnight for the start of the selected date."}` };
     return { timestamp, date: new Date(timestamp).toISOString().slice(0, 10) };
   };
@@ -588,9 +606,17 @@ function renderUnixBirthday({ stage, mode }) {
     const result = parse(false);
     stage.querySelector("#epoch-readout").textContent = result.error || (fixed ? `Calendar date: ${result.date} (UTC)` : `${new Date(result.timestamp).toISOString().replace("T", " ").replace("Z", " UTC")} · ${result.timestamp} ms${result.timestamp % 86400000 === 0 ? " · Aligned to midnight." : " · Alignment needed."}`);
     if (!fixed && !worse && !result.error) input.setAttribute("aria-valuetext", `${new Date(result.timestamp).toISOString()} (${result.timestamp} milliseconds)`);
+    if (!fixed && !worse && !result.error) stage.querySelectorAll("[data-epoch-adjust]").forEach(button => {
+      const next = result.timestamp + Number(button.dataset.epochAdjust);
+      button.disabled = next < earliest || next > latest;
+    });
   };
   input.addEventListener("input", preview);
   if (!fixed && !worse) {
+    stage.querySelectorAll("[data-epoch-adjust]").forEach(button => button.addEventListener("click", () => {
+      input.value = String(Number(input.value) + Number(button.dataset.epochAdjust));
+      preview();
+    }));
     stage.querySelector("#epoch-align").addEventListener("click", () => {
       const result = parse(false);
       if (result.error) { say(result.error); return; }
@@ -604,6 +630,7 @@ function renderUnixBirthday({ stage, mode }) {
     const result = parse();
     if (result.error) { say(result.error); return; }
     if (result.date !== target) { say("Alex's fictional birthday is July 16, 1992. Use the calendar preview to select that date."); return; }
+    lockAcceptedControls(stage);
     say(`Alex's birthday accepted: ${result.date} (UTC). Nothing was saved outside this demo.`);
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   };
@@ -659,10 +686,10 @@ function renderPasswordGym({ stage, mode }) {
   let revealed = 1;
   let finished = false;
   shell("STRENGTH TRAINING FOR A COMPLETELY FAKE PASSWORD", fixed ? "A passphrase, without the obstacle course." : "Your password needs more reps.",
-    `You know the password requirements that appear when you create an account?${fixed ? " Here there is just one visible length requirement." : ` Here, meeting one rule reveals another while all the earlier rules still apply.${worse ? " The final rule contradicts the others: this version is deliberately impossible." : " Keep editing to satisfy all 20 rules."}`} Invent a throwaway phrase, never a real password. Nothing creates an account or measures real password security.`,
-    `<div class="gym-warning">DEMO ONLY — do not reuse a real password here or use this puzzle's solution for a real account.</div><form class="gym-form" id="gym-form"><label for="gym-phrase">Invented demo phrase (visible text)</label><input id="gym-phrase" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="240" aria-describedby="gym-warning-text"><small id="gym-warning-text">Live evaluation. Your phrase stays in this page; nothing is sent to a server.</small><p class="gym-progress" id="gym-progress"></p><ol class="gym-rules" id="gym-rules" tabindex="0" aria-label="Revealed password requirements"></ol></form>`);
+    `You know the password requirements that appear when you create an account?${fixed ? " Here there is just one visible length requirement. Finish your whole phrase, then select Create demo password to accept it." : ` Here, meeting one rule reveals another while all the earlier rules still apply.${worse ? " The final rule contradicts the others: this version is deliberately impossible." : " Keep editing to satisfy all 20 rules."}`} Invent a throwaway phrase, never a real password. Nothing creates an account or measures real password security.`,
+    `<div class="gym-warning">DEMO ONLY — do not reuse a real password here or use this puzzle's solution for a real account.</div><form class="gym-form" id="gym-form"><label for="gym-phrase">Invented demo phrase (visible text)</label><input id="gym-phrase" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="240" aria-describedby="gym-warning-text"><small id="gym-warning-text">Live evaluation. Your phrase stays in this page; nothing is sent to a server.</small><p class="gym-progress" id="gym-progress"></p><ol class="gym-rules" id="gym-rules" tabindex="0" aria-label="Revealed password requirements"></ol>${fixed ? '<button class="demo-button" id="gym-create">Create demo password</button>' : ""}</form>`);
   const input = stage.querySelector("#gym-phrase");
-  const evaluate = () => {
+  const evaluate = (accept = false) => {
     if (finished) return;
     const results = rules.map(rule => rule.passes(input.value));
     const previous = revealed;
@@ -671,25 +698,28 @@ function renderPasswordGym({ stage, mode }) {
     ruleList.innerHTML = rules.slice(0, revealed).map((rule, index) => `<li class="${results[index] ? "satisfied" : "unsatisfied"}"><span>${results[index] ? "✓" : "×"}</span>${rule.text}</li>`).join("");
     if (revealed > previous) ruleList.scrollTop = ruleList.scrollHeight;
     const satisfied = results.slice(0, revealed).filter(Boolean).length;
-    stage.querySelector("#gym-progress").textContent = `${revealed} / ${rules.length} rules revealed · ${satisfied} currently satisfied · checked automatically`;
+    stage.querySelector("#gym-progress").textContent = `${revealed} / ${rules.length} rules revealed · ${satisfied} currently satisfied · ${fixed ? "select Create demo password when ready" : "checked automatically"}`;
+    if (fixed) stage.querySelector("#gym-create").disabled = satisfied !== rules.length;
     if (worse && revealed === rules.length) {
       finished = true;
       input.readOnly = true;
       const message = "Demo complete: this website blocked password creation. Rule 32 forbids the digits required by earlier rules, so no password can satisfy them all. Use Fix it to create a demo password normally.";
       say(message);
       completeExhibit(stage, message, "blocked");
-    } else if (revealed === rules.length && satisfied === rules.length) {
+    } else if (revealed === rules.length && satisfied === rules.length && (!fixed || accept)) {
       finished = true;
-      input.readOnly = true;
-      say(`Demo phrase accepted. All ${rules.length} requirement${rules.length === 1 ? "" : "s"} met automatically. No account was created; never reuse this phrase.`);
+      lockAcceptedControls(stage);
+      say(`Demo phrase accepted. All ${rules.length} requirement${rules.length === 1 ? "" : "s"} met${fixed ? "" : " automatically"}. No account was created; never reuse this phrase.`);
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    } else if (fixed && satisfied === rules.length) {
+      say("Length requirement met. Keep editing your phrase, or select Create demo password when ready.");
     } else {
       const failing = results.slice(0, revealed).findIndex(result => !result);
       say(`Rule ${failing + 1} is unmet: ${rules[failing].text} All earlier requirements remain active.`);
     }
   };
-  input.addEventListener("input", evaluate);
-  stage.querySelector("form").addEventListener("submit", event => { event.preventDefault(); evaluate(); });
+  input.addEventListener("input", () => evaluate());
+  stage.querySelector("form").addEventListener("submit", event => { event.preventDefault(); evaluate(true); });
   evaluate();
   return () => {};
 }
@@ -704,6 +734,7 @@ function renderCatCaptcha({ stage, mode }) {
       `<form id="cat-simple-form"><label class="cat-simple-label"><input type="checkbox" id="cat-simple-check" required> I'm human (demo only)</label><button class="demo-button">Verify demo</button></form>`);
     stage.querySelector("#cat-simple-form").addEventListener("submit", event => {
       event.preventDefault();
+      lockAcceptedControls(stage);
       say("Demo verified. No chase, no cheese, and no real security check.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
@@ -841,6 +872,7 @@ function renderCatCaptcha({ stage, mode }) {
     say("The mouse is at column 2, row 6. The cat is at column 8, row 1. Collect the cheese and escape. Take your time.");
   };
   stage.querySelector("#cat-retry").addEventListener("click", () => {
+    resetExhibit(stage);
     reset();
     board.focus({ preventScroll: true });
   });
@@ -853,7 +885,7 @@ function renderCheckboxEcosystem({ stage, mode }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   shell("CONSENT IS A DELICATE HOUSEPLANT", fixed ? "Preferences, not pets." : "Your checkboxes are alive.",
-    fixed ? "Choose the settings you want and save them. Checked boxes stay checked without any extra attention. These are demo preferences only." : `Normally, choosing a setting is one click. Here, checked boxes behave like pets: they wander around and turn themselves off unless you feed them. Turn on Security alerts, Delivery updates, and Dark mode only, keep them fed, then save.${worse ? " Every third feeding creates another checked box to manage." : ""} The movement starts with your first change; Pause habitat gives you a break. Nothing changes real settings.`,
+    fixed ? "Choose your settings: turn on Security alerts, Delivery updates, and Dark mode only, then save. Checked boxes stay checked without any extra attention. These are demo preferences only." : `Normally, choosing a setting is one click. Here, checked boxes behave like pets: they wander around and turn themselves off unless you feed them. Turn on Security alerts, Delivery updates, and Dark mode only, keep them fed, then save.${worse ? " Every third feeding creates another checked box to manage." : ""} The movement starts with your first change; Pause habitat gives you a break. Nothing changes real settings.`,
     `<div class="eco-habitat"><div class="eco-grid" id="eco-grid"></div><div class="new-actions">${fixed ? "" : '<button type="button" class="plain-button" id="eco-pause">Start habitat</button>'}<button type="button" class="demo-button" id="eco-save">Save demo preferences</button></div><p id="eco-summary" class="eco-summary"></p></div>`);
   const grid = stage.querySelector("#eco-grid");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -942,7 +974,7 @@ function renderCheckboxEcosystem({ stage, mode }) {
     else { paused = false; start(); paint(); say("Habitat awake. Remember to feed your checked boxes."); }
   });
   stage.querySelector("#eco-save").addEventListener("click", () => {
-    if (!fixed && preferences.some(pet => pet.checked !== pet.required)) {
+    if (preferences.some(pet => pet.checked !== pet.required)) {
       say("Enable only Security alerts, Delivery updates, and Dark mode. All other preferences, including offspring, must be off.");
       return;
     }
@@ -978,6 +1010,7 @@ function renderElevatorDate({ stage, mode }) {
     stage.querySelector("#lift-form").addEventListener("submit", event => {
       event.preventDefault();
       if (stage.querySelector("#lift-date").value !== "1992-07-16") { say("Set Alex's fictional birthday to July 16, 1992."); return; }
+      lockAcceptedControls(stage);
       say("Alex's birthday accepted: July 16, 1992. Nothing was saved outside the demo.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
@@ -1060,6 +1093,7 @@ function renderElevatorDate({ stage, mode }) {
     }
   });
   stage.querySelector("#lift-restart").addEventListener("click", () => {
+    resetExhibit(stage);
     stop();
     selection.length = 0;
     level = 0;
@@ -1122,7 +1156,7 @@ function renderPasswordCrane({ stage, mode }) {
     fixed ? "Instead of using the claw, type the supplied throwaway phrase Claw_M00n!42 for a fictional test account. Never use a real password; this demo sends and stores nothing."
       : `You've been asked to create a password with letters, numbers, and a special character. Here you have to pick up each one with an arcade claw. Assemble ${target}, carrying each tile to DROP to add it. The character banks are groups of letters and symbols; ASCII is the computer code used to number them. Never use a real password.${worse ? " Every third grab takes the neighboring character. Return it and try again; the rest of your password stays." : ""}`,
     `<section class="arcade-exhibit arcade-crane">
-      ${fixed ? `<form id="arcade-phrase-form"><label for="arcade-phrase">Test-account phrase: ${target} (visible)</label><input id="arcade-phrase" type="text" minlength="4" maxlength="${limit}" required autocomplete="off" spellcheck="false"><button class="demo-button">Use demo phrase</button></form>` : `
+      ${fixed ? `<form id="arcade-phrase-form"><label for="arcade-phrase">Test-account phrase: ${target} (visible)</label><input id="arcade-phrase" type="text" maxlength="${limit}" required autocomplete="off" spellcheck="false"><button class="demo-button">Use demo phrase</button></form>` : `
       <p id="arcade-crane-help" class="arcade-instructions">Choose a character bank (a group of letters and symbols), move over a tile, and Grab. Carry it to DROP and release. With the cabinet or a crane button focused: <kbd>←</kbd>/<kbd>→</kbd> move, <kbd>Page Up</kbd>/<kbd>Page Down</kbd> switch banks, and <kbd>Home</kbd>/<kbd>End</kbd> jump to the first tile/chute. <kbd>Space</kbd> grabs or drops on the cabinet and activates focused buttons normally. Held tiles travel between banks unchanged.</p>
       <div class="arcade-bank"><label for="arcade-bank">Character bank (ASCII codes)</label><select id="arcade-bank"></select><div class="new-actions"><button type="button" class="plain-button" id="arcade-bank-prev">Previous bank</button><button type="button" class="plain-button" id="arcade-bank-next">Next bank</button></div></div>
       <div id="arcade-cabinet" class="arcade-cabinet" tabindex="0" role="group" aria-label="Password claw controls" aria-describedby="arcade-crane-help arcade-claw-state">
@@ -1142,12 +1176,16 @@ function renderPasswordCrane({ stage, mode }) {
     on($("#arcade-phrase-form"), "submit", event => {
       event.preventDefault();
       if (input.value !== target) { say(`Enter the supplied throwaway phrase ${target}, never a real password.`); return; }
+      lockAcceptedControls($("#arcade-phrase-form"));
       say("Test-account phrase accepted. No account was created and nothing was sent.");
       stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     on($("#arcade-crane-reset"), "click", () => {
+      resetExhibit(stage);
       password = "";
       input.value = "";
+      input.readOnly = false;
+      $("#arcade-phrase-form button").disabled = false;
       say("Demo phrase cleared.");
     });
     return cleanup;
@@ -1163,7 +1201,9 @@ function renderPasswordCrane({ stage, mode }) {
   let lane = 0;
   let held = "";
   let grabs = 0;
+  let finished = false;
   const update = () => {
+    bankSelect.disabled = finished;
     bankSelect.value = String(bank);
     $("#arcade-bank-prev").disabled = bank === 0;
     $("#arcade-bank-next").disabled = bank === letters.length / bankSize - 1;
@@ -1185,6 +1225,8 @@ function renderPasswordCrane({ stage, mode }) {
     $("#arcade-drop").disabled = !held || lane !== chute || password.length >= limit;
     $("#arcade-return").disabled = !held;
     $("#arcade-undo").disabled = !password;
+    $("#arcade-check").disabled = finished;
+    if (finished) stage.querySelectorAll(".arcade-crane button:not(#arcade-crane-reset)").forEach(button => { button.disabled = true; });
   };
   const move = direction => {
     lane = Math.max(0, Math.min(chute, lane + direction));
@@ -1234,9 +1276,14 @@ function renderPasswordCrane({ stage, mode }) {
     say(password === target
       ? `Success! The fictional password is ${target}. No real credentials were used or saved.`
       : `Not ${target} yet. Use Undo to remove unwanted characters, or reset and try again.`);
-    if (password === target) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    if (password === target) {
+      finished = true;
+      update();
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    }
   });
   on($(".arcade-crane"), "keydown", event => {
+    if (finished) return;
     if (event.target.closest("select, input, textarea")) return;
     if (!["ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", " "].includes(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === " " && event.target.closest("button")) return;
@@ -1250,6 +1297,7 @@ function renderPasswordCrane({ stage, mode }) {
     else if (!event.repeat) { if (held) drop(); else grab(); }
   });
   on($("#arcade-crane-reset"), "click", () => {
+    resetExhibit(stage);
     animations.forEach(animation => animation.cancel());
     animations.clear();
     password = "";
@@ -1257,6 +1305,7 @@ function renderPasswordCrane({ stage, mode }) {
     lane = 0;
     held = "";
     grabs = 0;
+    finished = false;
     update();
     say(`Cabinet reset. Goal: ${target}. All 128 ASCII characters are available across the banks.`);
   });
@@ -1280,8 +1329,10 @@ function renderEmailAuction({ stage, mode }) {
   if (fixed) {
     stage.querySelector("#auction-setup").addEventListener("submit", event => {
       event.preventDefault();
+      if (!stage.querySelector("#auction-email").validity.valid) return;
       say(`Email accepted for this demo: ${stage.querySelector("#auction-email").value.trim()}. Nothing was sent or saved.`);
-      if (stage.querySelector("#auction-email").validity.valid) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      lockAcceptedControls(stage);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
     });
     return () => {};
   }
@@ -1449,7 +1500,10 @@ function renderEmailAuction({ stage, mode }) {
     paint();
     say("All letters, digits, and punctuation are available. No email is requested upfront. Buy what you need and assemble it below.");
   };
-  stage.querySelector("#auction-reset").addEventListener("click", open);
+  stage.querySelector("#auction-reset").addEventListener("click", () => {
+    resetExhibit(stage);
+    open();
+  });
   stage.querySelector("#auction-undo").addEventListener("click", () => {
     assembled.pop();
     paint();
@@ -1490,7 +1544,10 @@ function renderAddressJigsaw({ stage, mode, shuffle }) {
       event.preventDefault();
       const correct = stage.querySelector("#jigsaw-input").value.trim().replace(/\s+/g, " ") === target;
       say(correct ? "Demo address accepted. Nothing was shipped or saved." : `Use the fictional address ${target}.`);
-      if (correct) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      if (correct) {
+        lockAcceptedControls(stage);
+        stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+      }
     });
     return () => {};
   }
@@ -1584,6 +1641,7 @@ function renderAddressJigsaw({ stage, mode, shuffle }) {
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   stage.querySelector("#jigsaw-reset").addEventListener("click", () => {
+    resetExhibit(stage);
     solved = false;
     slots = Array(words.length).fill(null);
     shuffleTray();
@@ -1637,9 +1695,9 @@ function renderExpandingForm({ stage, mode }) {
   });
   stage.querySelector("#expanding-form").addEventListener("submit", event => {
     event.preventDefault();
-    const missing = inputs.findIndex(input => input.value.trim().length < 2);
+    const missing = inputs.findIndex(input => !input.value.trim());
     if (missing >= 0) {
-      say(`Enter at least two non-padding characters for ${fields[missing].name.toLowerCase()}. Your other answers are preserved.`);
+      say(`Enter ${fields[missing].name.toLowerCase()}. Your other answers are preserved.`);
       inputs[missing].focus();
       return;
     }
@@ -1673,6 +1731,7 @@ function renderCorrectingSearch({ stage, mode }) {
   let intended = "";
   let rejected = 0;
   let pending = false;
+  let finished = false;
   let timer = null;
   let corrections = [];
   const clearTimer = () => { clearTimeout(timer); timer = null; };
@@ -1685,7 +1744,7 @@ function renderCorrectingSearch({ stage, mode }) {
   };
   const schedule = () => {
     clearTimer();
-    if (fixed || pending || !intended || rejected >= corrections.length || document.hidden) return;
+    if (finished || fixed || pending || !intended || rejected >= corrections.length || document.hidden) return;
     timer = setTimeout(() => {
       timer = null;
       const correction = corrections[rejected];
@@ -1706,6 +1765,7 @@ function renderCorrectingSearch({ stage, mode }) {
     }, worse ? 450 : 700);
   };
   const updateQuery = () => {
+    if (finished) return;
     clearTimer();
     intended = input.value.trim();
     rejected = 0;
@@ -1767,8 +1827,13 @@ function renderCorrectingSearch({ stage, mode }) {
       empty.textContent = "No matching entries in this small fictional catalog. Try quiet cafes, weather, museum hours, accessible forms, or cat pictures.";
       results.append(empty);
     }
-    say(`Searched "${query}" without changing it. ${matches.length} local demo results. No external search was performed.${matchesDemoText(query, "quiet cafes") ? "" : " Your task is to find quiet cafes for meeting a friend."}`);
-    if (matchesDemoText(query, "quiet cafes")) stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    const foundCafe = /^quiet cafes?$/.test(query.toLowerCase().replace(/\s+/g, " ")) && matches.some(item => item.title === "Quiet cafes");
+    say(`Searched "${query}" without changing it. ${matches.length} local demo results. No external search was performed.${foundCafe ? "" : " Your task is to find quiet cafes for meeting a friend."}`);
+    if (foundCafe) {
+      finished = true;
+      lockAcceptedControls(stage);
+      stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
+    }
   });
   const visibility = () => { if (document.hidden) clearTimer(); else schedule(); };
   document.addEventListener("visibilitychange", visibility);

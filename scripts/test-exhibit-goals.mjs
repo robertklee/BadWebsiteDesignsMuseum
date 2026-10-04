@@ -246,6 +246,10 @@ try {
 
     const gym = await open("password-gym", mode);
     await gym.locator("#gym-phrase").fill(mode === "fixed" ? "a throwaway phrase" : "Rain sorry VII monday please #c0ffee 2026 moon cat () !!! banana robot tea [] + _ ? left right I agree 69 !!! !");
+    if (mode === "fixed") {
+      await unfinished(gym);
+      await gym.locator("#gym-create").click();
+    }
     await finished(gym, mode === "hard" ? /no password can satisfy/ : /phrase accepted/i, mode === "hard" ? "blocked" : "success");
     assert.equal(await gym.locator("#gym-phrase").getAttribute("readonly"), "");
     await gym.close();

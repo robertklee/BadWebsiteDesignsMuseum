@@ -156,7 +156,7 @@ function renderHome(anchor) {
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy"><div class="eyebrow"><span class="small-cross">✳</span> A QUICK TASK. ALLEGEDLY.</div>
       <h1 id="hero-title">Good taste.<br><span>Bad examples.</span></h1>
-      <p>Enter a phone number. Cancel a subscription. Click a button. A collection of everyday tasks, and websites with other plans.</p>
+      <p>Enter a phone number, find a receipt, cancel a subscription. You've done it all before. This collection follows those familiar jobs into websites with very particular ideas about how they should be done.</p>
       <a class="primary-link" href="/exhibit/cat-captcha">Try your first bad idea <span>↗</span></a>
       <a class="hero-browse" href="/#collection">Or browse the whole collection ↓</a>
       <div class="hero-fine">${exhibits.length} things to try <span>·</span> Interactive exhibits <span>·</span> Free to explore</div></div>
@@ -166,8 +166,8 @@ function renderHome(anchor) {
     <section class="collection section-wrap" id="collection" aria-labelledby="collection-title"><div class="section-heading"><div><div class="eyebrow">THE PERMANENT COLLECTION</div><h2 id="collection-title">${exhibits.length} simple tasks.<span> A few complications.</span></h2></div><p>Pick something you'd normally do online.<br>The website will take it from here.</p></div>
     <div class="filters" role="group" aria-label="Filter exhibits">${["All exhibits", ...new Set(exhibits.map(exhibit => exhibit.category))].map(label => `<button class="filter" aria-pressed="${activeFilter === label}" data-filter="${label}">${label}${label === "All exhibits" ? ` <span>${String(exhibits.length).padStart(2, "0")}</span>` : ""}</button>`).join("")}</div>
     <div class="card-grid" id="exhibit-grid">${exhibits.filter(e => activeFilter === "All exhibits" || e.category === activeFilter).map(card).join("")}</div>
-    <p class="collection-footnote"><span>↳</span> Every exhibit is interactive.</p></section>
-    <section id="about" class="about section-wrap"><div class="about-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">WHY THIS WEBSITE EXISTS</div><h2>You've had a frustrating<br>experience online. So have we.</h2><p>You came to do one small thing. There was a form, a pop-up, and a password requirement nobody mentioned. We kept a few examples.</p><p>Choose <strong>“Make it even worse”</strong> for another version, or “Fix it” for the straightforward one. Restart begins a fresh attempt; Exit returns to the collection.</p><span class="about-signoff">SOME OF THESE MAY FEEL FAMILIAR. ↗</span></div></section>`;
+    <p class="collection-footnote"><span>↳</span> Every exhibit is interactive: choose a task and try it for yourself.</p></section>
+    <section id="about" class="about section-wrap"><div class="about-symbol" aria-hidden="true">✳</div><div><div class="eyebrow">WHY THIS WEBSITE EXISTS</div><h2>You've had a frustrating<br>experience online. So have we.</h2><p>You came to do one small thing: book two tickets, find a recipe, turn down a video. Somewhere along the way you were choosing a password, dismissing an offer, or wondering whether the button had heard you. This museum keeps a few examples of that experience, taken a little further.</p><p>Each exhibit is a working website with a small job to do. No design or programming knowledge required. Choose <strong>“Make it even worse”</strong> for another version, or “Fix it” to see the same job handled straightforwardly. Restart begins a fresh attempt; Exit returns to the collection.</p><span class="about-signoff">SOME OF THESE MAY FEEL FAMILIAR. ↗</span></div></section>`;
   document.title = "Really Bad Design Museum — Good taste. Bad examples.";
   const scrollPreviews = setupScrollPreviews(main.querySelector("#exhibit-grid"));
   cleanup = scrollPreviews.dispose;
@@ -206,7 +206,7 @@ function renderExhibit(id, focus = false) {
     <div class="exhibit-heading"><div><div class="eyebrow">EXHIBIT ${exhibit.number} / ${exhibit.category.toUpperCase()}</div><h1>${exhibit.name}</h1><p>${exhibit.tagline}</p></div><span class="specimen-label">A SMALL TASK.<br>A BAD IDEA. ↙</span></div>
     <details class="exhibit-guide"${guideOpen ? " open" : ""}>
       <summary>Visitor guide <span aria-hidden="true">↓</span></summary>
-      <div class="guide-body"><p class="guide-intro">A collection of simple tasks online. Each exhibit has a task and three versions.</p>
+      <div class="guide-body"><p class="guide-intro">A collection of simple tasks online: sending a message, choosing a setting, or getting through a form. Each exhibit is a website you can use, with a specific goal and three versions to explore.</p>
       <ol class="guide-steps"><li><strong>Try the task.</strong><span>The goal is above the exhibit. Click, type, or scroll to begin.</span></li><li><strong>Choose a version.</strong><span>“Make it even worse” raises the difficulty; “Fix it” offers a straightforward version. Switching modes starts a fresh attempt and clears progress.</span></li><li><strong>Restart or leave.</strong><span>Restart clears this attempt in the current mode. Exit returns to the collection. Escape exits only when focus is on the museum controls; inside the exhibit, it belongs to the current control or pop-up.</span></li></ol>
       <div class="guide-footer"><p>Use made-up details. Keep your passwords and payment information to yourself.</p><button type="button" class="guide-dismiss">Start exploring</button></div></div>
     </details>

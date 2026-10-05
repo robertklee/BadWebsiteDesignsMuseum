@@ -302,7 +302,8 @@ async function checkHover(mode, width) {
       await page.clock.runFor(6000);
     }
     await finished(page);
-    assert.match(await page.locator("#hover-product").textContent(), /ArmAdjustable\./);
+    const arm = page.locator(".hover-product-specs > div").filter({ has: page.locator("dt", { hasText: /^Arm$/ }) });
+    assert.match(await arm.locator("dd").textContent(), /^Adjustable\b/);
     assert.equal(await page.locator("#hover-product-attempts").textContent(), "2 menu closures.");
     await activate(page, page.locator(".reset-button"));
     await unfinished(page, 1);

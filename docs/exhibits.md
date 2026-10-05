@@ -136,7 +136,7 @@ Hard removes the slider and expects a timestamp to be entered manually, while st
 
 **Route:** `/exhibit/cancel`
 
-Cancel a fictional subscription, starting with a straightforward **Do you want to cancel your subscription?** before four double-negative confirmations. The introduction acknowledges how cancelling seems to get harder even when signing up takes seconds. The goal, current checkpoint, and active subscription state stay explicit. Each question has optional **Translate this question** help with its plain-language meaning and the answer that continues cancellation.
+Cancel a fictional subscription, starting with a straightforward **Do you want to cancel your subscription?** before four double-negative confirmations. The introduction explains checkpoints and translation help without announcing the wordplay. The goal, current checkpoint, and active subscription state stay explicit. Each question has optional **Translate this question** help with its plain-language meaning and the answer that continues cancellation.
 
 Wrong choices keep the failed question visible, lock its answers, and explain both the selected answer and the cancellation answer. An explicit **Return to checkpoint** button resumes the maze: Original disaster goes back one checkpoint (or stays at the first), while Hard resets its nine checkpoints and reshuffles the eight questions after the simple opener. Both keep shuffled answer positions and logically consistent wording; Hard adds more nested negatives. Correct answers report progress but do not end the subscription until every checkpoint is cleared. Fix it provides one direct cancellation action.
 

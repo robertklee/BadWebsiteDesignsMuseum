@@ -15,30 +15,30 @@ const familiarContext = {
   runaway: /button|ticket/i,
   "password-gym": /password/i,
   "correcting-search": /search/i,
-  "layout-checkout": /checkout/i,
+  "layout-checkout": /checkout|bench/i,
   "layout-earthquake": /ads?|library/i,
   "scroll-modal": /delivery/i,
   "validation-afterthought": /form|register/i,
   "hover-menu": /menus?/i,
   "notification-swatter": /form|support request/i,
-  "tetris-volume": /slider|Tetris/i,
+  "tetris-volume": /volume|video player/i,
   phone: /phone|number/i,
   "terms-game": /terms|agreement/i,
-  fonts: /font/i,
+  fonts: /font|notice/i,
   "unix-birthday": /birthday/i,
   cancel: /cancel|subscription/i,
   recipe: /recipe|ingredients|toast/i,
-  "expanding-form": /contact/i,
+  "expanding-form": /contact|form/i,
   dropdown: /message/i,
   "unresponsive-buttons": /tickets/i,
   "seismic-editor": /editor|sentence|reminder/i,
-  "volume-seesaw": /slider|sound/i,
-  "wind-volume": /slider/i,
+  "volume-seesaw": /volume|sound/i,
+  "wind-volume": /volume|slider/i,
   "checkbox-ecosystem": /settings?/i,
   "password-crane": /password|phrase/i,
   "physics-cart": /basket/i,
   "email-auction": /email/i,
-  "elevator-date": /calendar|date/i,
+  "elevator-date": /calendar|date|birthday/i,
   "shrinking-unsubscribe": /subscription|cancellation/i,
   "word-editor": /document|dropdown|note/i,
   cookies: /cookie/i,
@@ -116,7 +116,8 @@ try {
   assert.equal(await page.locator(".guide-steps li").count(), 3);
   assert.match(await page.locator(".guide-intro").textContent(), /simple tasks online/i);
   const catIntro = await page.locator(".new-demo-intro").textContent();
-  assert.match(catIntro, /CAPTCHA.*prove you're human.*ticking a box or selecting pictures/i);
+  assert.match(catIntro, /human check.*collect all 4 pieces of cheese.*reach the mouse hole/i);
+  assert.doesNotMatch(catIntro, /A CAPTCHA asks|This one has put a cat in charge/i);
   assert.match(catIntro, /4 pieces of cheese/);
   assert.match(catIntro, /not while you think/);
   assert.equal(await page.locator("#stage .exhibit-toolbar").count(), 0);
@@ -270,6 +271,11 @@ try {
       [exhibit.tagline, exhibit.description, exhibit.task, exhibit.fixedTask, exhibit.worseChange, exhibit.preview.replace(/<[^>]*>/g, " ")].join("\n"),
       /\b(?:demo|fictional|simulation)\b|\bpretend\b(?! to read\b)/i,
       `${exhibit.id} lets the museum context carry the satire instead of labeling every action as fictional`,
+    );
+    assert.doesNotMatch(
+      [exhibit.description, exhibit.preview].join("\n"),
+      /normally lets you|usually lets you|deliberately frustrating|for some reason|unnecessarily intelligent|legibility left the chat/i,
+      `${exhibit.id} lets the interface's attitude carry the joke`,
     );
     const spoiler = protectedSurprises[exhibit.id];
     if (spoiler) {

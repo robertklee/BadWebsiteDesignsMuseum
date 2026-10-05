@@ -22,10 +22,11 @@ Useful selectors:
 npm run generate:share -- --check
 npm run generate:share -- --older
 npm run generate:share -- --ids runaway,phone
+npm run generate:share -- --ids museum
 npm run generate:share -- --url http://127.0.0.1:3019
 ```
 
-`--check` writes to a temporary directory without modifying committed images. `--older` selects exhibits without the **New** badge. `--ids` accepts a comma-separated set of exhibit IDs. These options can be combined.
+By default, the generator refreshes all exhibit images and `museum.png`. `--check` writes to a temporary directory without modifying committed images. `--older` selects exhibits without the **New** badge and leaves the museum image unchanged. `--ids` accepts a comma-separated set of exhibit IDs or `museum`. These options can be combined; unselected images are preserved.
 
 ## Requirements
 
@@ -36,3 +37,5 @@ Check-only mode validates that previews can be exported; it does not compare gen
 ## Visual direction
 
 Show the familiar task and hint at the absurd obstacle, rather than revealing the full consequence. Keep the exhibit recognizable without assuming technical knowledge. Captions should invite exploration, not announce surprise charges, a failed group booking, a reversed progress bar, or a hidden final rule. Aim the joke at the interface rather than the visitor. Let the museum branding establish the satire instead of adding "fictional plan" or "pretend checkout" footnotes to sales pitches. A strong visual premise does not need to be replaced merely to make the collection uniform.
+
+Use the same understated voice as the exhibits: sincere product claims, polite suspicion, or confident paperwork rather than commentary on the bad-design mechanic. Descriptions and preview text come from the exhibit registry; regenerate affected PNGs when either changes. The museum image uses the home page's headline, introduction, and sculpture, without an exhibit count that can go stale.

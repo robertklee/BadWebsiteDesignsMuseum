@@ -398,7 +398,7 @@ try {
       if (mode === "fixed") {
         await page.locator("#cat-simple-check").check();
         await page.locator("#cat-simple-form button").click();
-        await finished(page, /Verified/);
+        await finished(page, /Human check complete/);
         await frozen(page, "#cat-simple-form");
         return;
       }
@@ -432,7 +432,7 @@ try {
   });
   for (const mode of ["easy", "hard"]) {
     await visit("phone", mode, async page => {
-      assert.match(await page.locator("#exhibit-task").textContent(), /Locking digits is optional/);
+      assert.match(await page.locator(".new-demo-intro").textContent(), /Locking is optional/);
       await page.locator("#confirm-phone").click();
       await pending(page);
       for (let index = 9; index >= 0; index--) {

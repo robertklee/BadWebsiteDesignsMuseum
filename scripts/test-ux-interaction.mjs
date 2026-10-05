@@ -203,8 +203,9 @@ try {
         await page.locator("#fly-name").fill("Alex Example");
         if (mode !== "fixed") {
           const help = await page.locator("#extra-status").textContent();
-          assert.match(help, /Complete the required fields; swat alerts that obstruct the form, or pause/);
-          assert.match(help, /Organization is optional; you do not have to clear every alert to send/);
+          assert.match(help, /Pause swarm stops new alerts; Swat one dismisses an alert/);
+          assert.match(help, /send the request without clearing them all/);
+          assert.match(await page.locator(".new-demo-intro").textContent(), /organization is optional/);
           assert.doesNotMatch(help, /six fields/);
           await page.locator("#fly-toggle").click();
           assert((await page.locator(".fly-notification").count()) > 0, "Paused swarm still has unswatted obstructions");

@@ -24,7 +24,7 @@ const chapters = [
   { answer: "A spoon", prose: /almost bought a spoon/ },
   { answer: "A journey", prose: /I say it's a journey/ },
   { answer: "Butter", prose: /The butter was butter/ },
-  { answer: "Butter on toast", prose: /just butter on toast/ },
+  { answer: "Butter on toast", prose: /butter on toast/ },
 ];
 const termsAnswers = new Map([
   ["Which animal is the official spokesperson?", "capybara"],
@@ -116,7 +116,8 @@ async function fits(page) {
 }
 
 async function approve(page, index, mode, profile, previousWins = 0) {
-  assert.match(await page.locator("#story-gate .story-chapter").textContent(), chapters[index].prose, "Answer is available in the public story");
+  const story = (await page.locator("#story-gate .story-chapter > h3, #story-gate .story-chapter > p").allTextContents()).join(" ");
+  assert.match(story, chapters[index].prose, "Answer is available in the public story, not just the answer options");
   await choose(page, chapters[index].answer, profile);
   if (mode === "hard") await certify(page, profile);
   await activate(page, page.locator(".reading-quiz button"), profile);
@@ -146,11 +147,12 @@ async function recipeAccessible(page) {
 
 async function shortcutTrap(page, mode, profile, expectedChapter, previousWins = 0) {
   await activate(page, page.getByRole("button", { name: "Jump to recipe ↓", exact: true }), profile);
-  assert.match(await page.locator("#story-gate").textContent(), /You jumped! To an advertisement/);
+  assert.match(await page.locator("#story-gate").textContent(), /SPONSORED SHORTCUT.*Breakfast essentials/);
+  assert.match(await page.locator("#demo-status").textContent(), /advertisement|Reading progress has also been reset/);
   assert.equal(await page.locator("#actual-recipe").count(), 0);
   assert.equal(await page.locator("#return-story").evaluate(element => element === document.activeElement), true);
   await unfinished(page, previousWins);
-  await activate(page, page.getByRole("button", { name: "Continue to the story you tried to skip" }), profile);
+  await activate(page, page.getByRole("button", { name: "Return to the story", exact: true }), profile);
   assert.match(await page.locator(".reading-progress").textContent(), new RegExp(`${mode === "hard" ? 0 : expectedChapter} / 6`));
   assert.equal(await page.locator("#reading-answer").evaluate(element => element === document.activeElement), true);
   await unfinished(page, previousWins);
@@ -192,7 +194,7 @@ async function testRecipe(page, mode, profile) {
   await activate(page, page.getByRole("button", { name: "Hide result notification" }), profile);
   if (mode !== "fixed") {
     const originalRecipe = await page.locator("#actual-recipe").innerHTML();
-    assert.match(await page.locator("#jump-recipe + small").textContent(), /Recipe unlocked/);
+    assert.match(await page.locator("#jump-recipe + small").textContent(), /Recipe available.*ingredients and method/);
     for (let repeat = 0; repeat < 3; repeat++) {
       await activate(page, page.getByRole("button", { name: "Jump to recipe ↓", exact: true }), profile);
       assert.equal(await page.locator("#actual-recipe").evaluate(element => element === document.activeElement), true);
@@ -202,7 +204,7 @@ async function testRecipe(page, mode, profile) {
       assert.equal(await page.locator("#exhibit-outcome").isVisible(), false, "Shortcut does not re-announce success");
     }
   }
-  await activate(page, page.getByRole("button", { name: "Keep admiring this mess" }), profile);
+  await activate(page, page.getByRole("button", { name: "Stay here", exact: true }), profile);
   await recipeAccessible(page);
   await finished(page);
   if (mode !== "fixed") {
@@ -300,7 +302,7 @@ async function testReceipt(page, mode, profile) {
   await downloadReceipt(page, mode, profile, "repeat");
   await finished(page);
   assert.equal(await page.locator("#exhibit-outcome").isVisible(), false, "Downloading again does not re-announce success");
-  await activate(page, page.getByRole("button", { name: "Keep admiring this mess" }), profile);
+  await activate(page, page.getByRole("button", { name: "Stay here", exact: true }), profile);
   await activate(page, page.getByRole("button", { name: "Restart in the current mode" }), profile);
   await unfinished(page, 1);
   assert.match(await page.locator("#mystery-task").textContent(), /^Receipt not yet downloaded/);
@@ -431,8 +433,8 @@ try {
         try {
           await page.goto(`${origin}/exhibit/${id}?mode=${mode}`);
           await page.locator("#stage").waitFor();
-          if (await page.getByRole("button", { name: "Got it — let's try it" }).isVisible()) {
-            await activate(page, page.getByRole("button", { name: "Got it — let's try it" }), profile);
+          if (await page.getByRole("button", { name: "Start exploring", exact: true }).isVisible()) {
+            await activate(page, page.getByRole("button", { name: "Start exploring", exact: true }), profile);
           }
           if (id === "recipe") await testRecipe(page, mode, profile);
           else if (id === "mystery-menu") await testReceipt(page, mode, profile);

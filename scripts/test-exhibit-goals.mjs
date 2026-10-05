@@ -262,7 +262,7 @@ try {
         await recipe.locator(".reading-quiz button").click();
       }
     }
-    await finished(recipe, mode === "fixed" ? /Recipe ready/ : /put butter on toast/);
+    await finished(recipe, mode === "fixed" ? /Recipe ready/ : /Recipe available: toast one slice of bread, then spread with one teaspoon of butter/);
     assert.equal(await recipe.locator("#actual-recipe").isVisible(), true);
     await recipe.close();
 

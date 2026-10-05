@@ -34,7 +34,7 @@ async function store(mode, width) {
   const product = id => page.locator(`[data-ai-product="${id}"]`);
   const prompt = page.locator("#ai-prompt");
   const response = page.locator("#ai-response");
-  const generate = page.getByRole("button", { name: "Generate unnecessary intelligence" });
+  const generate = page.getByRole("button", { name: "Generate product profile", exact: true });
   const activate = page.locator("#ai-activate");
   const required = mode === "hard" ? 3 : 1;
   const status = page.locator("#extra-status");
@@ -303,8 +303,8 @@ async function cancellation(mode, width) {
       assert.equal(await page.locator(".cancel-help").count(), 0);
       await choose(page.getByRole("button", { name: "Cancel subscription", exact: true }));
     } else {
-      assert.match(await page.locator(".new-demo-intro").textContent(), /goal is to end.*Translate this question.*CANCELLED/);
-      assert.match(await page.locator(".new-demo-intro").textContent(), /Cancelling a subscription seems to get harder these days/);
+      assert.match(await page.locator(".new-demo-intro").textContent(), /end your subscription.*Translate this question.*CANCELLED/);
+      assert.doesNotMatch(await page.locator(".new-demo-intro").textContent(), /signing up.*seconds|double.negative/i);
       assert.equal(await question.textContent(), openingQuestion, "Both maze modes begin with a straightforward confirmation");
       assert.equal(await page.locator(".cancel-help").getAttribute("open"), null, "Translations are optional, not automatic spoilers");
       await wrongTurn(1);

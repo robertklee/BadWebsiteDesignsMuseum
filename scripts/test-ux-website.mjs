@@ -270,7 +270,8 @@ async function checkHover(mode, width) {
   const { page, context } = await open("hover-menu", mode, width, "no-preference", true);
   try {
     const hold = page.locator("#menu-hold");
-    assert.match(await page.locator(".new-demo-intro").textContent(), /After two failed tries, Hold menu open appears/);
+    assert.match(await page.locator(".new-demo-intro").textContent(), /Pivot desk lamp.*arm is adjustable.*Keyboard navigation has no deadline/);
+    assert.doesNotMatch(await page.locator(".new-demo-intro").textContent(), /Hold menu open|failed tries/);
     assert.equal(await hold.isVisible(), false);
     if (width === 1280) {
       await page.locator('[data-depth="0"]').hover();
@@ -301,8 +302,8 @@ async function checkHover(mode, width) {
       await page.clock.runFor(6000);
     }
     await finished(page);
-    assert.match(await page.locator("#hover-product").textContent(), /Adjustable\. Unlike the menu/);
-    assert.equal(await page.locator("#hover-product-attempts").textContent(), "2 menu meltdowns.");
+    assert.match(await page.locator("#hover-product").textContent(), /ArmAdjustable\./);
+    assert.equal(await page.locator("#hover-product-attempts").textContent(), "2 menu closures.");
     await activate(page, page.locator(".reset-button"));
     await unfinished(page, 1);
     assert.equal(await page.locator("#menu-hold").isVisible(), false);

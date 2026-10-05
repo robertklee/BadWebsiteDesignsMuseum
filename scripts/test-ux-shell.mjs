@@ -34,7 +34,7 @@ try {
       await page.goto(`${origin}/exhibit/runaway?mode=${mode}`);
       assert.match(await page.locator(".guide-steps").innerText(), /Switching modes.*clears progress/);
       assert.match(await page.locator(".guide-steps").innerText(), /Escape exits only.*museum controls/);
-      await page.getByRole("button", { name: "Got it — let's try it", exact: true }).click();
+      await page.getByRole("button", { name: "Start exploring", exact: true }).click();
       await page.getByRole("button", { name: "Jump into exhibit ↓", exact: true }).click();
       const entry = await page.evaluate(() => ({
         task: document.querySelector("#exhibit-task").getBoundingClientRect().toJSON(),
@@ -62,7 +62,7 @@ try {
       assert(resultBounds.y >= 0 && resultBounds.y + resultBounds.height <= 740);
       await page.getByRole("button", { name: "Hide result notification", exact: true }).click();
       assert.equal(await page.locator("#difficulty-progress").isVisible(), true);
-      await page.getByRole("button", { name: "Keep admiring this mess", exact: true }).click();
+      await page.getByRole("button", { name: "Stay here", exact: true }).click();
       assert.equal(await page.locator("#difficulty-progress").isVisible(), false);
       assert.equal(await page.locator("#exhibit-task > span").innerText(), "TASK COMPLETE");
       await page.getByRole("button", { name: "Restart in the current mode", exact: true }).click();
@@ -98,7 +98,7 @@ try {
   assert.equal(await page.getByRole("textbox", { name: "Guest name", exact: true }).inputValue(), "Alex Example");
 
   await page.goto(`${origin}/exhibit/expanding-form?mode=fixed`);
-  await page.getByRole("button", { name: "Got it — let's try it", exact: true }).click();
+  await page.getByRole("button", { name: "Start exploring", exact: true }).click();
   await page.getByRole("button", { name: "Jump into exhibit ↓", exact: true }).click();
   const name = page.getByRole("textbox", { name: /Full name/ });
   for (let step = 0; step < 5 && !await name.evaluate(element => element === document.activeElement); step++) {

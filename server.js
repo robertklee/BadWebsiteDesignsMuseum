@@ -27,7 +27,7 @@ http.createServer(async (request, response) => {
   if (registryModule) file = [path.join("exhibits", `${registryModule[1]}.js`), "text/javascript; charset=utf-8"];
   if (!file) {
     response.writeHead(404, { "Content-Type": "text/plain" });
-    response.end("This exhibit is not part of the collection. Please consider applying for exhibition if it's bad enough.");
+    response.end("This page is not part of the collection. Return to the museum at /.");
     return;
   }
   try {

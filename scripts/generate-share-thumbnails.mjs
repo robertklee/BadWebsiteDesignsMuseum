@@ -16,6 +16,7 @@ const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
 const olderOnly = process.argv.includes("--older");
 const idsArgument = process.argv.indexOf("--ids");
 const requestedIds = idsArgument === -1 ? null : process.argv[idsArgument + 1]?.split(",");
+let museumCopy;
 
 if (!museumUrl || (urlArgument !== -1 && museumUrl.startsWith("--")) || (idsArgument !== -1 && (!requestedIds || requestedIds.some(id => !/^[a-z0-9-]+$/.test(id))))) {
   throw new Error("Usage: npm run generate:share -- [--url http://127.0.0.1:3000] [--older] [--ids runaway,phone] [--check]");
@@ -33,6 +34,12 @@ const shareStyles = `
     gap:64px; padding:65px 54px; align-items:center;
   }
   .share-sheet .card-art { width:540px; height:500px; border-radius:8px; }
+  .share-sheet .card-art.museum { background:none; border:0; }
+  .share-sheet .hero-sculpture { height:500px; }
+  .share-sheet .orbit-label { top:34px; font-size:9px; }
+  .share-sheet .award-seal { right:12px; }
+  .share-sheet .floating-star { top:40px; right:40px; }
+  .share-sheet .sculpture-caption { bottom:12px; }
   .share-preview-scaled {
     position:absolute; inset:48px auto auto 0;
     width:calc(540px / 1.65); height:245px;
@@ -72,10 +79,11 @@ function pngDimensions(buffer) {
 }
 
 async function renderShareSheet(page, id, reverse = false) {
-  return page.evaluate(async ({ exhibitId, reverseCatalog }) => {
+  return page.evaluate(async ({ exhibitId, reverseCatalog, museum }) => {
     const { exhibits, preview } = await import("/app.js");
     const catalog = reverseCatalog ? [...exhibits].reverse() : exhibits;
-    const exhibit = catalog.find(item => item.id === exhibitId);
+    const isMuseum = exhibitId === "museum";
+    const exhibit = isMuseum ? museum : catalog.find(item => item.id === exhibitId);
     if (!exhibit) throw new Error(`Unknown exhibit: ${exhibitId}`);
 
     document.body.replaceChildren();
@@ -84,9 +92,9 @@ async function renderShareSheet(page, id, reverse = false) {
 
     const art = document.createElement("div");
     art.className = `card-art ${exhibit.color}`;
-    art.innerHTML = preview(exhibit.id);
+    art.innerHTML = isMuseum ? exhibit.preview : preview(exhibit.id);
     if (!art.firstElementChild) throw new Error(`Missing preview: ${exhibitId}`);
-    if (!exhibit.new && !art.querySelector(".thumb-scene")) {
+    if (!isMuseum && !exhibit.new && !art.querySelector(".thumb-scene")) {
       const scaled = document.createElement("div");
       scaled.className = "share-preview-scaled";
       scaled.append(...art.childNodes);
@@ -96,7 +104,7 @@ async function renderShareSheet(page, id, reverse = false) {
     const label = document.createElement("span");
     label.className = "art-label";
     label.textContent = "INTERACTIVE EXHIBIT";
-    art.prepend(label);
+    if (!isMuseum) art.prepend(label);
 
     const copy = document.createElement("section");
     copy.className = "share-copy";
@@ -104,7 +112,7 @@ async function renderShareSheet(page, id, reverse = false) {
       ["p", "share-category", exhibit.category.toUpperCase()],
       ["h1", "share-title", exhibit.name],
       ["p", "share-description", exhibit.description],
-      ["span", "share-cta", "INTERACTIVE EXHIBIT ↗"],
+      ["span", "share-cta", isMuseum ? "EXPLORE THE COLLECTION ↗" : "INTERACTIVE EXHIBIT ↗"],
     ]) {
       const element = document.createElement(tag);
       element.className = className;
@@ -151,12 +159,10 @@ async function renderShareSheet(page, id, reverse = false) {
       }
     }
     return { id: exhibitId, text, html: sheet.outerHTML };
-  }, { exhibitId: id, reverseCatalog: reverse });
+  }, { exhibitId: id, reverseCatalog: reverse, museum: museumCopy });
 }
 
 await mkdir(outputDirectory, { recursive: true });
-const museumPath = path.join(outputDirectory, "museum.png");
-const museumHash = hash(await readFile(museumPath));
 const browser = await chromium.launch(executablePath ? { executablePath } : {});
 
 try {
@@ -164,6 +170,14 @@ try {
   await page.goto(museumUrl, { waitUntil: "networkidle" });
   await page.waitForSelector(".exhibit-card");
   await page.evaluate(() => document.fonts.ready);
+  museumCopy = await page.evaluate(() => ({
+    id: "museum",
+    name: document.querySelector("#hero-title").innerText.replace(/\s+/g, " "),
+    description: document.querySelector(".hero-copy > p").textContent,
+    category: "The permanent collection",
+    color: "museum",
+    preview: document.querySelector(".hero-sculpture").outerHTML,
+  }));
   await page.addStyleTag({ content: shareStyles });
 
   const catalog = await page.evaluate(async () => {
@@ -171,10 +185,13 @@ try {
     return exhibits.map(({ id, new: isNew }) => ({ id, isNew }));
   });
   const ids = catalog.map(({ id }) => id).sort();
-  if (requestedIds?.some(id => !ids.includes(id))) throw new Error("Unknown exhibit in --ids");
-  const selectedIds = catalog.filter(({ id, isNew }) => (!olderOnly || !isNew) && (!requestedIds || requestedIds.includes(id))).map(({ id }) => id).sort();
+  const allIds = [...ids, "museum"];
+  if (requestedIds?.some(id => !allIds.includes(id))) throw new Error("Unknown exhibit in --ids");
+  const selectedIds = catalog.filter(({ id, isNew }) => (!olderOnly || !isNew) && (!requestedIds || requestedIds.includes(id))).map(({ id }) => id);
+  if (!olderOnly && (!requestedIds || requestedIds.includes("museum"))) selectedIds.push("museum");
+  selectedIds.sort();
   if (!selectedIds.length) throw new Error("No exhibits match the requested selection");
-  const untouchedHashes = new Map(await Promise.all(ids.filter(id => !selectedIds.includes(id)).map(async id => [id, hash(await readFile(path.join(outputDirectory, `${id}.png`)))])));
+  const untouchedHashes = new Map(await Promise.all(allIds.filter(id => !selectedIds.includes(id)).map(async id => [id, hash(await readFile(path.join(outputDirectory, `${id}.png`)))])));
   for (const id of selectedIds) {
     const result = await renderShareSheet(page, id);
     const reordered = await renderShareSheet(page, id, true);
@@ -199,16 +216,13 @@ try {
   if (JSON.stringify(generated) !== JSON.stringify(ids)) {
     throw new Error("The share directory contains missing or stale exhibit thumbnails");
   }
-  if (hash(await readFile(museumPath)) !== museumHash) {
-    throw new Error("museum.png changed while generating exhibit thumbnails");
-  }
   for (const [id, originalHash] of untouchedHashes) {
     if (hash(await readFile(path.join(outputDirectory, `${id}.png`))) !== originalHash) {
       throw new Error(`Unselected thumbnail changed: ${id}`);
     }
   }
 
-  console.log(`Rendered and validated ${selectedIds.length} numberless 1200x630 share thumbnails. Preserved ${untouchedHashes.size} unselected thumbnails and museum.png.`);
+  console.log(`Rendered and validated ${selectedIds.length} numberless 1200x630 share thumbnails. Preserved ${untouchedHashes.size} unselected thumbnails.`);
   if (checkOnly) console.log(`Check-only output: ${outputDirectory}. Committed share images were not modified.`);
 } finally {
   await browser.close();

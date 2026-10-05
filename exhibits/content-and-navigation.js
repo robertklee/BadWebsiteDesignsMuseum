@@ -2,10 +2,10 @@
 import { createStageShell, createDemoStatus, completeExhibit, downloadDemoFile } from "./shared.js";
 
 export const exhibits = [
-  { id: "recipe", task: "Find the ingredients and method for buttered toast.", fixedTask: "Find the buttered-toast ingredients and method. They are available immediately.", name: "The Recipe Odyssey", category: "Content", color: "green", tagline: "Find a toast recipe. First, a little context.", description: "You need the ingredients and instructions for buttered toast. The food blog would like to start a little further back.", lesson: "You search for a quick recipe and find the author's entire family history first. This version goes further: it checks that you read the story before letting you reach two ingredients and a toaster.", fix: "The recipe comes first. The story is still there for anyone who wants to read it.", worseChange: "The blog is taking its family history even more seriously.", preview: `<div class="thumb-scene thumb-recipe"><span class="thumb-kicker">A PINCH OF PATIENCE</span><div class="thumb-toast-intro"><div class="thumb-toast" aria-hidden="true"><i></i></div><div><strong>Toast.</strong><span>2 ingredients.<br>A little backstory.</span></div></div><div class="thumb-recipe-gate"><span>BEFORE WE COOK</span><b>It began with Grandma.</b><small>First, a little context.</small></div></div>`, render: renderRecipe },
+  { id: "recipe", task: "Find the ingredients and method for buttered toast.", fixedTask: "Find the ingredients and method for buttered toast.", name: "The Recipe Odyssey", category: "Content", color: "green", tagline: "Find a toast recipe. First, a little context.", description: "Buttered toast, the way Grandma made it. First, you'll need to know a little about Grandma.", lesson: "You search for a quick recipe and find the author's entire family history first. This version goes further: it checks that you read the story before letting you reach two ingredients and a toaster.", fix: "The recipe comes first. The story is still there for anyone who wants to read it.", worseChange: "The blog is taking its family history even more seriously.", preview: `<div class="thumb-scene thumb-recipe"><span class="thumb-kicker">A PINCH OF PATIENCE</span><div class="thumb-toast-intro"><div class="thumb-toast" aria-hidden="true"><i></i></div><div><strong>Toast.</strong><span>2 ingredients.<br>A little backstory.</span></div></div><div class="thumb-recipe-gate"><span>BEFORE WE COOK</span><b>It began with Grandma.</b><small>First, a little context.</small></div></div>`, render: renderRecipe },
   { id: "terms-game", task: "Review the agreement and decide whether to accept it.", fixedTask: "Read the summary and choose Accept terms or Decline terms.", name: "Terms & Conditions: The Game", category: "Content", color: "lilac", tagline: "Of course you read them.", description: "The terms and conditions we all pretend to read. This website has its doubts.", lesson: "Most people recognize the checkbox saying they've read the terms and conditions. Here the website takes that claim literally and tests your memory. Signing up has become homework.", fix: "A short summary replaces the long document and exam. Accept or decline without a reading exam.", worseChange: "The committee has issued a revised agreement.", preview: `<div class="thumb-scene thumb-terms"><span class="thumb-kicker">BEFORE YOU CONTINUE</span><div class="thumb-terms-check">☑ I have read the terms</div><div class="thumb-exam"><span>TERMS / REVISION 4.2</span><strong>All read?<br>Lovely.</strong><div class="fake-lines"></div></div><small class="thumb-footer">We'll take your word for it. For now.</small></div>`, render: renderTermsGame },
-  { id: "mystery-menu", task: "Find your receipt for an expense claim. Open Receipts and select Download receipt.", fixedTask: "Open Receipts and select Download receipt for your expense claim.", name: "The Mystery Meat Menu", category: "Navigation", color: "blue", tagline: "Find your receipt. The menu prefers pictures.", description: "Find your receipt using a website menu that would rather let its symbols do the talking than name its links.", lesson: "You've probably stared at an unfamiliar icon wondering what it does. This menu removes every label, so even finding and downloading an expense receipt becomes trial and error.", fix: "The menu shows clear destination names that stay in the same places, so you can find and download the receipt.", worseChange: "The menu is even less predictable. Your goal is still to download the receipt.", preview: `<div class="thumb-scene thumb-mystery"><span class="thumb-kicker">YOUR RECEIPT IS ONE OF THESE</span><div class="thumb-symbol-menu"><span>⌘</span><span>◇</span><span>✳</span><span>◌</span><span class="thumb-mystery-active">⧉</span><span>⌁</span></div><div class="thumb-useless-tooltip">The other thing.</div><small class="thumb-footer">Six icons. A small paperwork adventure.</small></div>`, render: renderMysteryMenu },
-  { id: "retro", task: "Enter a made-up nickname and sign the guestbook.", fixedTask: "Enter a made-up nickname and select Sign guestbook.", name: "The Retro Personal Homepage", category: "Nostalgia", color: "yellow", tagline: "It's 1997. Everything is nearly working.", description: "Before social profiles, personal websites had guestbooks for visitors to sign. Leave a nickname on this blast from the past.", lesson: "Before social profiles, personal homepages often had a guestbook where visitors left a name or message. This one brings back the stars and visitor counters, then adds links and typing that fight back.", fix: "The nostalgic look stays, but links go where they say and the guestbook accepts ordinary typing.", worseChange: "The homepage has acquired a few more questionable upgrades.", preview: `<div class="thumb-scene thumb-retro"><span class="thumb-kicker">WELCOME TO MY HOMEPAGE!</span><div class="thumb-retro-site"><div class="thumb-retro-marquee">✦ SIGN MY GUESTBOOK ✦</div><span class="thumb-retro-intent">LEAVE YOUR NICKNAME</span><div class="thumb-retro-input"><span>NICKNAME</span><b>Alex<span>|</span></b></div><div class="thumb-retro-construction">UNDER CONSTRUCTION</div><span class="thumb-retro-counter">YOU ARE VISITOR 000042</span></div><small class="thumb-footer">Nearly working since 1997.</small></div>`, render: renderRetro },
+  { id: "mystery-menu", task: "Find your receipt for an expense claim. Open Receipts and select Download receipt.", fixedTask: "Open Receipts and select Download receipt for your expense claim.", name: "The Mystery Meat Menu", category: "Navigation", color: "blue", tagline: "Find your receipt. The menu prefers pictures.", description: "A receipt for your expense claim. The menu feels words would only complicate matters.", lesson: "You've probably stared at an unfamiliar icon wondering what it does. This menu removes every label, so even finding and downloading an expense receipt becomes trial and error.", fix: "The menu shows clear destination names that stay in the same places, so you can find and download the receipt.", worseChange: "The menu has been reconsidering its destinations.", preview: `<div class="thumb-scene thumb-mystery"><span class="thumb-kicker">YOUR ACCOUNT / QUICK LINKS</span><div class="thumb-symbol-menu"><span>⌘</span><span>◇</span><span>✳</span><span>◌</span><span class="thumb-mystery-active">⧉</span><span>⌁</span></div><div class="thumb-useless-tooltip">The other thing.</div><small class="thumb-footer">Everything should be self-evident.</small></div>`, render: renderMysteryMenu },
+  { id: "retro", task: "Enter a made-up nickname and sign the guestbook.", fixedTask: "Enter a made-up nickname and select Sign guestbook.", name: "The Retro Personal Homepage", category: "Nostalgia", color: "yellow", tagline: "It's 1997. Everything is nearly working.", description: "Leave a nickname in Alex's guestbook. Pixel the cat is looking forward to meeting you.", lesson: "Before social profiles, personal homepages often had a guestbook where visitors left a name or message. This one brings back the stars and visitor counters, then adds links and typing that fight back.", fix: "The nostalgic look stays, but links go where they say and the guestbook accepts ordinary typing.", worseChange: "The homepage has acquired a few more questionable upgrades.", preview: `<div class="thumb-scene thumb-retro"><span class="thumb-kicker">WELCOME TO MY HOMEPAGE!</span><div class="thumb-retro-site"><div class="thumb-retro-marquee">✦ SIGN MY GUESTBOOK ✦</div><span class="thumb-retro-intent">LEAVE YOUR NICKNAME</span><div class="thumb-retro-input"><span>NICKNAME</span><b>Alex<span>|</span></b></div><div class="thumb-retro-construction">UNDER CONSTRUCTION</div><span class="thumb-retro-counter">YOU ARE VISITOR 000042</span></div><small class="thumb-footer">Nearly working since 1997.</small></div>`, render: renderRetro },
 ];
 
 function buildMuseumTerms(worse) {
@@ -68,17 +68,17 @@ function renderRecipe({ stage, mode, shuffle }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { status, say } = createDemoStatus();
-  const recipe = `<section class="actual-recipe" id="actual-recipe" tabindex="-1"><span class="demo-kicker">YOU MADE IT. LET'S MAKE TOAST.</span><h3>Butter on toast</h3><div class="recipe-stats">2 ingredients <span>5 minutes</span> Serves 1</div><h4>Ingredients</h4><ul><li>1 slice of bread</li><li>1 teaspoon of butter</li></ul><h4>Method</h4><ol><li>Toast the bread until golden.</li><li>Spread the butter on it. Eat while warm.</li></ol></section>`;
+  const recipe = `<section class="actual-recipe" id="actual-recipe" tabindex="-1"><span class="demo-kicker">BUTTER ON TOAST</span><h3>Butter on toast</h3><div class="recipe-stats">2 ingredients <span>5 minutes</span> Serves 1</div><h4>Ingredients</h4><ul><li>1 slice of bread</li><li>1 teaspoon of butter</li></ul><h4>Method</h4><ol><li>Toast the bread until golden.</li><li>Spread the butter on it. Eat while warm.</li></ol></section>`;
   const chapters = [
     ["It all began with my grandmother.", "She was a remarkable woman. She owned a toaster. But before we get to that, you need to understand the village, the wind, and the particular shade of beige in her kitchen."],
-    ["A brief history of the kitchen window.", "It faced east. Or perhaps west. We spent many summers debating this. The bread waited patiently, as bread is known to do. You're probably here for a recipe. We're getting there."],
+    ["A brief history of the kitchen window.", "It faced east. Or perhaps west. We spent many summers debating this. The bread waited patiently, as bread is known to do. She believed a kitchen window should offer a point of view."],
     ["The summer we almost bought a spoon.", "Father said we already had a spoon. Mother said that wasn't the point. In many ways, that conversation shaped the person I am today. It did not, however, affect the toast."],
-    ["What bread means to me.", "Some say bread is flour, water, and yeast. I say it's a journey. A journey that requires at least six paragraphs before mentioning that you should put it in a toaster."],
-    ["A note on butter, and belonging.", "The butter was butter. But spiritually, it was so much more. It was a reminder that the simplest things in life can be made unnecessarily complicated by a food blog."],
-    ["Before we begin, a few final thoughts.", "Thank you for being part of this community. Thank you for scrolling. Most of all, thank you for your commitment to finding a recipe that is, in fact, just butter on toast."],
+    ["What bread means to me.", "Some say bread is flour, water, and yeast. I say it's a journey. Every loaf brings me back to that kitchen."],
+    ["A note on butter, and belonging.", "The butter was butter. But spiritually, it was so much more. I still use her butter dish on special occasions. Breakfast counts."],
+    ["Before we begin, a few final thoughts.", "Thank you for being part of this community. Thank you for scrolling. I hope this family recipe for butter on toast finds a place at your table."],
   ];
-  const story = chapters.map(([title, text], index) => `<section class="story-chapter"><span>CHAPTER ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${text}</p>${worse ? `<div class="recipe-ad">ADVERTISEMENT<br><strong>This space could have been the recipe.</strong><p>Instead, here's a thoughtful pause for something you did not come here to buy.</p></div><p>${text}</p>` : ""}</section>`).join("");
-  stage.innerHTML = `<div class="recipe-demo"><div class="blog-masthead">a pinch of patience<span>FOOD. FAMILY. EXCESSIVE CONTEXT.</span></div><div class="recipe-intro"><span class="demo-kicker">THE SIMPLE THINGS</span><h2>The perfect buttered toast.</h2><p>${fixed ? "The recipe is right below. Read the ingredients and method; the family story is optional." : "You need the ingredients and instructions for buttered toast. The food blog would like to start a little further back. Read the chapters and answer their questions to continue."}</p><p>By Olivia · 5 minute recipe · ${fixed ? "No expedition required" : "A little background before breakfast"}</p>${fixed ? "" : `<button class="plain-button" id="jump-recipe">Jump to recipe ↓</button><small>The blog has its own ideas. The museum's “Fix it” and Exit controls always work.</small>`}</div>${fixed ? `${recipe}<details class="optional-story"><summary>The story behind the toast (optional)</summary>${story}</details>` : `<div id="story-gate"></div>${status}`}</div>`;
+  const story = chapters.map(([title, text], index) => `<section class="story-chapter"><span>CHAPTER ${String(index + 1).padStart(2, "0")}</span><h3>${title}</h3><p>${text}</p>${worse ? `<div class="recipe-ad">ADVERTISEMENT<br><strong>A little warmth for your kitchen.</strong><p>Discover our collection of breakfast essentials.</p></div><p>${text}</p>` : ""}</section>`).join("");
+  stage.innerHTML = `<div class="recipe-demo"><div class="blog-masthead">a pinch of patience<span>FOOD. FAMILY. EXCESSIVE CONTEXT.</span></div><div class="recipe-intro"><span class="demo-kicker">THE SIMPLE THINGS</span><h2>The perfect buttered toast.</h2><p>${fixed ? "The ingredients and method are below. The family story follows." : "This recipe has been in our family for generations. I'd love to tell you how it found its way to our table."}</p><p>By Olivia · 5 minute recipe · ${fixed ? "Serves 1" : "A little background before breakfast"}</p>${fixed ? "" : `<button class="plain-button" id="jump-recipe">Jump to recipe ↓</button><small>The blog has its own ideas. The museum's “Fix it” and Exit controls always work.</small>`}</div>${fixed ? `${recipe}<details class="optional-story"><summary>The story behind the toast (optional)</summary>${story}</details>` : `<div id="story-gate"></div>${status}`}</div>`;
   if (!fixed) {
     const gate = stage.querySelector("#story-gate");
     const jump = stage.querySelector("#jump-recipe");
@@ -95,14 +95,14 @@ function renderRecipe({ stage, mode, shuffle }) {
     const renderChapter = () => {
       if (chapter === chapters.length) {
         gate.innerHTML = recipe;
-        jump.nextElementSibling.textContent = "Recipe unlocked. The shortcut finally tells the truth.";
+        jump.nextElementSibling.textContent = "Recipe available. Jump to recipe now goes to the ingredients and method.";
         gate.querySelector("#actual-recipe").focus();
-        say("Six quizzes later: put butter on toast. That was the entire recipe.");
+        say("Recipe available: toast one slice of bread, then spread with one teaspoon of butter.");
         stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
         return;
       }
       const quiz = quizzes[chapter];
-      gate.innerHTML = `<div class="reading-progress">RECIPE ACCESS: ${chapter} / 6 CHAPTERS APPROVED</div><section class="story-chapter"><span>MANDATORY CHAPTER ${chapter + 1}</span><h3>${chapters[chapter][0]}</h3><p>${chapters[chapter][1]}</p>${worse ? `<div class="recipe-ad">SPONSORED INTERRUPTION<strong>This could have been the recipe.</strong></div>` : ""}<form class="reading-quiz"><label for="reading-answer">${quiz.question}</label><select id="reading-answer" required><option value="">Prove you read it</option>${shuffle(quiz.options).map(option => `<option>${option}</option>`).join("")}</select>${worse ? `<label class="obstacle-check"><input type="checkbox" required> I certify that this paragraph changed my relationship with toast.</label>` : ""}<button class="demo-button">Unlock the next paragraph →</button><small>${worse ? "Wrong answer? Back to chapter one." : "The recipe is not accessible until every quiz is passed."}</small></form></section>`;
+      gate.innerHTML = `<div class="reading-progress">RECIPE ACCESS: ${chapter} / 6 CHAPTERS APPROVED</div><section class="story-chapter"><span>MANDATORY CHAPTER ${chapter + 1}</span><h3>${chapters[chapter][0]}</h3><p>${chapters[chapter][1]}</p>${worse ? `<div class="recipe-ad">SPONSORED INTERRUPTION<strong>Breakfast essentials / Shop the collection</strong></div>` : ""}<form class="reading-quiz"><label for="reading-answer">${quiz.question}</label><select id="reading-answer" required><option value="">Prove you read it</option>${shuffle(quiz.options).map(option => `<option>${option}</option>`).join("")}</select>${worse ? `<label class="obstacle-check"><input type="checkbox" required> I certify that this paragraph changed my relationship with toast.</label>` : ""}<button class="demo-button">Unlock the next paragraph →</button><small>${worse ? "Wrong answer? Back to chapter one." : "The recipe is not accessible until every quiz is passed."}</small></form></section>`;
       gate.querySelector("form").addEventListener("submit", event => {
         event.preventDefault();
         if (gate.querySelector("select").value !== quiz.answer) {
@@ -111,7 +111,7 @@ function renderRecipe({ stage, mode, shuffle }) {
             renderChapter();
             gate.querySelector("select").focus();
           }
-          say(worse ? "Incorrect. All reading progress reset. Grandmother would like another word." : "Incorrect. The irrelevant family history needs another read.");
+          say(worse ? "Incorrect. All reading progress reset. Grandmother would like another word." : "Incorrect. Check this chapter and try again; your reading progress is retained.");
           return;
         }
         chapter++;
@@ -127,14 +127,14 @@ function renderRecipe({ stage, mode, shuffle }) {
         return;
       }
       detours++;
-      gate.innerHTML = `<div class="recipe-ad"><span>SPONSORED SHORTCUT ${detours}</span><h3>You jumped! To an advertisement.</h3><p>Skipping the story requires reading the story. Your toast remains unavailable.</p><button class="demo-button" id="return-story">Continue to the story you tried to skip</button></div>`;
+      gate.innerHTML = `<div class="recipe-ad"><span>SPONSORED SHORTCUT ${detours}</span><h3>A little something for your kitchen.</h3><p>Breakfast essentials, chosen with care. Return to the story to continue toward the recipe.</p><button class="demo-button" id="return-story">Return to the story</button></div>`;
       if (worse) chapter = 0;
       gate.querySelector("button").addEventListener("click", () => {
         renderChapter();
         (gate.querySelector("select") || gate.querySelector("#actual-recipe")).focus();
       });
       gate.querySelector("button").focus();
-      say(worse ? "Shortcut activated. Reading progress has also been reset." : "The skip button has successfully skipped the useful part.");
+      say(worse ? "Shortcut activated. Reading progress has also been reset." : "This shortcut opened an advertisement. Return to the story to continue.");
     });
   } else completeExhibit(stage, "Recipe ready: one slice of bread, one teaspoon of butter. Toast the bread, then spread the butter. The family story is optional.");
   return () => {};
@@ -165,7 +165,7 @@ function renderTermsGame({ stage, mode, shuffle }) {
     const acceptButton = stage.querySelector("#terms-accept");
     if (acceptButton) acceptButton.disabled = true;
     stage.querySelector("#terms-decline").disabled = true;
-    say("Terms declined. The committee will have to cope.");
+    say("Terms declined.");
     stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
   });
   if (fixed) {
@@ -250,20 +250,20 @@ function renderMysteryMenu({ stage, mode, shuffle }) {
   const worse = mode === "worse";
   const { shell, say } = createStageShell(stage);
   const destinations = [
-    { id: "home", name: "Home", description: "Welcome to a site that considers words an unnecessary navigation expense." },
+    { id: "home", name: "Home", description: "Welcome to your account. Everything is just an icon away." },
     { id: "shipping", name: "Shipping policy", description: "Orders travel by carrier pigeon. Allow three business days, plus any time spent admiring a statue." },
-    { id: "offers", name: "Special offers", description: "Today's offer: ten percent more navigation confusion. The offer expires whenever you find the right page." },
+    { id: "offers", name: "Special offers", description: "Today's offer: ten percent off ceremonial stationery. While supplies remain sufficiently ceremonial." },
     { id: "receipts", name: "Receipts", description: "Your receipt is ready. Select Download receipt to collect it." },
-    { id: "settings", name: "Settings", description: "Your settings are set to mysterious. This is not a configurable preference." },
+    { id: "settings", name: "Settings", description: "Your account is using our recommended settings. We recommend continuing to recommend them." },
     { id: "help", name: "Help", description: "To find something, click the icon that leads to it. We hope this comprehensive advice helps." },
   ];
   const symbols = ["⌘", "◇", "✳", "◌", "⧉", "⌁"];
   let mapping = fixed ? [...destinations] : shuffle(destinations);
   let progress = 0;
   let clicks = 0;
-  shell("NAVIGATION BY PURE INTUITION", fixed ? "A menu with actual names." : "What could these possibly mean?",
-    `You need your receipt for an expense claim.${fixed ? " The menu names each page: open Receipts, then select Download receipt." : " Website menus usually tell you where each link goes. This one would rather let its symbols do the talking. Explore the icons to find Receipts, then select Download receipt."}`,
-    `<div class="mystery-task" id="mystery-task">Receipt not yet downloaded</div><nav class="mystery-nav" id="mystery-nav" aria-label="Website menu"></nav><section class="mystery-destination" id="mystery-destination" aria-live="polite"><h3>Where would you like to go?</h3><p>${fixed ? "Open Receipts to find your expense-claim document." : "We removed the labels to make room for elegance. The elegance is now the only clue."}</p></section>`);
+  shell("YOUR ACCOUNT / QUICK LINKS", fixed ? "Your account." : "Everything in its place.",
+    `You need your receipt for an expense claim.${fixed ? " The menu names each page: open Receipts, then select Download receipt." : " Find Receipts, then select Download receipt."}`,
+    `<div class="mystery-task" id="mystery-task">Receipt not yet downloaded</div><nav class="mystery-nav" id="mystery-nav" aria-label="Website menu"></nav><section class="mystery-destination" id="mystery-destination" aria-live="polite"><h3>Where would you like to go?</h3><p>${fixed ? "Open Receipts to find your expense-claim document." : "Please choose a destination. Our symbols have been carefully considered."}</p></section>`);
   const menu = stage.querySelector("#mystery-nav");
   const panel = stage.querySelector("#mystery-destination");
   const updateProgress = () => {
@@ -281,7 +281,7 @@ function renderMysteryMenu({ stage, mode, shuffle }) {
         if (progress) return;
         progress = 1;
         updateProgress();
-        say("Receipt downloaded. The paperwork was easier to find than the menu was to read.");
+        say("Receipt downloaded.");
         stage.dispatchEvent(new Event("exhibit-complete", { bubbles: true }));
       });
     }
@@ -308,7 +308,7 @@ function renderRetro({ stage, mode, shuffle }) {
   const fixed = mode === "fixed";
   const worse = mode === "worse";
   const { status, say } = createDemoStatus();
-  stage.innerHTML = `<div class="retro-demo"><div class="retro-banner">${fixed ? "Alex's little corner of the internet" : "★ WELCOME TO ALEX'S HOMEPAGE!!! ★"}</div><p class="retro-subtitle">${fixed ? "A guestbook is where visitors to a personal homepage leave a name or message. Enter a made-up nickname and sign this one." : "Before social profiles, personal homepages had guestbooks where visitors left a name or message. Try signing this one with a made-up nickname. It is 1997, and everything is nearly working."}</p><p class="retro-subtitle">${fixed ? "Space enthusiast. Cat appreciator. Website owner since 1997." : "Best viewed with your eyes • 800 × 600 • Internet Explorer 4.0"}</p><div class="retro-layout"><aside class="retro-sidebar"><span>${fixed ? "Make yourself at home" : "COOL LINKS!!"}</span><a href="#retro-about">About me</a><a href="#retro-favorites">My favorite things</a><a href="#retro-guestbook">Sign my guestbook</a><div class="retro-planet" aria-hidden="true">🪐</div><span class="visitor-counter">VISITOR #000042</span></aside><div class="retro-content"><section id="retro-about"><h2>${fixed ? "Hi, I'm Alex." : "Hello, fellow net surfer!!!"}</h2><p>This is my little corner of cyberspace. I like space, cats, and making websites. This page has been almost finished for 29 years.</p></section><section id="retro-favorites"><h3>My favorite things</h3><p>✦ Saturn's rings &nbsp; ✦ My cat, Pixel &nbsp; ✦ The World Wide Web</p></section>${!fixed ? `<div class="construction-large">🚧 UNDER CONSTRUCTION 🚧</div>` : ""}${worse ? `<div class="retro-extra">AWARD-WINNING WEBSITE*<br><span>~*~ WEBMASTER'S CHOICE ~*~</span><small>*Awarded by the webmaster's cat.</small></div>` : ""}<form id="retro-guestbook"><label for="guest-name">Leave your mark in the guestbook</label><div class="guestbook-controls"><input id="guest-name" placeholder="Your nickname" required maxlength="40"><button class="demo-button">Sign guestbook</button></div><small>Pixel the cat reads every entry. Eventually.</small></form>${status}<div id="guest-entries"></div></div></div><div class="retro-bottom">${fixed ? "Made with enthusiasm. Updated when I remember." : "✉ Email the webmaster (telepathically) ✉ · © 1997 FOREVER"}</div></div>`;
+  stage.innerHTML = `<div class="retro-demo"><div class="retro-banner">${fixed ? "Alex's little corner of the internet" : "★ WELCOME TO ALEX'S HOMEPAGE!!! ★"}</div><p class="retro-subtitle">${fixed ? "Leave a made-up nickname in my guestbook." : "Please sign my guestbook with a made-up nickname!! Pixel reads every entry."}</p><p class="retro-subtitle">${fixed ? "Space enthusiast. Cat appreciator. Website owner since 1997." : "Best viewed with your eyes • 800 × 600 • Internet Explorer 4.0"}</p><div class="retro-layout"><aside class="retro-sidebar"><span>${fixed ? "Make yourself at home" : "COOL LINKS!!"}</span><a href="#retro-about">About me</a><a href="#retro-favorites">My favorite things</a><a href="#retro-guestbook">Sign my guestbook</a><div class="retro-planet" aria-hidden="true">🪐</div><span class="visitor-counter">VISITOR #000042</span></aside><div class="retro-content"><section id="retro-about"><h2>${fixed ? "Hi, I'm Alex." : "Hello, fellow net surfer!!!"}</h2><p>This is my little corner of cyberspace. I like space, cats, and making websites. This page has been almost finished for 29 years.</p></section><section id="retro-favorites"><h3>My favorite things</h3><p>✦ Saturn's rings &nbsp; ✦ My cat, Pixel &nbsp; ✦ The World Wide Web</p></section>${!fixed ? `<div class="construction-large">🚧 UNDER CONSTRUCTION 🚧</div>` : ""}${worse ? `<div class="retro-extra">AWARD-WINNING WEBSITE*<br><span>~*~ WEBMASTER'S CHOICE ~*~</span><small>*Awarded by the webmaster's cat.</small></div>` : ""}<form id="retro-guestbook"><label for="guest-name">Leave your mark in the guestbook</label><div class="guestbook-controls"><input id="guest-name" placeholder="Your nickname" required maxlength="40"><button class="demo-button">Sign guestbook</button></div><small>Pixel the cat reads every entry. Eventually.</small></form>${status}<div id="guest-entries"></div></div></div><div class="retro-bottom">${fixed ? "Made with enthusiasm. Updated when I remember." : "✉ Email the webmaster (telepathically) ✉ · © 1997 FOREVER"}</div></div>`;
   let navigationClicks = 0;
   stage.querySelectorAll(".retro-sidebar a").forEach(link => link.addEventListener("click", event => {
     event.preventDefault();
@@ -320,7 +320,7 @@ function renderRetro({ stage, mode, shuffle }) {
     target.setAttribute("tabindex", "-1");
     target.scrollIntoView({ block: "center" });
     target.focus({ preventScroll: true });
-    if (!fixed) say(destination === href ? "Third time's the charm. The menu accidentally went to the right place." : "The menu labels are only suggestions. Try again. Every third click works.");
+    if (!fixed) say(destination === href ? "Third time's the charm. You found the page." : "The menu labels are only suggestions. Try again. Every third click works.");
   }));
   const guestForm = stage.querySelector("form");
   const nickname = stage.querySelector("#guest-name");
@@ -337,7 +337,7 @@ function renderRetro({ stage, mode, shuffle }) {
       if (event.isComposing) return;
       const reversed = [...nickname.value].reverse().join("");
       nickname.value = worse ? reversed.replace(/[aeiou]/gi, vowel => ({ a: "4", e: "3", i: "1", o: "0", u: "8" })[vowel.toLowerCase()]) : reversed;
-      say("Your nickname was reversed after that edit. Apparently typing it once was too convenient.");
+      say("Your nickname was reversed after that edit. The webmaster calls this backwards compatibility.");
     });
     guestForm.append(captcha);
   }
@@ -379,7 +379,7 @@ function renderRetro({ stage, mode, shuffle }) {
       captchaRound++;
       if (worse && captchaRound < 2) {
         renderCaptcha();
-        say("Correct! Unfortunately, we now require a second cat inspection.");
+        say("Cat inspection passed. A second round is required.");
         return;
       }
     }
